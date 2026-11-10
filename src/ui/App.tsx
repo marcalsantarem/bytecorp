@@ -67,7 +67,10 @@ function GameScreen({ engine }: { engine: GameEngine }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-neon-cyan/20 bg-panel/90 px-4 py-3 backdrop-blur">
-        <h1 className="font-mono text-lg font-bold tracking-wider text-white">{t('app.title')}</h1>
+        <h1 className="flex items-baseline gap-2 font-mono text-lg font-bold tracking-wider text-white">
+          {t('app.title')}
+          <span className="text-xs font-normal tracking-normal text-neon-cyan/50">v{__APP_VERSION__}</span>
+        </h1>
         <div className="flex flex-wrap items-center gap-2 font-mono text-sm">
           <Stat icon={<Database className="size-4" aria-hidden />} label={t('hud.bytes')} value={formatBytes(run.bytes, locale)} />
           <Stat icon={<Activity className="size-4" aria-hidden />} label={t('hud.production')} value={formatBytesPerSecond(engine.production.total, locale)} />

@@ -2,11 +2,11 @@
 
 Cada marco entrega um incremento jogável e integrado (Bíblia 25.3) e fecha com PR `dev` → `main`, tag e versão no título do jogo. Tasks só são criadas quando o marco começa ([backlog.md](backlog.md)).
 
-Versões: proposta Mn → `v0.(n+1).0`, pendente de aprovação (A-03 em [decisoes.md](decisoes.md)).
+Versões: marco Mn → `v0.(n+1).0` (D-07 em [decisoes.md](decisoes.md)).
 
 | Marco | Versão | Status | Agentes |
 |---|---|---|---|
-| M0 Fundação | v0.1.0 | Implementado; fechamento pendente | AG01, AG03 |
+| M0 Fundação | v0.1.0 | Pronto para PR e tag | AG01, AG03, AG04 |
 | M1 Loop básico | v0.2.0 | Próximo | AG01, AG03, AG04, AG05 |
 | M2 Expansão da execução | v0.3.0 | — | AG01, AG04, AG07 |
 | M3 Prestígio (primeira versão jogável) | v0.4.0 | — | AG02, AG04, AG07 |

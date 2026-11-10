@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Locale } from '../core/format'
 import { detectLocale, translate, type MessageKey, type MessageParams } from '../i18n'
 
@@ -24,6 +24,10 @@ export function I18nProvider({ children, initial, onChange }: { children: ReactN
     () => ({ locale, setLocale, t: (key, params) => translate(locale, key, params) }),
     [locale, setLocale],
   )
+  // Título da aba com a versão (D-07); refeito ao trocar de idioma.
+  useEffect(() => {
+    document.title = `${translate(locale, 'app.title')} v${__APP_VERSION__}`
+  }, [locale])
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }
 

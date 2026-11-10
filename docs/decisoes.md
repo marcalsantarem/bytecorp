@@ -12,6 +12,7 @@ Registro do AG00. Vale abaixo do usuário e da Bíblia, acima dos documentos dos
 | D-04 | 2026-11-10 | Eventos ficam no M7, depois da primeira versão jogável e antes do beta. | AG00, assumida |
 | D-05 | 2026-11-10 | Processo de trabalho, time e Git conforme [00_processo.md](00_processo.md). | Usuário |
 | D-06 | 2026-11-10 | Configurações (idioma) salvas fora do save do jogo; sobrevivem a "Novo jogo". | M0 |
+| D-07 | 2026-11-10 | Versões: marco Mn fecha como `v0.(n+1).0`. M0 = v0.1.0, beta (M8) = v0.9.0, 1.0 fica para o lançamento. | Usuário |
 
 ## Provisórias
 
@@ -28,4 +29,3 @@ Tasks que dependem destes itens ficam bloqueadas.
 |---|---|---|
 | A-01 | Fórmula global de produção e ordem de combinação dos bônus (Bíblia 4.2). | Produção com bônus (M1), agentes e melhorias (M2) |
 | A-02 | Fórmula de Quantum Cores e condição para habilitar o Reboot (Bíblia 9.4, 9.6, 28.2). | M3 |
-| A-03 | Numeração das versões por marco. | Fechamento do M0 |
