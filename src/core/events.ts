@@ -6,6 +6,7 @@ export interface GameEvents {
   // Disparado ao fim de cada chamada de advance, com o tempo de jogo processado.
   tick: { dtMs: number }
   click: { gained: Decimal; critical: boolean }
+  purchase: { id: string; quantity: number; cost: Decimal }
   stateReplaced: Record<string, never>
 }
 

@@ -6,8 +6,8 @@ Versões: marco Mn → `v0.(n+1).0` (D-07 em [decisoes.md](decisoes.md)).
 
 | Marco | Versão | Status | Agentes |
 |---|---|---|---|
-| M0 Fundação | v0.1.0 | Pronto para PR e tag | AG01, AG03, AG04 |
-| M1 Loop básico | v0.2.0 | Próximo | AG01, AG03, AG04, AG05 |
+| M0 Fundação | v0.1.0 | Fechado | AG01, AG03, AG04 |
+| M1 Loop básico | v0.2.0 | Pronto para PR e tag | AG01, AG03, AG04, AG05, AG07 |
 | M2 Expansão da execução | v0.3.0 | — | AG01, AG04, AG07 |
 | M3 Prestígio (primeira versão jogável) | v0.4.0 | — | AG02, AG04, AG07 |
 | M4 Tempo | v0.5.0 | — | AG02, AG04 |
@@ -34,7 +34,7 @@ Bíblia 5, 6, 15.1 a 15.4, 21.
 
 - Clique com crítico (fixos, percentuais, multiplicador crítico).
 - Equipamentos: custo exponencial, descontos, compra x1/x10/MAX por cartão, desbloqueio e visibilidade.
-- Produção passiva pela fórmula global (depende de A-01).
+- Produção passiva pela soma dos equipamentos. Os bônus, e portanto a fórmula global (A-01), entram no M2.
 - Layout responsivo: três colunas no desktop, abas no mobile; loja por categoria.
 - Cena provisória com o núcleo visual.
 - Save em momentos importantes (compras), além do autosave.

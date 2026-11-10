@@ -48,14 +48,14 @@ Cada agente escreve só nas suas pastas. Escrever fora delas exige autorização
 | AG00 | `CLAUDE.md`, `docs/00_*`, `docs/roadmap.md`, `docs/decisoes.md`, `docs/backlog.md`, `docs/briefings/`, `docs/agentes/`, `.claude/` |
 | AG01 | Arquivos na raiz de `src/core/` (engine, clock, events, state, production, decimal, format), `src/core/economy/`, `src/core/catalog/types.ts`, `docs/AG01/` |
 | AG02 | `src/core/progression/`, `docs/AG02/` |
-| AG03 | `src/core/save/`, `src/platform/`, `src/app/`, `src/i18n/`, `public/` (exceto `public/assets/`), configuração da raiz (`package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts`, `eslint.config.js`, `.gitignore`, `netlify.toml`), `docs/AG03/` |
-| AG04 | `src/ui/`, `src/main.tsx`, `src/index.css`, `index.html`, `docs/AG04/` |
+| AG03 | `src/core/save/`, `src/platform/`, `src/app/`, `src/i18n/` (exceto `ui/` e `content/`), `public/` (exceto `public/assets/`), configuração da raiz (`package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts`, `eslint.config.js`, `.gitignore`, `netlify.toml`), `docs/AG03/` |
+| AG04 | `src/ui/`, `src/i18n/ui/`, `src/main.tsx`, `src/index.css`, `index.html`, `docs/AG04/` |
 | AG05 | `src/render/`, `src/audio/`, `public/assets/`, `docs/AG05/` |
-| AG07 | `src/core/catalog/` (exceto `types.ts`), `tools/`, `tests/`, `docs/AG07/` |
+| AG07 | `src/core/catalog/` (exceto `types.ts`), `src/i18n/content/`, `tools/`, `tests/`, `docs/AG07/` |
 
 A Bíblia (`bytecorp.md`) só muda com aprovação do usuário, registrada pelo AG00.
 
-Os textos de interface e de conteúdo estão hoje juntos em `src/i18n/pt-BR.ts` e `en.ts` (AG03). Até a divisão por domínio (backlog), quem precisar adicionar texto recebe autorização no briefing.
+Textos de i18n: `src/i18n/ui/` é do AG04 e `src/i18n/content/` é do AG07; o restante de `src/i18n/` (combinação, `MessageKey`, `translate`) é do AG03.
 
 ## Marcos e tasks
 

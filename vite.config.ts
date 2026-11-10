@@ -10,7 +10,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   test: {
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
     environment: 'node',
   },
 })

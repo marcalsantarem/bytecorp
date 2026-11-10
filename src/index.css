@@ -22,3 +22,29 @@ body {
   color: #d7fff6;
   font-family: var(--font-sans);
 }
+
+/* Painel neon: borda em degradê, cantos chanfrados e brilho (componente NeonPanel). */
+.neon-glow {
+  --neon: var(--color-neon-cyan);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--neon) 35%, transparent));
+}
+.neon-glow-magenta {
+  --neon: var(--color-neon-magenta);
+}
+.neon-edge,
+.neon-body {
+  --cut: 12px;
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+}
+.neon-edge {
+  padding: 1px;
+  background: linear-gradient(135deg, var(--neon), color-mix(in srgb, var(--neon) 15%, transparent));
+}
+.neon-body {
+  --cut: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: color-mix(in srgb, var(--color-panel) 95%, transparent);
+}

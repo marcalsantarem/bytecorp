@@ -1,13 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import { CATALOG } from './catalog'
 import { startClock } from './clock'
-import { GameEngine } from './engine'
+import { DEFAULT_CONFIG, GameEngine, type EngineConfig } from './engine'
 import { createInitialState } from './state'
 
-function engineWith(equipment: Record<string, number>) {
+function engineWith(equipment: Record<string, number>, config: Partial<EngineConfig> = {}) {
   const state = createInitialState(0)
   state.run.equipment = equipment
-  return new GameEngine(CATALOG, state)
+  return new GameEngine(CATALOG, state, { ...DEFAULT_CONFIG, random: () => 0.99, ...config })
+}
+
+// Devolve os valores em sequência, repetindo o último.
+function sequence(...values: number[]): () => number {
+  let i = 0
+  return () => values[Math.min(i++, values.length - 1)]!
 }
 
 describe('GameEngine', () => {
@@ -59,6 +65,49 @@ describe('GameEngine', () => {
     expect(engine.state.stats.bytesFromClicks.toNumber()).toBe(2)
     expect(engine.state.stats.bytesFromProduction.toNumber()).toBe(0)
     expect(clicks).toEqual([false, false])
+    expect(engine.state.stats.criticalClicks).toBe(0)
+  })
+
+  it('usa 5% de chance e x5 como crítico padrão', () => {
+    expect(DEFAULT_CONFIG.criticalChance).toBe(0.05)
+    expect(DEFAULT_CONFIG.criticalMultiplier).toBe(5)
+    expect(DEFAULT_CONFIG.random).toBe(Math.random)
+  })
+
+  it('aplica o crítico quando o sorteio fica abaixo da chance', () => {
+    const engine = engineWith({}, { baseClick: 3, random: sequence(0.04, 0.05, 0) })
+    const events: { gained: number; critical: boolean }[] = []
+    engine.events.on('click', ({ gained, critical }) =>
+      events.push({ gained: gained.toNumber(), critical }),
+    )
+    expect(engine.click().toNumber()).toBe(15)
+    expect(engine.click().toNumber()).toBe(3) // 0.05 não é < 0.05
+    expect(engine.click().toNumber()).toBe(15)
+    expect(events).toEqual([
+      { gained: 15, critical: true },
+      { gained: 3, critical: false },
+      { gained: 15, critical: true },
+    ])
+    expect(engine.state.stats.clicks).toBe(3)
+    expect(engine.state.stats.criticalClicks).toBe(2)
+    expect(engine.state.stats.bytesFromClicks.toNumber()).toBe(33)
+    expect(engine.state.run.bytes.toNumber()).toBe(33)
+    expect(engine.state.run.bytesEarned.toNumber()).toBe(33)
+    expect(engine.state.stats.bytesEarnedAllTime.toNumber()).toBe(33)
+  })
+
+  it('mantém clickValue sem crítico e respeita o multiplicador configurado', () => {
+    const engine = engineWith({}, { baseClick: 2, criticalMultiplier: 7, random: () => 0 })
+    expect(engine.clickValue.toNumber()).toBe(2)
+    expect(engine.click().toNumber()).toBe(14)
+    expect(engine.clickValue.toNumber()).toBe(2)
+  })
+
+  it('não tem limite de cliques nem combo', () => {
+    const engine = engineWith({}, { random: () => 0.5 })
+    for (let i = 0; i < 1000; i++) expect(engine.click().toNumber()).toBe(1)
+    expect(engine.state.stats.clicks).toBe(1000)
+    expect(engine.state.run.bytes.toNumber()).toBe(1000)
   })
 
   it('recalcula a produção depois de invalidate', () => {

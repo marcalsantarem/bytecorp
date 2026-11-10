@@ -2,22 +2,87 @@
 
 Mantido pelo AG00. Status: a fazer, pronta para briefing, em andamento, em validação, feita, bloqueada.
 
-## Marco atual: M0 Fundação (fechamento)
+## Marco atual: M1 Loop básico (v0.2.0)
 
 | ID | Task | Dono | Depende de | Status |
 |---|---|---|---|---|
-| T-001 | Implementação do M0 (núcleo, i18n, catálogos, save) | AG00, antes do acordo de processo | — | feita |
-| T-002 | Expor a versão do `package.json` (0.1.0) para o app | AG03 | — | feita (BRF-001) |
-| T-003 | Mostrar a versão no título da aba e no cabeçalho | AG04 | T-002 | feita (BRF-003) |
-| T-004 | `netlify.toml` com build e publicação de `dist/` | AG03 | — | feita (BRF-002); deploy real depende do painel do Netlify |
-| T-005 | PR `dev` → `main` e tag do M0 | AG00 | T-003, T-004, pedido do usuário | a fazer |
+| T-006 | Dividir os dicionários de i18n em interface (posse do AG04) e conteúdo (posse do AG07), sem mudar o uso de `MessageKey` | AG03 | — | feita (BRF-004) |
+| T-007 | Clique com crítico (Bíblia 5.4 e 5.5): fixos, percentuais, chance e multiplicador crítico, sorteio injetável para testes, evento `click` com `critical`, estatística de críticos | AG01 | — | feita (BRF-005) |
+| T-008 | Equipamentos (Bíblia 4.3, 4.6, 6.3, 6.6): custo `C_base × k^N` inteiro com desconto e mínimo de 1 Byte, compra x1/x10/MAX, estado oculto/revelado/desbloqueado, evento de compra e dados prontos para a loja | AG01 | T-007 (mesmos arquivos do engine) | feita (BRF-007) |
+| T-009 | Salvar logo após compras, além do autosave (Bíblia 21.2) | AG03 | T-008 | feita (BRF-010) |
+| T-010 | Layout responsivo (Bíblia 15.1 a 15.3 e 15.6): três colunas no desktop, abas inferiores no mobile, rodapé com Reboot, Árvore Quantum e Conquistas desabilitados; corrigir o encerramento da sessão aberta pela tela de save corrompido | AG04 | T-006 | feita (BRF-008) |
+| T-011 | Loja de equipamentos (Bíblia 6.4 a 6.6): abas por categoria no desktop, lista compacta no mobile, cartões completos, seletor x1/x10/MAX por cartão só na sessão | AG04 | T-008, T-010 | feita (BRF-011); inclui o acabamento neon da referência (D-08) |
+| T-012 | Botão de clique abaixo do núcleo, com animação de compressão, valor por clique e montagem da cena do núcleo | AG04 | T-007, T-010, T-011, T-013 | feita (BRF-012) |
+| T-013 | Cena provisória do núcleo em Canvas 2D (Bíblia 5.2): anéis, brilho neon, pulso no clique e efeito intensificado no crítico, exposta como `mountCoreScene(canvas, events)` | AG05 | — | feita (BRF-006) |
+| T-014 | Catálogo do M1: 3 equipamentos por categoria (15), textos pt-BR e en, valores provisórios com fator 1,15 | AG07 | T-006 | feita (BRF-009) |
+| T-015 | QA do M1: testes de integração (MAX respeita o saldo, custos inteiros ≥ 1, crítico com sorteio fixo, save após compra) e roteiro manual desktop e mobile | AG07 | T-009, T-011, T-012, T-014 | feita (BRF-013); achou o defeito D-1 (T-047) |
+| T-047 | Corrigir o custo unitário para inteiro exato (defeito D-1 da QA) | AG01 | T-015 | feita (BRF-014) |
+| T-048 | Executar o roteiro manual `docs/AG07/roteiro-qa-m1.md` em 1280 px e 375 px (a QA não o executou) | AG07 | T-047 | feita (BRF-015); achou D1 a D5 |
+| T-049 | Ajustes no mobile: alvos de toque de 44 px, truncamentos e nome acessível do seletor de idioma (D2, D4, D5) | AG04 | T-048 | feita (BRF-016); conferida pelo AG00 em 375 px com Bytes grandes |
+| T-050 | Rótulos das categorias de equipamento em pt-BR (D1) | AG07 | A-05 (resolvida) | feita (BRF-017) |
+| T-016 | Versão 0.2.0 no `package.json` e no `package-lock.json` | AG03 | T-049, T-050 | feita (BRF-018) |
+| T-017 | PR `dev` → `main` e tag `v0.2.0` | AG00 | T-016, pedido do usuário | em andamento: PR a abrir pelo usuário; tag após o merge |
+
+Ondas possíveis em paralelo (arquivos diferentes):
+
+1. T-006, T-007, T-013
+2. T-008, T-010, T-014
+3. T-009, T-011, T-012
+4. T-015, depois T-016 e T-017
+
+## Próximos marcos (quebrados antecipadamente a pedido do usuário)
+
+Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem em sequência. Tasks marcadas "bloqueada" esperam decisão em "A definir" ([decisoes.md](decisoes.md)).
+
+### M2 Expansão da execução (v0.3.0)
+
+| ID | Task | Dono | Depende de | Status |
+|---|---|---|---|---|
+| T-018 | Estágios corporativos: avanço de `run.stage` por requisito, evento `stageChanged` | AG01 | — | a fazer |
+| T-019 | Agentes (regras): contratação individual, custo com desconto, nível coletivo uma unidade por vez, eventos | AG01 | T-018 | a fazer |
+| T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | a fazer |
+| T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020, A-01 | bloqueada |
+| T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | a fazer |
+| T-023 | Catálogo de agentes (4 a 5) com textos nos dois idiomas | AG07 | T-019 | a fazer |
+| T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | a fazer |
+| T-025 | Catálogo: equipamentos extras por estágio e revisão dos limites dos estágios | AG07 | T-018, T-024 | a fazer |
+| T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | a fazer |
+| T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | a fazer |
+| T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018, T-027 | a fazer |
+| T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |
+| T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | a fazer |
+| T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva | AG07 | T-021, T-022, T-025, T-030 | a fazer |
+| T-032 | Versão 0.3.0 | AG03 | T-031 | a fazer |
+| T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
+
+### M3 Prestígio (v0.4.0), fecha a primeira versão jogável
+
+| ID | Task | Dono | Depende de | Status |
+|---|---|---|---|---|
+| T-034 | Reboot (regras): reset da execução, preservação do permanente, contagem de reboots, evento; recompensa injetável | AG02 | M2 | a fazer |
+| T-035 | Fórmula de Quantum Cores e condição para habilitar o Reboot | AG02 | T-034, A-02 | bloqueada |
+| T-036 | Árvore Quantum (regras): nós, níveis um por vez, custo exponencial, pré-requisitos, reset com custo crescente | AG02 | T-034 | a fazer |
+| T-037 | Aplicar os efeitos quânticos na fórmula de produção e no limite offline | AG01 | T-036, T-021 | bloqueada |
+| T-038 | Save: revisar o formato, salvar logo após Reboot e reset da árvore | AG03 | T-034, T-036 | a fazer |
+| T-039 | Catálogo da árvore Quantum: 3 caminhos, cerca de 12 nós, textos | AG07 | T-036 | a fazer |
+| T-040 | Efeito de Reboot em Canvas 2D (2 a 3 s, pulável) | AG05 | T-034 | a fazer |
+| T-041 | Janela de Reboot: estimativa, confirmação do que se perde e preserva, botão do rodapé | AG04 | T-035, T-040 | bloqueada |
+| T-042 | Árvore Quantum na interface (1): visual com linhas neon, pan e zoom, seleção | AG04 | T-036, T-039, T-041 | a fazer |
+| T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | a fazer |
+| T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | a fazer |
+| T-045 | Versão 0.4.0 | AG03 | T-044 | a fazer |
+| T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | a fazer |
+
+## Marcos fechados
+
+| Marco | Versão | Tasks |
+|---|---|---|
+| M0 Fundação | v0.1.0 | T-001 a T-005 |
 
 ## Depois
 
-| Task | Marco | Dono provável |
+| Item | Marco | Dono provável |
 |---|---|---|
-| Salvar após compras e ações importantes (perda observada ao recarregar logo após clicar) | M1 | AG03 |
-| Dividir os dicionários de i18n por domínio (interface e conteúdo) para separar a posse entre AG04 e AG07 | M1 | AG03 |
-| Parar o relógio e salvar ao trocar de jogo pela tela de save corrompido (sessão nova não é encerrada no desmonte) | M1 | AG03 |
-| Testes de componentes React | M1 | AG04 |
-| Sincronizar o campo `version` do `package-lock.json` (ainda 0.0.0) | M1 | AG03 |
+| Testes de componentes React (exige ambiente DOM no Vitest) | M2 | AG03 e AG04 |
+| Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |
+| Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |
