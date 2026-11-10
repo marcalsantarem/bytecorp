@@ -7,10 +7,20 @@ const MAX_BULK = 100_000
 
 // Custo da unidade de índice n (n = quantidade já comprada): floor(C_base × k^n × (1 − d/100)),
 // nunca menor que 1 Byte (GDD 4.3 e 4.6). O desconto incide em cada unidade.
+// O Decimal (break_infinity) tem ~15 dígitos de mantissa, então floor() pode devolver
+// 23295442.999999996 no lugar de 23295443. Até o inteiro seguro, o resultado é saneado:
+// valores a menos de 1e-9 (relativo) de um inteiro viram esse inteiro; os demais usam floor.
+// Acima de Number.MAX_SAFE_INTEGER "inteiro exato" perde sentido (a mantissa já não
+// distingue unidades): devolve-se o floor() do Decimal, aceito como aproximação.
 export function unitCost(baseCost: number, growth: number, owned: number, discountPercent: Decimal | number = 0): Decimal {
   const factor = Math.max(0, 1 - D(discountPercent).toNumber() / 100)
-  const raw = D(baseCost).mul(D(growth).pow(owned)).mul(factor).floor()
-  return raw.lt(1) ? D(1) : raw
+  const raw = D(baseCost).mul(D(growth).pow(owned)).mul(factor)
+  if (raw.lt(1)) return D(1)
+  if (raw.gt(Number.MAX_SAFE_INTEGER)) return raw.floor()
+  const x = raw.toNumber()
+  const r = Math.round(x)
+  const exact = Math.abs(x - r) <= x * 1e-9 ? r : Math.floor(x)
+  return D(Math.max(1, exact))
 }
 
 // Soma exata dos custos unitários de `quantity` unidades a partir de `owned`.

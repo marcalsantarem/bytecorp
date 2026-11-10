@@ -65,6 +65,19 @@ describe('custo', () => {
     expect(bulkCost(10, 1.15, 0, 3, 150).toNumber()).toBe(3)
   })
 
+  it('D-1: custo unitário é inteiro exato (n=102 e 103, descontos 0/10/50/99)', () => {
+    for (const d of [0, 10, 50, 99]) {
+      for (const n of [102, 103]) {
+        const c = unitCost(15, 1.15, n, d)
+        const x = c.toNumber()
+        expect(Number.isInteger(x), `n=${n} d=${d} (${x})`).toBe(true)
+        expect(c.eq(Math.floor(x)), `n=${n} d=${d} eq`).toBe(true)
+      }
+    }
+    expect(unitCost(15, 1.15, 102).toNumber()).toBe(23295443)
+    expect(unitCost(15, 1.15, 103).toNumber()).toBe(26789759)
+  })
+
   it('MAX nunca gasta mais que o saldo e mais uma unidade não caberia', () => {
     for (const discount of [0, 30, 150]) {
       // Com desconto de 150% cada unidade custa 1: saldos grandes iriam até o limite do MAX.

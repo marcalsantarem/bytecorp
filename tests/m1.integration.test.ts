@@ -29,10 +29,11 @@ describe('catálogo real: custos', () => {
         for (let n = 0; n <= 200; n++) {
           const c = unitCost(e.baseCost, e.costGrowth, n, discount)
           expect(c.gte(1), `${e.id} n=${n}`).toBe(true)
-          // Tolerância: break_infinity guarda mantissa de ~15 dígitos, então um inteiro
-          // pode voltar como 23295442.999999996 (ver defeito D-1 na entrega do BRF-013).
+          // Igualdade exata (D-1): o Decimal deve reconstruir exatamente o inteiro.
           const x = c.toNumber()
-          expect(Math.abs(x - Math.round(x)) <= x * 1e-12, `${e.id} n=${n} inteiro (${x})`).toBe(true)
+          expect(Number.isInteger(x), `${e.id} n=${n} inteiro (${x})`).toBe(true)
+          // Acima do inteiro seguro (ver cost.ts) só vale Number.isInteger.
+          if (x <= Number.MAX_SAFE_INTEGER) expect(c.eq(D(Math.floor(x))), `${e.id} n=${n} eq`).toBe(true)
         }
       }
     })
