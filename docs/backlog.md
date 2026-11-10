@@ -15,8 +15,10 @@ Mantido pelo AG00. Status: a fazer, pronta para briefing, em andamento, em valid
 | T-012 | Botão de clique abaixo do núcleo, com animação de compressão, valor por clique e montagem da cena do núcleo | AG04 | T-007, T-010, T-011, T-013 | feita (BRF-012) |
 | T-013 | Cena provisória do núcleo em Canvas 2D (Bíblia 5.2): anéis, brilho neon, pulso no clique e efeito intensificado no crítico, exposta como `mountCoreScene(canvas, events)` | AG05 | — | feita (BRF-006) |
 | T-014 | Catálogo do M1: 3 equipamentos por categoria (15), textos pt-BR e en, valores provisórios com fator 1,15 | AG07 | T-006 | feita (BRF-009) |
-| T-015 | QA do M1: testes de integração (MAX respeita o saldo, custos inteiros ≥ 1, crítico com sorteio fixo, save após compra) e roteiro manual desktop e mobile | AG07 | T-009, T-011, T-012, T-014 | a fazer |
-| T-016 | Versão 0.2.0 no `package.json` e no `package-lock.json` | AG03 | T-015 | a fazer |
+| T-015 | QA do M1: testes de integração (MAX respeita o saldo, custos inteiros ≥ 1, crítico com sorteio fixo, save após compra) e roteiro manual desktop e mobile | AG07 | T-009, T-011, T-012, T-014 | feita (BRF-013); achou o defeito D-1 (T-047) |
+| T-047 | Corrigir o custo unitário para inteiro exato (defeito D-1 da QA) | AG01 | T-015 | pronta para briefing (BRF-014) |
+| T-048 | Executar o roteiro manual `docs/AG07/roteiro-qa-m1.md` em 1280 px e 375 px (a QA não o executou) | AG07 | T-047 | a fazer |
+| T-016 | Versão 0.2.0 no `package.json` e no `package-lock.json` | AG03 | T-047, T-048 | a fazer |
 | T-017 | PR `dev` → `main` e tag `v0.2.0` | AG00 | T-016, pedido do usuário | a fazer |
 
 Ondas possíveis em paralelo (arquivos diferentes):
