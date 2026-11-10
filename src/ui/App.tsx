@@ -6,7 +6,8 @@ import { formatBytes } from '../core/format'
 import type { KeyValueStorage } from '../core/save/storage'
 import { useI18n } from './i18n'
 import { GameLayout } from './layout/GameLayout'
-import { AgentsPanel, InfraPlaceholder, ShopPanel, StatsPanel } from './layout/Panels'
+import { AgentsPanel, InfraPlaceholder, StatsPanel } from './layout/Panels'
+import { ShopPanel } from './shop/ShopPanel'
 import { useEngineRevision } from './useEngine'
 
 type Phase = { kind: 'loading' } | BootResult
@@ -75,7 +76,7 @@ function GameScreen({ engine }: { engine: GameEngine }) {
           <AgentsPanel />
         </>
       }
-      right={<ShopPanel />}
+      right={<ShopPanel engine={engine} />}
       center={
         <>
           <InfraPlaceholder />

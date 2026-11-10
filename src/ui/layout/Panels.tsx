@@ -3,24 +3,15 @@ import type { ReactNode } from 'react'
 import type { GameEngine } from '../../core/engine'
 import { formatBytes, formatCount } from '../../core/format'
 import type { MessageKey } from '../../i18n'
+import { NeonPanel } from '../components/NeonPanel'
 import { useI18n } from '../i18n'
 
 export function Panel({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-2 rounded-lg border border-neon-cyan/15 bg-panel/60 p-3">
+    <NeonPanel>
       <h2 className="font-mono text-xs font-bold tracking-wider text-neon-cyan/80 uppercase">{title}</h2>
       {children}
-    </section>
-  )
-}
-
-// Lugar reservado para a loja (T-011).
-export function ShopPanel() {
-  const { t } = useI18n()
-  return (
-    <Panel title={t('shop.title')}>
-      <p className="text-sm text-white/50">{t('shop.placeholder')}</p>
-    </Panel>
+    </NeonPanel>
   )
 }
 

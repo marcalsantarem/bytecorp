@@ -12,6 +12,7 @@ Registro do AG00. Vale abaixo do usuário e da Bíblia, acima dos documentos dos
 | D-04 | 2026-11-10 | Eventos ficam no M7, depois da primeira versão jogável e antes do beta. | AG00, assumida |
 | D-05 | 2026-11-10 | Processo de trabalho, time e Git conforme [00_processo.md](00_processo.md). | Usuário |
 | D-06 | 2026-11-10 | Configurações (idioma) salvas fora do save do jogo; sobrevivem a "Novo jogo". | M0 |
+| D-08 | 2026-11-10 | Referência visual em `docs/referencias/` (só inspiração). O acabamento neon (painéis chanfrados, barra colorida nos cartões) entra já nas tasks T-011 e T-012 do M1; onde diverge da Bíblia, vale a Bíblia. | Usuário |
 | D-07 | 2026-11-10 | Versões: marco Mn fecha como `v0.(n+1).0`. M0 = v0.1.0, beta (M8) = v0.9.0, 1.0 fica para o lançamento. | Usuário |
 
 ## Provisórias
