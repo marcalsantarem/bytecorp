@@ -21,7 +21,7 @@ Mantido pelo AG00. Status: a fazer, pronta para briefing, em andamento, em valid
 | T-049 | Ajustes no mobile: alvos de toque de 44 px, truncamentos e nome acessível do seletor de idioma (D2, D4, D5) | AG04 | T-048 | feita (BRF-016); conferida pelo AG00 em 375 px com Bytes grandes |
 | T-050 | Rótulos das categorias de equipamento em pt-BR (D1) | AG07 | A-05 (resolvida) | feita (BRF-017) |
 | T-016 | Versão 0.2.0 no `package.json` e no `package-lock.json` | AG03 | T-049, T-050 | feita (BRF-018) |
-| T-017 | PR `dev` → `main` e tag `v0.2.0` | AG00 | T-016, pedido do usuário | em andamento: PR a abrir pelo usuário; tag após o merge |
+| T-017 | PR `dev` → `main` e tag `v0.2.0` | AG00 | T-016, pedido do usuário | feita (PR #2, tag v0.2.0) |
 
 Ondas possíveis em paralelo (arquivos diferentes):
 
