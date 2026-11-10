@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* Identidade visual herdada do protótipo (GDD 1.4). */
+@theme {
+  --color-void: #050811;
+  --color-panel: #080d1f;
+  --color-neon-cyan: #00ffcc;
+  --color-neon-magenta: #ff007f;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, monospace;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-void);
+  color: #d7fff6;
+  font-family: var(--font-sans);
+}

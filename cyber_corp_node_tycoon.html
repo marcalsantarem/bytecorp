@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Corp: Node Tycoon</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050811;
+            color: #00ffcc;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.05) 0%, transparent 70%),
+                linear-gradient(180deg, #050811 0%, #02040a 100%);
+        }
+
+        .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Custom Neon Effects */
+        .neon-border-cyan {
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2), inset 0 0 10px rgba(0, 255, 204, 0.1);
+            border: 1px solid rgba(0, 255, 204, 0.4);
+        }
+
+        .neon-border-magenta {
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.2), inset 0 0 10px rgba(255, 0, 127, 0.1);
+            border: 1px solid rgba(255, 0, 127, 0.4);
+        }
+
+        .neon-text-cyan {
+            text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+        }
+
+        .neon-text-magenta {
+            text-shadow: 0 0 8px rgba(255, 0, 127, 0.6);
+        }
+
+        .click-node-btn {
+            transition: all 0.05s ease-out;
+        }
+        .click-node-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
+        }
+
+        /* Floating Byte Numbers Animation */
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
+        }
+        .float-text {
+            position: absolute;
+            animation: floatUp 0.8s ease-out forwards;
+            pointer-events: none;
+            font-family: 'Fira Code', monospace;
+            font-weight: bold;
+            color: #00ffcc;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ffcc44;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ffcc88;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-cyan-500 selection:text-black">
+
+    <!-- TOP HEADER / NAV -->
+    <header class="w-full bg-[#080d1a]/80 backdrop-blur-md border-b border-cyan-500/30 p-4 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                    <i data-lucide="terminal" class="w-6 h-6 text-cyan-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wider text-white neon-text-cyan flex items-center gap-2">
+                        CYBER CORP <span class="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/40">NODE TYCOON</span>
+                    </h1>
+                    <p class="text-xs text-cyan-400/60 font-mono">STATUS: OPERATIONAL // V1.0.4</p>
+                </div>
+            </div>
+
+            <!-- Stats Bar Top -->
+            <div class="flex flex-wrap items-center gap-4 text-sm font-mono">
+                <div class="px-3 py-1.5 rounded bg-[#0b1329] border border-cyan-500/20 flex items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+                    <span class="text-gray-400">BOOST:</span>
+                    <span id="boost-timer-display" class="text-amber-400 font-bold">1x (INATIVO)</span>
+                </div>
+                <div class="px-3 py-1.5 rounded bg-[#0b1329] border border-pink-500/30 flex items-center gap-2">
+                    <i data-lucide="cpu" class="w-4 h-4 text-pink-400"></i>
+                    <span class="text-gray-400">CORES QUANTIC:</span>
+                    <span id="quantum-cores-display" class="text-pink-400 font-bold">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN DASHBOARD -->
+    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto">
+        
+        <!-- LEFT PANEL: Core Clicker Node & Stats -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            <!-- Resource Card -->
+            <div class="bg-[#080d1f]/90 rounded-xl p-6 neon-border-cyan flex flex-col items-center justify-center text-center relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <span class="text-xs font-mono uppercase tracking-widest text-cyan-400/70 mb-1">Armazenamento Total</span>
+                <div class="text-4xl sm:text-5xl font-extrabold font-mono text-white tracking-tight mb-2 neon-text-cyan flex items-center justify-center gap-2" id="bytes-display">
+                    0 B
+                </div>
+                
+                <div class="flex items-center gap-2 text-sm font-mono text-cyan-300/80 bg-cyan-950/40 px-3 py-1 rounded-full border border-cyan-500/20">
+                    <i data-lucide="activity" class="w-4 h-4 text-cyan-400 animate-pulse"></i>
+                    <span id="bps-display">0 B/s</span>
+                </div>
+            </div>
+
+            <!-- Central Clicker Node -->
+            <div class="bg-[#080d1f]/90 rounded-xl p-8 neon-border-cyan flex flex-col items-center justify-center relative min-h-[280px]">
+                <div id="click-area" class="relative cursor-pointer select-none">
+                    <button id="node-click-btn" class="click-node-btn w-40 h-40 rounded-full bg-gradient-to-tr from-cyan-950 via-[#0a192f] to-cyan-900 border-2 border-cyan-400 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,255,204,0.3)] hover:shadow-[0_0_45px_rgba(0,255,204,0.5)] group">
+                        <i data-lucide="server" class="w-16 h-16 text-cyan-400 group-hover:scale-110 transition-transform duration-200"></i>
+                        <span class="mt-2 text-xs font-mono text-cyan-300 tracking-wider">MINAR NODE</span>
+                    </button>
+                </div>
+                <p class="text-xs text-center font-mono text-cyan-400/50 mt-6">
+                    [ Clique no Servidor Central para processar dados manualmente ]
+                </p>
+            </div>
+
+            <!-- Monetization / Ads Boost Panel -->
+            <div class="bg-[#0d091a]/90 rounded-xl p-5 neon-border-magenta flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-pink-500/20 pb-2">
+                    <h2 class="text-sm font-bold font-mono text-pink-400 flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> ACELERADORES DE DADOS (MONETIZAÇÃO)
+                    </h2>
+                    <span class="text-[10px] bg-pink-950 text-pink-300 px-2 py-0.5 rounded border border-pink-500/30 font-mono">ADS SIMULADOS</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                    <!-- Boost 2x Speed -->
+                    <button id="btn-ad-boost" onclick="watchAdBoost()" class="flex items-center gap-3 p-3 bg-pink-950/30 hover:bg-pink-900/40 border border-pink-500/40 rounded-lg text-left transition-all group">
+                        <div class="p-2 bg-pink-500/20 rounded border border-pink-500/40 text-pink-400 group-hover:scale-105 transition-transform">
+                            <i data-lucide="play-circle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-white">Boost 2x Velocidade</div>
+                            <div class="text-[11px] text-pink-300/70 font-mono">Ver Ad (+2 min)</div>
+                        </div>
+                    </button>
+
+                    <!-- Instant Data Surge -->
+                    <button id="btn-ad-surge" onclick="watchAdSurge()" class="flex items-center gap-3 p-3 bg-cyan-950/30 hover:bg-cyan-900/40 border border-cyan-500/40 rounded-lg text-left transition-all group">
+                        <div class="p-2 bg-cyan-500/20 rounded border border-cyan-500/40 text-cyan-400 group-hover:scale-105 transition-transform">
+                            <i data-lucide="database-backup" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-white">Surto de Dados</div>
+                            <div class="text-[11px] text-cyan-300/70 font-mono">Ganhe +5 min de BPS</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: Upgrades, AI Agents & Reboot -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-cyan-500/30 space-x-2">
+                <button id="tab-btn-upgrades" onclick="switchTab('upgrades')" class="px-4 py-2 border-b-2 border-cyan-400 text-cyan-400 font-mono text-sm font-bold flex items-center gap-2 transition-all">
+                    <i data-lucide="hard-drive" class="w-4 h-4"></i> HARDWARE
+                </button>
+                <button id="tab-btn-agents" onclick="switchTab('agents')" class="px-4 py-2 border-b-2 border-transparent text-gray-400 hover:text-cyan-300 font-mono text-sm font-bold flex items-center gap-2 transition-all">
+                    <i data-lucide="bot" class="w-4 h-4"></i> IAS AUTÔNOMAS
+                </button>
+                <button id="tab-btn-reboot" onclick="switchTab('reboot')" class="px-4 py-2 border-b-2 border-transparent text-gray-400 hover:text-pink-400 font-mono text-sm font-bold flex items-center gap-2 transition-all">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> REBOOT (PRESTÍGIO)
+                </button>
+            </div>
+
+            <!-- TAB 1: HARDWARE UPGRADES -->
+            <div id="tab-content-upgrades" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                <!-- Upgrade items rendered dynamically -->
+            </div>
+
+            <!-- TAB 2: AI AGENTS -->
+            <div id="tab-content-agents" class="hidden space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                <!-- Agent items rendered dynamically -->
+            </div>
+
+            <!-- TAB 3: REBOOT (PRESTIGE) -->
+            <div id="tab-content-reboot" class="hidden bg-[#080d1f]/90 rounded-xl p-6 neon-border-magenta flex flex-col gap-4">
+                <div class="flex items-center gap-3 text-pink-400">
+                    <i data-lucide="shield-alert" class="w-8 h-8"></i>
+                    <div>
+                        <h3 class="text-lg font-bold font-mono text-white">REBOOT DE SISTEMA QUANTICO</h3>
+                        <p class="text-xs text-pink-300/70">Reinicie seu progresso de servidores em troca de Cores Quânticos permanentes.</p>
+                    </div>
+                </div>
+
+                <div class="bg-pink-950/20 border border-pink-500/30 p-4 rounded-lg space-y-2 text-sm font-mono">
+                    <div class="flex justify-between text-gray-300">
+                        <span>Bytes acumulados na execução:</span>
+                        <span id="reboot-current-bytes" class="text-cyan-400 font-bold">0</span>
+                    </div>
+                    <div class="flex justify-between text-gray-300">
+                        <span>Cores Quânticos para reivindicar:</span>
+                        <span id="reboot-gain-cores" class="text-pink-400 font-bold">+0</span>
+                    </div>
+                    <div class="flex justify-between text-gray-300 border-t border-pink-500/20 pt-2">
+                        <span>Bônus Multiplicador Futuro:</span>
+                        <span id="reboot-future-bonus" class="text-emerald-400 font-bold">+0%</span>
+                    </div>
+                </div>
+
+                <div class="text-xs text-gray-400 space-y-1">
+                    <p>⚠️ <strong>Atenção:</strong> O Reboot irá resetar seus Bytes, Upgrades de Hardware e IAs Autônomas.</p>
+                    <p>✓ Seus <strong>Cores Quânticos</strong> e multiplicadores permanecem para sempre!</p>
+                </div>
+
+                <button id="btn-do-reboot" onclick="executeReboot()" class="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold font-mono rounded-lg border border-pink-400/40 shadow-lg shadow-pink-950/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                    EXECUTAR REBOOT DE SISTEMA
+                </button>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full border-t border-cyan-500/20 bg-[#04060d] py-3 text-center text-xs font-mono text-cyan-400/40">
+        Cyber Corp: Node Tycoon &copy; 2026 // Salve automático local ativado
+    </footer>
+
+    <!-- MODAL: OFFLINE PROGRESS (SIMULATED AD REWARD) -->
+    <div id="modal-offline" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#090e21] border border-cyan-500/50 rounded-xl p-6 max-w-md w-full neon-border-cyan flex flex-col gap-4 text-center">
+            <div class="w-12 h-12 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto border border-cyan-400">
+                <i data-lucide="cpu" class="w-6 h-6 text-cyan-400"></i>
+            </div>
+            
+            <h2 class="text-xl font-bold font-mono text-white">BEM-VINDO DE VOLTA!</h2>
+            <p class="text-xs text-cyan-300/80">Seus nós continuaram processando enquanto você estava desconectado.</p>
+
+            <div class="bg-cyan-950/40 border border-cyan-500/30 p-4 rounded-lg my-2">
+                <div class="text-xs text-gray-400 font-mono">Ganhos Offline:</div>
+                <div id="offline-bytes-earned" class="text-2xl font-bold font-mono text-cyan-400">0 B</div>
+                <div id="offline-time-elapsed" class="text-[11px] text-gray-500 font-mono mt-1">Tempo ausente: 0s</div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button onclick="claimOfflineEarnings(2)" class="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold font-mono rounded-lg border border-pink-400/40 flex items-center justify-center gap-2 shadow-lg shadow-pink-950/50">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i> DUPLICAR 2X (VER AD SIMULADO)
+                </button>
+                <button onclick="claimOfflineEarnings(1)" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono text-xs rounded-lg border border-gray-600">
+                    Coletar Normal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SIMULATED REWARDED AD PLAYING -->
+    <div id="modal-ad-player" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#0d091a] border border-pink-500/50 rounded-xl p-8 max-w-sm w-full text-center flex flex-col items-center gap-4 neon-border-magenta">
+            <div class="relative w-16 h-16 flex items-center justify-center">
+                <div class="absolute inset-0 rounded-full border-4 border-pink-500/20 border-t-pink-500 animate-spin"></div>
+                <i data-lucide="film" class="w-7 h-7 text-pink-400"></i>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold font-mono text-white">REPRODUZINDO ANÚNCIO...</h3>
+                <p class="text-xs text-pink-300/70 mt-1">Simulação de Monetização por Vídeo Recompensado</p>
+            </div>
+
+            <div class="w-full bg-pink-950/50 border border-pink-500/30 rounded-full h-3 overflow-hidden">
+                <div id="ad-progress-bar" class="bg-gradient-to-r from-pink-500 to-purple-500 h-full w-0 transition-all duration-100"></div>
+            </div>
+
+            <div id="ad-countdown" class="text-xs font-mono text-gray-400">Recompensa em 3s...</div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        /* ==========================================================================
+           GAME DATA STRUCTURES & CONFIG
+           ========================================================================== */
+        
+        const UPGRADES_DATA = [
+            { id: 'home_server', name: 'Servidor Caseiro', baseCost: 15, baseBps: 0.5, count: 0, icon: 'server' },
+            { id: 'cloud_rig', name: 'Rig em Nuvem', baseCost: 100, baseBps: 4, count: 0, icon: 'cloud-lightning' },
+            { id: 'datacenter_rack', name: 'Rack Data Center', baseCost: 1100, baseBps: 32, count: 0, icon: 'database' },
+            { id: 'quantum_node', name: 'Nó Quântico', baseCost: 12000, baseBps: 260, count: 0, icon: 'cpu' },
+            { id: 'data_fortress', name: 'Fortaleza de Dados', baseCost: 130000, baseBps: 1400, count: 0, icon: 'shield' }
+        ];
+
+        const AGENTS_DATA = [
+            { id: 'script_kiddie', name: 'Script Kiddie Bot', baseCost: 50, clickBoost: 1, bpsMultiplier: 0.05, count: 0, icon: 'bot' },
+            { id: 'subnet_crawler', name: 'Subnet Crawler AI', baseCost: 500, clickBoost: 5, bpsMultiplier: 0.10, count: 0, icon: 'network' },
+            { id: 'neural_core', name: 'Núcleo Neural Deep', baseCost: 5000, clickBoost: 25, bpsMultiplier: 0.25, count: 0, icon: 'brain' }
+        ];
+
+        // Core State
+        let gameState = {
+            bytes: 0,
+            totalBytesEarned: 0,
+            clickPower: 1,
+            quantumCores: 0,
+            upgrades: {},
+            agents: {},
+            lastTimestamp: Date.now(),
+            boostEndTime: 0
+        };
+
+        let pendingOfflineBytes = 0;
+        let pendingAdCallback = null;
+
+        /* ==========================================================================
+           INITIALIZATION & HELPERS
+           ========================================================================== */
+
+        window.onload = function() {
+            lucide.createIcons();
+            loadGame();
+            setupInitialState();
+            checkOfflineProgress();
+            renderUpgrades();
+            renderAgents();
+            updateUI();
+            
+            // Game Loop (10 ticks per sec)
+            setInterval(gameLoop, 100);
+            // Auto-save every 5 seconds
+            setInterval(saveGame, 5000);
+
+            // Node click handler
+            document.getElementById('node-click-btn').addEventListener('click', handleNodeClick);
+        };
+
+        function setupInitialState() {
+            UPGRADES_DATA.forEach(u => {
+                if (!(u.id in gameState.upgrades)) gameState.upgrades[u.id] = 0;
+            });
+            AGENTS_DATA.forEach(a => {
+                if (!(a.id in gameState.agents)) gameState.agents[a.id] = 0;
+            });
+        }
+
+        function formatBytes(val) {
+            if (val < 1000) return val.toFixed(1) + " B";
+            const units = ["KB", "MB", "GB", "TB", "PB", "EB"];
+            let u = -1;
+            let r = 10;
+            do {
+                val /= 1000;
+                u++;
+            } while (Math.round(Math.abs(val) * r) / r >= 1000 && u < units.length - 1);
+            return val.toFixed(2) + " " + units[u];
+        }
+
+        /* ==========================================================================
+           CALCULATIONS (BPS, COSTS, PRESTIGE)
+           ========================================================================== */
+
+        function getBoostMultiplier() {
+            return (Date.now() < gameState.boostEndTime) ? 2 : 1;
+        }
+
+        function getQuantumMultiplier() {
+            // Each Quantum Core gives +25% permanent bonus
+            return 1 + (gameState.quantumCores * 0.25);
+        }
+
+        function calculateBPS() {
+            let rawBps = 0;
+            UPGRADES_DATA.forEach(u => {
+                const count = gameState.upgrades[u.id] || 0;
+                rawBps += count * u.baseBps;
+            });
+
+            // Agents BPS Multiplier Bonus
+            let agentBpsBonus = 1;
+            AGENTS_DATA.forEach(a => {
+                const count = gameState.agents[a.id] || 0;
+                agentBpsBonus += count * a.bpsMultiplier;
+            });
+
+            return rawBps * agentBpsBonus * getQuantumMultiplier() * getBoostMultiplier();
+        }
+
+        function calculateClickPower() {
+            let baseClick = 1;
+            AGENTS_DATA.forEach(a => {
+                const count = gameState.agents[a.id] || 0;
+                baseClick += count * a.clickBoost;
+            });
+            return baseClick * getQuantumMultiplier() * getBoostMultiplier();
+        }
+
+        function getUpgradeCost(upgrade) {
+            const count = gameState.upgrades[upgrade.id] || 0;
+            return Math.floor(upgrade.baseCost * Math.pow(1.15, count));
+        }
+
+        function getAgentCost(agent) {
+            const count = gameState.agents[agent.id] || 0;
+            return Math.floor(agent.baseCost * Math.pow(1.25, count));
+        }
+
+        function getPrestigeCoresReward() {
+            if (gameState.totalBytesEarned < 100000) return 0;
+            // Formula: sqrt(totalBytes / 100,000)
+            return Math.floor(Math.sqrt(gameState.totalBytesEarned / 100000));
+        }
+
+        /* ==========================================================================
+           CORE GAME LOOP & CLICKING
+           ========================================================================== */
+
+        function gameLoop() {
+            const now = Date.now();
+            const delta = (now - gameState.lastTimestamp) / 1000;
+            gameState.lastTimestamp = now;
+
+            const bps = calculateBPS();
+            const earned = bps * delta;
+
+            gameState.bytes += earned;
+            gameState.totalBytesEarned += earned;
+
+            updateUI();
+        }
+
+        function handleNodeClick(e) {
+            const pwr = calculateClickPower();
+            gameState.bytes += pwr;
+            gameState.totalBytesEarned += pwr;
+
+            // Visual Float Effect
+            createFloatingText(e, `+${formatBytes(pwr)}`);
+            updateUI();
+        }
+
+        function createFloatingText(e, text) {
+            const clickArea = document.getElementById('click-area');
+            const rect = clickArea.getBoundingClientRect();
+            
+            const el = document.createElement('div');
+            el.className = 'float-text';
+            el.innerText = text;
+
+            // Position near cursor click or center
+            const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
+            const y = e.clientY ? e.clientY - rect.top : rect.height / 2;
+
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+
+            clickArea.appendChild(el);
+
+            setTimeout(() => {
+                el.remove();
+            }, 800);
+        }
+
+        /* ==========================================================================
+           UPGRADES & PURCHASES
+           ========================================================================== */
+
+        function buyUpgrade(id) {
+            const up = UPGRADES_DATA.find(u => u.id === id);
+            const cost = getUpgradeCost(up);
+
+            if (gameState.bytes >= cost) {
+                gameState.bytes -= cost;
+                gameState.upgrades[id] = (gameState.upgrades[id] || 0) + 1;
+                renderUpgrades();
+                updateUI();
+            }
+        }
+
+        function buyAgent(id) {
+            const ag = AGENTS_DATA.find(a => a.id === id);
+            const cost = getAgentCost(ag);
+
+            if (gameState.bytes >= cost) {
+                gameState.bytes -= cost;
+                gameState.agents[id] = (gameState.agents[id] || 0) + 1;
+                renderAgents();
+                updateUI();
+            }
+        }
+
+        /* ==========================================================================
+           PRESTIGE (REBOOT) SYSTEM
+           ========================================================================== */
+
+        function executeReboot() {
+            const coresToGain = getPrestigeCoresReward();
+            if (coresToGain <= 0) return;
+
+            gameState.quantumCores += coresToGain;
+            gameState.bytes = 0;
+            gameState.totalBytesEarned = 0;
+            
+            // Reset upgrades and agents
+            UPGRADES_DATA.forEach(u => gameState.upgrades[u.id] = 0);
+            AGENTS_DATA.forEach(a => gameState.agents[a.id] = 0);
+
+            saveGame();
+            renderUpgrades();
+            renderAgents();
+            switchTab('upgrades');
+            updateUI();
+        }
+
+        /* ==========================================================================
+           MONETIZATION DEMOS (REWARDED ADS & BOOSTS)
+           ========================================================================== */
+
+        function triggerSimulatedAd(onComplete) {
+            pendingAdCallback = onComplete;
+            const modal = document.getElementById('modal-ad-player');
+            const progressBar = document.getElementById('ad-progress-bar');
+            const countdown = document.getElementById('ad-countdown');
+            
+            modal.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            
+            let progress = 0;
+            let secondsLeft = 3;
+
+            const interval = setInterval(() => {
+                progress += 3.3;
+                progressBar.style.width = `${progress}%`;
+                
+                secondsLeft = Math.max(0, (3 - (progress / 33.3)).toFixed(1));
+                countdown.innerText = `Recompensa em ${secondsLeft}s...`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    modal.classList.add('hidden');
+                    if (pendingAdCallback) pendingAdCallback();
+                }
+            }, 100);
+        }
+
+        function watchAdBoost() {
+            triggerSimulatedAd(() => {
+                const twoMins = 2 * 60 * 1000;
+                const now = Date.now();
+                if (gameState.boostEndTime > now) {
+                    gameState.boostEndTime += twoMins;
+                } else {
+                    gameState.boostEndTime = now + twoMins;
+                }
+                updateUI();
+            });
+        }
+
+        function watchAdSurge() {
+            triggerSimulatedAd(() => {
+                const bps = calculateBPS();
+                const surgeReward = Math.max(50, bps * 300); // 5 minutes worth of BPS
+                gameState.bytes += surgeReward;
+                gameState.totalBytesEarned += surgeReward;
+                updateUI();
+            });
+        }
+
+        /* ==========================================================================
+           OFFLINE PROGRESS & MODAL
+           ========================================================================== */
+
+        function checkOfflineProgress() {
+            const now = Date.now();
+            const elapsedSeconds = Math.floor((now - gameState.lastTimestamp) / 1000);
+
+            // Minimum 10 seconds offline to trigger
+            if (elapsedSeconds > 10) {
+                const bps = calculateBPS();
+                pendingOfflineBytes = bps * elapsedSeconds;
+
+                if (pendingOfflineBytes > 5) {
+                    document.getElementById('offline-bytes-earned').innerText = formatBytes(pendingOfflineBytes);
+                    document.getElementById('offline-time-elapsed').innerText = `Tempo ausente: ${formatTime(elapsedSeconds)}`;
+                    document.getElementById('modal-offline').classList.remove('hidden');
+                }
+            }
+        }
+
+        function claimOfflineEarnings(multiplier) {
+            if (multiplier > 1) {
+                triggerSimulatedAd(() => {
+                    gameState.bytes += pendingOfflineBytes * multiplier;
+                    gameState.totalBytesEarned += pendingOfflineBytes * multiplier;
+                    document.getElementById('modal-offline').classList.add('hidden');
+                    updateUI();
+                });
+            } else {
+                gameState.bytes += pendingOfflineBytes;
+                gameState.totalBytesEarned += pendingOfflineBytes;
+                document.getElementById('modal-offline').classList.add('hidden');
+                updateUI();
+            }
+        }
+
+        function formatTime(totalSeconds) {
+            const hrs = Math.floor(totalSeconds / 3600);
+            const mins = Math.floor((totalSeconds % 3600) / 60);
+            const secs = totalSeconds % 60;
+            if (hrs > 0) return `${hrs}h ${mins}m ${secs}s`;
+            if (mins > 0) return `${mins}m ${secs}s`;
+            return `${secs}s`;
+        }
+
+        /* ==========================================================================
+           UI RENDERING & TABS
+           ========================================================================== */
+
+        function switchTab(tabName) {
+            ['upgrades', 'agents', 'reboot'].forEach(t => {
+                const content = document.getElementById(`tab-content-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tabName) {
+                    content.classList.remove('hidden');
+                    btn.classList.add('border-cyan-400', 'text-cyan-400');
+                    btn.classList.remove('border-transparent', 'text-gray-400');
+                } else {
+                    content.classList.add('hidden');
+                    btn.classList.remove('border-cyan-400', 'text-cyan-400');
+                    btn.classList.add('border-transparent', 'text-gray-400');
+                }
+            });
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('tab-content-upgrades');
+            container.innerHTML = UPGRADES_DATA.map(u => {
+                const count = gameState.upgrades[u.id] || 0;
+                const cost = getUpgradeCost(u);
+                return `
+                    <div class="bg-[#080d1f]/90 border border-cyan-500/30 p-4 rounded-xl flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-cyan-950/60 rounded-lg border border-cyan-500/40 text-cyan-400">
+                                <i data-lucide="${u.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white font-mono text-sm">${u.name}</h4>
+                                <div class="text-xs text-cyan-400/70 font-mono">+${formatBytes(u.baseBps)}/s cada</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-mono bg-cyan-950 px-2.5 py-1 rounded border border-cyan-500/30 text-cyan-300">
+                                Qtd: ${count}
+                            </span>
+                            <button id="btn-up-${u.id}" onclick="buyUpgrade('${u.id}')" 
+                                class="px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all flex flex-col items-center border border-cyan-400/40 bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                                <span>COMPRAR</span>
+                                <span class="text-[10px] text-cyan-400/80">${formatBytes(cost)}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function renderAgents() {
+            const container = document.getElementById('tab-content-agents');
+            container.innerHTML = AGENTS_DATA.map(a => {
+                const count = gameState.agents[a.id] || 0;
+                const cost = getAgentCost(a);
+                return `
+                    <div class="bg-[#080d1f]/90 border border-cyan-500/30 p-4 rounded-xl flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-cyan-950/60 rounded-lg border border-cyan-500/40 text-cyan-400">
+                                <i data-lucide="${a.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white font-mono text-sm">${a.name}</h4>
+                                <div class="text-xs text-cyan-400/70 font-mono">+${a.clickBoost} Clique | +${(a.bpsMultiplier*100).toFixed(0)}% BPS</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-mono bg-cyan-950 px-2.5 py-1 rounded border border-cyan-500/30 text-cyan-300">
+                                Qtd: ${count}
+                            </span>
+                            <button id="btn-ag-${a.id}" onclick="buyAgent('${a.id}')" 
+                                class="px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all flex flex-col items-center border border-cyan-400/40 bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                                <span>CONTRATAR</span>
+                                <span class="text-[10px] text-cyan-400/80">${formatBytes(cost)}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function updateUI() {
+            // Main Stats
+            document.getElementById('bytes-display').innerText = formatBytes(gameState.bytes);
+            document.getElementById('bps-display').innerText = `${formatBytes(calculateBPS())}/s`;
+            document.getElementById('quantum-cores-display').innerText = gameState.quantumCores;
+
+            // Boost display
+            const boostTimerEl = document.getElementById('boost-timer-display');
+            const now = Date.now();
+            if (gameState.boostEndTime > now) {
+                const remSecs = Math.ceil((gameState.boostEndTime - now) / 1000);
+                boostTimerEl.innerText = `2x (${remSecs}s)`;
+                boostTimerEl.className = "text-emerald-400 font-bold animate-pulse";
+            } else {
+                boostTimerEl.innerText = `1x (INATIVO)`;
+                boostTimerEl.className = "text-amber-400 font-bold";
+            }
+
+            // Upgrade Button States
+            UPGRADES_DATA.forEach(u => {
+                const btn = document.getElementById(`btn-up-${u.id}`);
+                if (btn) btn.disabled = gameState.bytes < getUpgradeCost(u);
+            });
+
+            AGENTS_DATA.forEach(a => {
+                const btn = document.getElementById(`btn-ag-${a.id}`);
+                if (btn) btn.disabled = gameState.bytes < getAgentCost(a);
+            });
+
+            // Reboot Tab State
+            const coresReward = getPrestigeCoresReward();
+            document.getElementById('reboot-current-bytes').innerText = formatBytes(gameState.totalBytesEarned);
+            document.getElementById('reboot-gain-cores').innerText = `+${coresReward}`;
+            document.getElementById('reboot-future-bonus').innerText = `+${(coresReward * 25)}%`;
+            document.getElementById('btn-do-reboot').disabled = coresReward <= 0;
+        }
+
+        /* ==========================================================================
+           LOCALSTORAGE PERSISTENCE
+           ========================================================================== */
+
+        function saveGame() {
+            gameState.lastTimestamp = Date.now();
+            localStorage.setItem('cyber_corp_save', JSON.stringify(gameState));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('cyber_corp_save');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    gameState = { ...gameState, ...parsed };
+                } catch (e) {
+                    console.error("Falha ao carregar save:", e);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

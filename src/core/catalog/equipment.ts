@@ -1,0 +1,67 @@
+import type { EquipmentDef } from './types'
+
+// Catálogo provisório do estágio Solo Hacker, um equipamento por categoria.
+// Custos e produção partem dos valores do protótipo; o fator 1,15 é a referência
+// de hardware comum (GDD 4.3). Tudo sujeito ao balanceamento do M2 em diante.
+export const EQUIPMENT: EquipmentDef[] = [
+  {
+    id: 'home_router',
+    category: 'networking',
+    nameKey: 'equipment.home_router.name',
+    descriptionKey: 'equipment.home_router.desc',
+    icon: 'router',
+    baseCost: 15,
+    costGrowth: 1.15,
+    baseProduction: 0.5,
+    unlock: { kind: 'always' },
+    reveal: { kind: 'always' },
+  },
+  {
+    id: 'home_server',
+    category: 'processing',
+    nameKey: 'equipment.home_server.name',
+    descriptionKey: 'equipment.home_server.desc',
+    icon: 'server',
+    baseCost: 100,
+    costGrowth: 1.15,
+    baseProduction: 4,
+    unlock: { kind: 'bytesEarnedInRun', amount: 50 },
+    reveal: { kind: 'always' },
+  },
+  {
+    id: 'external_drive',
+    category: 'storage',
+    nameKey: 'equipment.external_drive.name',
+    descriptionKey: 'equipment.external_drive.desc',
+    icon: 'hard-drive',
+    baseCost: 1_100,
+    costGrowth: 1.15,
+    baseProduction: 32,
+    unlock: { kind: 'bytesEarnedInRun', amount: 500 },
+    reveal: { kind: 'bytesEarnedInRun', amount: 50 },
+  },
+  {
+    id: 'desk_fan',
+    category: 'cooling',
+    nameKey: 'equipment.desk_fan.name',
+    descriptionKey: 'equipment.desk_fan.desc',
+    icon: 'fan',
+    baseCost: 12_000,
+    costGrowth: 1.15,
+    baseProduction: 260,
+    unlock: { kind: 'bytesEarnedInRun', amount: 6_000 },
+    reveal: { kind: 'bytesEarnedInRun', amount: 500 },
+  },
+  {
+    id: 'power_strip',
+    category: 'infrastructure',
+    nameKey: 'equipment.power_strip.name',
+    descriptionKey: 'equipment.power_strip.desc',
+    icon: 'plug-zap',
+    baseCost: 130_000,
+    costGrowth: 1.15,
+    baseProduction: 1_400,
+    unlock: { kind: 'bytesEarnedInRun', amount: 65_000 },
+    reveal: { kind: 'bytesEarnedInRun', amount: 6_000 },
+  },
+]
