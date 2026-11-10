@@ -29,5 +29,6 @@ Tasks que dependem destes itens ficam bloqueadas.
 | ID | Questão | Bloqueia |
 |---|---|---|
 | A-01 | Fórmula global de produção e ordem de combinação dos bônus (Bíblia 4.2). | Agentes e melhorias (M2); no M1 não há fonte de bônus |
+| A-05 | Rótulos das categorias de equipamento em pt-BR: manter em inglês (nomes da Bíblia 6.1) ou traduzir (Rede, Processamento, Armazenamento, Refrigeração, Infraestrutura). | T-050 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |
 | A-02 | Fórmula de Quantum Cores e condição para habilitar o Reboot (Bíblia 9.4, 9.6, 28.2). | M3 |

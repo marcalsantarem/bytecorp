@@ -17,8 +17,10 @@ Mantido pelo AG00. Status: a fazer, pronta para briefing, em andamento, em valid
 | T-014 | Catálogo do M1: 3 equipamentos por categoria (15), textos pt-BR e en, valores provisórios com fator 1,15 | AG07 | T-006 | feita (BRF-009) |
 | T-015 | QA do M1: testes de integração (MAX respeita o saldo, custos inteiros ≥ 1, crítico com sorteio fixo, save após compra) e roteiro manual desktop e mobile | AG07 | T-009, T-011, T-012, T-014 | feita (BRF-013); achou o defeito D-1 (T-047) |
 | T-047 | Corrigir o custo unitário para inteiro exato (defeito D-1 da QA) | AG01 | T-015 | feita (BRF-014) |
-| T-048 | Executar o roteiro manual `docs/AG07/roteiro-qa-m1.md` em 1280 px e 375 px (a QA não o executou) | AG07 | T-047 | em andamento (BRF-015) |
-| T-016 | Versão 0.2.0 no `package.json` e no `package-lock.json` | AG03 | T-047, T-048 | a fazer |
+| T-048 | Executar o roteiro manual `docs/AG07/roteiro-qa-m1.md` em 1280 px e 375 px (a QA não o executou) | AG07 | T-047 | feita (BRF-015); achou D1 a D5 |
+| T-049 | Ajustes no mobile: alvos de toque de 44 px, truncamentos e nome acessível do seletor de idioma (D2, D4, D5) | AG04 | T-048 | pronta para briefing (BRF-016) |
+| T-050 | Rótulos das categorias de equipamento em pt-BR (D1) | AG07 | A-05 | bloqueada |
+| T-016 | Versão 0.2.0 no `package.json` e no `package-lock.json` | AG03 | T-049, T-050 | a fazer |
 | T-017 | PR `dev` → `main` e tag `v0.2.0` | AG00 | T-016, pedido do usuário | a fazer |
 
 Ondas possíveis em paralelo (arquivos diferentes):
