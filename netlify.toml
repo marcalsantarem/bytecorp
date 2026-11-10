@@ -1,0 +1,7 @@
+# Build do Netlify (página única, sem roteamento no cliente).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"

@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado do repositório
 
-**M0 (Fundação) concluído.** `bytecorp.md` é o GDD/documento de requisitos do **Byte Corp Idle** (jogo incremental/idle tycoon cyberpunk, Web primeiro). Ele é a referência central: qualquer mudança de escopo deve ser registrada nele, e a seção 29 prevalece sobre propostas anteriores em caso de conflito.
+M0 (Fundação) implementado; o estado dos marcos está em [docs/roadmap.md](docs/roadmap.md). `bytecorp.md` (a "Bíblia") é o GDD/documento de requisitos do **Byte Corp Idle** (jogo incremental/idle tycoon cyberpunk, Web primeiro). Ele é a referência central: qualquer mudança de escopo deve ser registrada nele, e a seção 29 prevalece sobre propostas anteriores em caso de conflito.
 
 `cyber_corp_node_tycoon.html` é um protótipo descartável de validação da jogabilidade (ver "Protótipo" abaixo). Não é a base do projeto e não deve ser evoluído.
 
-Repositório git na branch `main`, com remoto `origin` em https://github.com/marcalsantarem/bytecorp.
+Remoto `origin` em https://github.com/marcalsantarem/bytecorp. Trabalho só na branch `dev` (ver "Processo de trabalho").
 
 Idioma do projeto: a especificação e a conversa com o usuário são em português brasileiro. O jogo é bilíngue (pt-BR e en), então nenhum texto de interface pode ficar fixo no código.
 
@@ -36,7 +36,7 @@ Definida pelo GDD (18.2 e 24.1): React, Tailwind CSS, Lucide Icons, Three.js (c�
   - `engine.ts`: `GameEngine`. Recebe tempo por `advance(ms)` e o fatia em passos de até `maxStepMs`; o resultado depende só do total de ms. Toda mudança que afete a produção deve chamar `invalidate()`, que limpa o cache de `production` e incrementa `revision`.
   - `clock.ts`: dirige o engine por `setInterval` e `performance.now()`, nunca por `requestAnimationFrame`.
   - `state.ts`: `GameState` dividido em `run` (zerado pelo Reboot), `meta` (permanente) e `stats` (histórico). Onde um campo novo entra define o que o Reboot faz com ele.
-  - `production.ts`: produção consolidada; `globalMultiplier` é o ponto onde a fórmula global (decisão 1) será implementada.
+  - `production.ts`: produção consolidada; `globalMultiplier` é o ponto onde a fórmula global (A-01 em `docs/decisoes.md`) será implementada.
   - `catalog/`: tipos e dados dos catálogos. Textos são `MessageKey` do i18n. `validateCatalog` roda nos testes e checa ids, chaves de i18n, custos e a ordem por custo crescente.
   - `save/`: `codec.ts` serializa (Decimal vira string), valida campo a campo e aplica `MIGRATIONS`. Ao mudar o formato do estado: incrementar `SAVE_VERSION`, adicionar a migração e atualizar `parseState`.
 - `src/i18n/`: `pt-BR.ts` é o dicionário de referência e define `MessageKey`; os outros idiomas são `Record<MessageKey, string>`, então chave faltando é erro de compilação. Interpolação com `{param}`.
@@ -87,46 +87,21 @@ Não portar:
 
 Ausentes no protótipo: melhorias comuns, estágios corporativos, categorias de loja, x10/MAX, descontos, clique crítico, níveis de agentes, árvore Quantum, conquistas, i18n e cena 3D.
 
-## Decisões em aberto
+## Processo de trabalho
 
-A seção 28 lista os valores pendentes de balanceamento. Os pontos abaixo precisam de resposta do usuário e não devem ser inventados em silêncio:
+A sessão principal é o **AG00 (Líder)**: fala com o usuário, escreve briefings, delega, valida, registra decisões, commita e envia. **O AG00 não implementa**: código, imagens, efeitos e sons são sempre feitos por um especialista (`ag01` a `ag07` em `.claude/agents/`), a partir de um briefing em `docs/briefings/`.
 
-1. **Aberta, bloqueia o M1/M2.** Fórmula matemática exata da produção global e ordem de combinação dos bônus (4.2). Hoje `globalMultiplier` retorna 1.
-2. **Resolvida no M0:** números grandes com `break_infinity.js` (`Decimal`, em `src/core/decimal.ts`). Toda grandeza econômica usa `Decimal`; contagens de itens e níveis continuam `number`.
-3. **Provisória:** depois de YB a formatação usa RB e QB (prefixos SI ronna e quetta) e então notação científica. Trocar em `BYTE_UNITS` quando as unidades fictícias forem definidas (4.7).
-4. **Aberta, bloqueia o M3.** Fórmula de Quantum Cores e condição mínima para habilitar o Reboot. O texto de 9.6 fala em "Quantum Cores suficientes para executar a ação", o que é ambíguo (28.2).
-5. **Resolvida no M0:** Vite, TypeScript e Vitest.
-6. **Assumida:** eventos ficam fora da primeira versão jogável (12.1, 25.4), mas o beta exige todo o conteúdo previsto (2.3). O plano os coloca no M7, antes do beta.
+Antes de agir, consulte:
 
-## Marcos de desenvolvimento
+- [docs/00_processo.md](docs/00_processo.md): time, fluxo, posse de pastas, regras de tasks e de Git.
+- [docs/roadmap.md](docs/roadmap.md): marcos e o que cada um entrega.
+- [docs/backlog.md](docs/backlog.md): tasks e status reais.
+- [docs/decisoes.md](docs/decisoes.md): decisões tomadas, provisórias e "A definir" (que bloqueiam tasks).
 
-Cada marco entrega um incremento jogável e integrado (25.3). Não desenvolver sistemas isolados para integrar no final.
+Lembretes que mais se perdem:
 
-| Marco | Entrega | Seções do GDD |
-|---|---|---|
-| **M0 Fundação** | Projeto criado, Game Core (estado, ciclo com delta time, barramento de eventos), números grandes e formatação por idioma, i18n, esquema dos catálogos, testes do núcleo | 4.1, 4.7, 16.2, 24 |
-| **M1 Loop básico** | Clique com crítico, equipamentos (custo, x1/x10/MAX, descontos), produção passiva, layout responsivo mínimo com cena provisória, save/load versionado com autosave | 5, 6, 15.1 a 15.4, 21 |
-| **M2 Expansão da execução** | Agentes (contratação, nível coletivo, bônus), melhorias comuns, estágios corporativos, regras de desbloqueio e visibilidade | 7, 8, 1.2, 6.3 |
-| **M3 Prestígio** | Reboot com confirmação, Quantum Cores, árvore Quantum (pan, zoom, painel de detalhes, reset com custo crescente). **Fecha a primeira versão jogável (25.1)** | 9, 10 |
-| **M4 Tempo** | Bônus temporários, aceleradores (inventário, substituição com escolha de perder ou armazenar), produção offline por intervalos, resumo de retorno | 13, 14 |
-| **M5 Metajogo e fluxo** | Conquistas (fila de notificações, recompensas), janela de estatísticas, tela inicial, configurações, tutorial contextual, notificações locais | 11, 15.5 a 15.8, 16.1, 17, 22 |
-| **M6 Apresentação** | Cena Three.js por estágio, agrupamento visual, partículas em Canvas 2D, transições de estágio e de Reboot, qualidade adaptativa, música em camadas e efeitos | 18, 19, 20 |
-| **M7 Eventos** | Sistema de eventos, integração com aceleradores, Reboot e offline, etapa do tutorial | 12 |
-| **M8 Beta** | Catálogo completo, balanceamento, acabamento responsivo, preparação para PWA, canal externo de feedback | 2, 25.2, 28 |
-
-A monetização (seção 23) vem depois do beta; antes disso só deixar os pontos de extensão (origem de aceleradores, dobro do ganho offline). O M6 não depende de M4 e M5 e pode correr em paralelo a partir do fim do M1, desde que consuma apenas o estado público do núcleo.
-
-## Divisão em subagentes
-
-Seis subagentes especializados, com a sessão principal como orquestradora (dona dos contratos compartilhados: tipos do estado, eventos internos, esquema dos catálogos e do save). O limite real de paralelismo é a posse de arquivos: dois agentes nunca escrevem na mesma área.
-
-| # | Subagente | Área exclusiva | Marcos |
-|---|---|---|---|
-| 1 | **Núcleo e economia** | Game Core, números, fórmula de produção, cliques, equipamentos, agentes, melhorias | M0 a M2 |
-| 2 | **Progressão e tempo** | Reboot, Quantum, conquistas, bônus temporários, aceleradores, offline, eventos | M3 a M5, M7 |
-| 3 | **Persistência e plataforma** | Save em IndexedDB, versionamento e migrações, i18n, configurações, notificações, PWA | M0, M1, M5, M8 |
-| 4 | **Interface React** | Layout, loja, modais, árvore Quantum, tutorial, tela inicial | M1 a M8 |
-| 5 | **Cena e áudio** | Three.js, Canvas 2D, qualidade adaptativa, Web Audio | M1 (provisório), M6 |
-| 6 | **Conteúdo, balanceamento e QA** | Dados dos catálogos, simulações da curva econômica, testes de independência de frames e de offline | M2 em diante |
-
-Concorrência recomendada: no M0, apenas os agentes 1 e 3, porque os contratos ainda estão mudando. Do M1 em diante, de três a quatro ao mesmo tempo (lógica, interface, cena/áudio e conteúdo). O agente 4 sempre parte de contratos já publicados pelos agentes 1 e 2, nunca de implementação em andamento. Áudio fica junto com a cena por ser pequeno e não ter dependência cruzada; se o M6 crescer, pode ser separado em um sétimo agente.
+- Só disparar tasks (delegar a um especialista) com autorização do usuário. Ao fechar cada etapa, listar as tasks concluídas e as próximas do marco atual.
+- Commits só na `dev`, agrupados por etapa, mensagem curta em português no imperativo, e só depois de lint, typecheck, testes e build passarem. Nada de push na `main` nem de outras branches.
+- PR `dev` → `main` só quando o usuário pedir; título e descrição também colados no chat.
+- Decisões criativas, de escopo e de stack vão ao usuário com 2 ou 3 opções e uma recomendação.
+- Respostas e briefings curtos; ler arquivos em trechos.
