@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `cyber_corp_node_tycoon.html` é um protótipo descartável de validação da jogabilidade (ver "Protótipo" abaixo). Não é a base do projeto e não deve ser evoluído.
 
-Repositório git local na branch `main`, sem remoto configurado.
+Repositório git na branch `main`, com remoto `origin` em https://github.com/marcalsantarem/bytecorp.
 
 Idioma do projeto: a especificação e a conversa com o usuário são em português brasileiro. O jogo é bilíngue (pt-BR e en), então nenhum texto de interface pode ficar fixo no código.
 
