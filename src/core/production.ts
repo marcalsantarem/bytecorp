@@ -35,6 +35,12 @@ export function clickFlatBonus(_state: GameState, _catalog: Catalog): Decimal {
   return D(0)
 }
 
+// Soma aditiva dos efeitos costDiscountPercent ativos, em pontos percentuais, sem teto
+// (GDD 4.6). Ainda não há fontes (M2); hoje é 0.
+export function costDiscountPercent(_state: GameState, _catalog: Catalog): Decimal {
+  return D(0)
+}
+
 // Soma dos efeitos clickPercent ativos, em pontos percentuais. Ainda não há fontes (M2); hoje é 0.
 export function clickPercentBonus(_state: GameState, _catalog: Catalog): Decimal {
   return D(0)

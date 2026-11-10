@@ -18,6 +18,13 @@ describe('catálogo', () => {
     ])
   })
 
+  it('tem 3 equipamentos por categoria e 15 no total', () => {
+    expect(CATALOG.equipment).toHaveLength(15)
+    for (const category of ['networking', 'processing', 'storage', 'cooling', 'infrastructure']) {
+      expect(CATALOG.equipment.filter((e) => e.category === category)).toHaveLength(3)
+    }
+  })
+
   it('detecta problemas comuns', () => {
     const broken = {
       ...CATALOG,
