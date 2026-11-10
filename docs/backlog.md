@@ -26,6 +26,49 @@ Ondas possíveis em paralelo (arquivos diferentes):
 3. T-009, T-011, T-012
 4. T-015, depois T-016 e T-017
 
+## Próximos marcos (quebrados antecipadamente a pedido do usuário)
+
+Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem em sequência. Tasks marcadas "bloqueada" esperam decisão em "A definir" ([decisoes.md](decisoes.md)).
+
+### M2 Expansão da execução (v0.3.0)
+
+| ID | Task | Dono | Depende de | Status |
+|---|---|---|---|---|
+| T-018 | Estágios corporativos: avanço de `run.stage` por requisito, evento `stageChanged` | AG01 | — | a fazer |
+| T-019 | Agentes (regras): contratação individual, custo com desconto, nível coletivo uma unidade por vez, eventos | AG01 | T-018 | a fazer |
+| T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | a fazer |
+| T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020, A-01 | bloqueada |
+| T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | a fazer |
+| T-023 | Catálogo de agentes (4 a 5) com textos nos dois idiomas | AG07 | T-019 | a fazer |
+| T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | a fazer |
+| T-025 | Catálogo: equipamentos extras por estágio e revisão dos limites dos estágios | AG07 | T-018, T-024 | a fazer |
+| T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | a fazer |
+| T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | a fazer |
+| T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018, T-027 | a fazer |
+| T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |
+| T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | a fazer |
+| T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva | AG07 | T-021, T-022, T-025, T-030 | a fazer |
+| T-032 | Versão 0.3.0 | AG03 | T-031 | a fazer |
+| T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
+
+### M3 Prestígio (v0.4.0), fecha a primeira versão jogável
+
+| ID | Task | Dono | Depende de | Status |
+|---|---|---|---|---|
+| T-034 | Reboot (regras): reset da execução, preservação do permanente, contagem de reboots, evento; recompensa injetável | AG02 | M2 | a fazer |
+| T-035 | Fórmula de Quantum Cores e condição para habilitar o Reboot | AG02 | T-034, A-02 | bloqueada |
+| T-036 | Árvore Quantum (regras): nós, níveis um por vez, custo exponencial, pré-requisitos, reset com custo crescente | AG02 | T-034 | a fazer |
+| T-037 | Aplicar os efeitos quânticos na fórmula de produção e no limite offline | AG01 | T-036, T-021 | bloqueada |
+| T-038 | Save: revisar o formato, salvar logo após Reboot e reset da árvore | AG03 | T-034, T-036 | a fazer |
+| T-039 | Catálogo da árvore Quantum: 3 caminhos, cerca de 12 nós, textos | AG07 | T-036 | a fazer |
+| T-040 | Efeito de Reboot em Canvas 2D (2 a 3 s, pulável) | AG05 | T-034 | a fazer |
+| T-041 | Janela de Reboot: estimativa, confirmação do que se perde e preserva, botão do rodapé | AG04 | T-035, T-040 | bloqueada |
+| T-042 | Árvore Quantum na interface (1): visual com linhas neon, pan e zoom, seleção | AG04 | T-036, T-039, T-041 | a fazer |
+| T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | a fazer |
+| T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | a fazer |
+| T-045 | Versão 0.4.0 | AG03 | T-044 | a fazer |
+| T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | a fazer |
+
 ## Marcos fechados
 
 | Marco | Versão | Tasks |
