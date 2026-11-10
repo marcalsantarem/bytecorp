@@ -2,11 +2,12 @@ import { TriangleAlert } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { boot, type BootResult, type GameSession } from '../app/bootstrap'
 import type { GameEngine } from '../core/engine'
-import { formatBytes } from '../core/format'
 import type { KeyValueStorage } from '../core/save/storage'
 import { useI18n } from './i18n'
+import { ClickButton } from './core/ClickButton'
+import { CoreScene } from './core/CoreScene'
 import { GameLayout } from './layout/GameLayout'
-import { AgentsPanel, InfraPlaceholder, StatsPanel } from './layout/Panels'
+import { AgentsPanel, StatsPanel } from './layout/Panels'
 import { ShopPanel } from './shop/ShopPanel'
 import { useEngineRevision } from './useEngine'
 
@@ -66,7 +67,6 @@ export function App({ storage }: { storage: KeyValueStorage }) {
 
 function GameScreen({ engine }: { engine: GameEngine }) {
   useEngineRevision(engine)
-  const { t, locale } = useI18n()
   return (
     <GameLayout
       engine={engine}
@@ -79,18 +79,8 @@ function GameScreen({ engine }: { engine: GameEngine }) {
       right={<ShopPanel engine={engine} />}
       center={
         <>
-          <InfraPlaceholder />
-          <div className="size-40 rounded-full border-2 border-neon-cyan/60 shadow-[0_0_40px_rgba(0,255,204,0.3)] lg:size-48" aria-hidden />
-          <div className="flex flex-col items-center gap-2">
-            <button
-              type="button"
-              onClick={() => engine.click()}
-              className="rounded-xl border border-neon-cyan/60 bg-neon-cyan/10 px-8 py-4 font-mono text-base font-bold text-white transition-transform duration-75 select-none active:scale-95"
-            >
-              {t('click.button')}
-            </button>
-            <span className="font-mono text-xs text-neon-cyan/70">{t('click.perClick', { value: formatBytes(engine.clickValue, locale) })}</span>
-          </div>
+          <CoreScene engine={engine} />
+          <ClickButton engine={engine} />
         </>
       }
     />

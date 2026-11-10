@@ -40,12 +40,6 @@ export function StatsPanel({ engine }: { engine: GameEngine }) {
   )
 }
 
-// Reservado para a infraestrutura e a cena (T-012).
-export function InfraPlaceholder() {
-  const { t } = useI18n()
-  return <p className="font-mono text-xs text-white/40">{t('core.infraPlaceholder')}</p>
-}
-
 const FOOTER: { key: MessageKey; icon: ReactNode }[] = [
   { key: 'footer.reboot', icon: <RotateCcw className="size-4 shrink-0" aria-hidden /> },
   { key: 'footer.quantumTree', icon: <Network className="size-4 shrink-0" aria-hidden /> },

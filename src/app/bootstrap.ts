@@ -4,6 +4,7 @@ import { GameEngine } from '../core/engine'
 import { AUTOSAVE_INTERVAL_MS, SaveManager } from '../core/save/saveManager'
 import type { KeyValueStorage } from '../core/save/storage'
 import { createInitialState } from '../core/state'
+import { createPersistence } from './purchaseSave'
 
 export type BootResult =
   | { kind: 'ready'; session: GameSession }
@@ -36,9 +37,8 @@ export async function boot(storage: KeyValueStorage): Promise<BootResult> {
 
 function start(engine: GameEngine, saves: SaveManager): GameSession {
   const stopClock = startClock(engine, browserClock)
-  const save = () => {
-    saves.save(engine).catch((error: unknown) => console.error('Falha ao salvar', error))
-  }
+  const persistence = createPersistence(engine, saves)
+  const save = persistence.saveNow
   const autosave = setInterval(save, AUTOSAVE_INTERVAL_MS)
   const onHide = () => {
     if (document.visibilityState === 'hidden') save()
@@ -54,6 +54,7 @@ function start(engine: GameEngine, saves: SaveManager): GameSession {
       document.removeEventListener('visibilitychange', onHide)
       window.removeEventListener('pagehide', save)
       save()
+      persistence.dispose()
     },
   }
 }
