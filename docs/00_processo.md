@@ -28,7 +28,9 @@ Em caso de conflito, vale nesta ordem: usuário, Bíblia (`bytecorp.md`), [decis
 2. O AG00 escreve o briefing em `docs/briefings/BRF-xxx_AGxx_<entrega>.md` (modelo em [briefings/_modelo.md](briefings/_modelo.md)), com critério de pronto testável. Nenhum agente trabalha sem briefing.
 3. O especialista entrega no formato: **entregue, validação, suposições, não testado, próximo passo**.
 4. O AG00 valida (lê o diff, roda lint, typecheck, testes e build) antes de seguir.
-5. Ao fechar a etapa, o AG00 commita e envia, e publica o relatório de fechamento: concluídas (ID e descrição) e próximas (ID, descrição e agente).
+5. Ao fechar a etapa, o AG00 commita e envia, e publica o relatório de fechamento: concluídas (ID e descrição) e próximas (ID, descrição e agente), sempre do marco atual.
+
+**O AG00 só dispara tasks com autorização do usuário.** Escrever briefing e preparar o backlog pode; delegar a um especialista, não. A autorização vale para as tasks que o usuário nomear.
 
 Regras:
 
@@ -66,8 +68,8 @@ Os textos de interface e de conteúdo estão hoje juntos em `src/i18n/pt-BR.ts` 
 
 ## Git
 
-- `dev` é a única branch onde se commita. Publica em dev--bytecorpgame.netlify.app.
-- `main` é protegida: sem push direto, só recebe PR de `dev`, e só quando o usuário pedir, ao atingir um marco.
+- `dev` é a única branch onde se commita. Publica em https://dev--bytecorpgame.netlify.app.
+- `main` é protegida no GitHub: sem push direto, só recebe PR de `dev`, e só quando o usuário pedir, ao atingir um marco. Publica em https://bytecorpgame.netlify.app.
 - Nenhuma outra branch é criada sem pedido do usuário.
 - Só o AG00 commita e envia, por conta própria, ao fechar uma etapa. Especialistas nunca commitam.
 - Trabalho agrupado, sem commit por pequena alteração. Mensagens em português, curtas e no imperativo.

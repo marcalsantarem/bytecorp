@@ -100,6 +100,7 @@ Antes de agir, consulte:
 
 Lembretes que mais se perdem:
 
+- Só disparar tasks (delegar a um especialista) com autorização do usuário. Ao fechar cada etapa, listar as tasks concluídas e as próximas do marco atual.
 - Commits só na `dev`, agrupados por etapa, mensagem curta em português no imperativo, e só depois de lint, typecheck, testes e build passarem. Nada de push na `main` nem de outras branches.
 - PR `dev` → `main` só quando o usuário pedir; título e descrição também colados no chat.
 - Decisões criativas, de escopo e de stack vão ao usuário com 2 ou 3 opções e uma recomendação.
