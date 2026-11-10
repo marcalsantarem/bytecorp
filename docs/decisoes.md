@@ -13,6 +13,7 @@ Registro do AG00. Vale abaixo do usuário e da Bíblia, acima dos documentos dos
 | D-05 | 2026-11-10 | Processo de trabalho, time e Git conforme [00_processo.md](00_processo.md). | Usuário |
 | D-06 | 2026-11-10 | Configurações (idioma) salvas fora do save do jogo; sobrevivem a "Novo jogo". | M0 |
 | D-08 | 2026-11-10 | Referência visual em `docs/referencias/` (só inspiração). O acabamento neon (painéis chanfrados, barra colorida nos cartões) entra já nas tasks T-011 e T-012 do M1; onde diverge da Bíblia, vale a Bíblia. | Usuário |
+| D-09 | 2026-11-10 | Categorias de equipamento em pt-BR traduzidas: Rede, Processamento, Armazenamento, Refrigeração, Infraestrutura; o idioma en mantém os nomes em inglês. | Usuário |
 | D-07 | 2026-11-10 | Versões: marco Mn fecha como `v0.(n+1).0`. M0 = v0.1.0, beta (M8) = v0.9.0, 1.0 fica para o lançamento. | Usuário |
 
 ## Provisórias
@@ -29,6 +30,5 @@ Tasks que dependem destes itens ficam bloqueadas.
 | ID | Questão | Bloqueia |
 |---|---|---|
 | A-01 | Fórmula global de produção e ordem de combinação dos bônus (Bíblia 4.2). | Agentes e melhorias (M2); no M1 não há fonte de bônus |
-| A-05 | Rótulos das categorias de equipamento em pt-BR: manter em inglês (nomes da Bíblia 6.1) ou traduzir (Rede, Processamento, Armazenamento, Refrigeração, Infraestrutura). | T-050 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |
 | A-02 | Fórmula de Quantum Cores e condição para habilitar o Reboot (Bíblia 9.4, 9.6, 28.2). | M3 |

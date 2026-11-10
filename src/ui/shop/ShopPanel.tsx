@@ -23,7 +23,7 @@ export function ShopPanel({ engine }: { engine: GameEngine }) {
         value={category}
         onChange={(e) => setCategory(e.target.value as EquipmentCategory)}
         aria-label={t('shop.category')}
-        className="rounded border border-neon-cyan/30 bg-void px-2 py-1.5 font-mono text-sm text-neon-cyan lg:hidden"
+        className="min-h-11 rounded border border-neon-cyan/30 bg-void px-2 py-1.5 font-mono text-sm text-neon-cyan lg:hidden"
       >
         {CATEGORIES.map((c) => (
           <option key={c} value={c}>

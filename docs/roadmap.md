@@ -7,7 +7,7 @@ Versões: marco Mn → `v0.(n+1).0` (D-07 em [decisoes.md](decisoes.md)).
 | Marco | Versão | Status | Agentes |
 |---|---|---|---|
 | M0 Fundação | v0.1.0 | Fechado | AG01, AG03, AG04 |
-| M1 Loop básico | v0.2.0 | Em andamento | AG01, AG03, AG04, AG05, AG07 |
+| M1 Loop básico | v0.2.0 | Pronto para PR e tag | AG01, AG03, AG04, AG05, AG07 |
 | M2 Expansão da execução | v0.3.0 | — | AG01, AG04, AG07 |
 | M3 Prestígio (primeira versão jogável) | v0.4.0 | — | AG02, AG04, AG07 |
 | M4 Tempo | v0.5.0 | — | AG02, AG04 |

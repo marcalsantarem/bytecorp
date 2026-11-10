@@ -9,11 +9,11 @@ export const contentPtBR = {
   'stage.quantum_facility': 'Quantum Facility',
   'stage.mega_corporation': 'Mega Corporation',
 
-  'category.networking': 'Networking',
-  'category.processing': 'Processing',
-  'category.storage': 'Storage',
-  'category.cooling': 'Cooling',
-  'category.infrastructure': 'Infrastructure',
+  'category.networking': 'Rede',
+  'category.processing': 'Processamento',
+  'category.storage': 'Armazenamento',
+  'category.cooling': 'Refrigeração',
+  'category.infrastructure': 'Infraestrutura',
 
   'equipment.home_router.name': 'Roteador doméstico',
   'equipment.home_router.desc': 'Uma conexão improvisada que já trafega alguns pacotes.',

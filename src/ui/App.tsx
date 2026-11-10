@@ -49,7 +49,7 @@ export function App({ storage }: { storage: KeyValueStorage }) {
           <p className="mb-5 text-sm text-white/70">{t('save.corrupt.body')}</p>
           <button
             type="button"
-            className="rounded-lg border border-neon-magenta/50 bg-neon-magenta/20 px-4 py-2 font-mono text-sm font-bold text-white hover:bg-neon-magenta/30"
+            className="min-h-11 rounded-lg border border-neon-magenta/50 bg-neon-magenta/20 px-4 py-2 font-mono text-sm font-bold text-white hover:bg-neon-magenta/30"
             onClick={() => phase.startNewGame().then((session) => {
                 sessionRef.current = session
                 setPhase({ kind: 'ready', session })

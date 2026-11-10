@@ -42,7 +42,7 @@ export function GameLayout({ engine, left, center, right }: Props) {
             type="button"
             aria-current={tab === id ? 'page' : undefined}
             onClick={() => setTab(id)}
-            className={`flex flex-1 flex-col items-center gap-0.5 py-2 font-mono text-xs ${tab === id ? 'bg-neon-cyan/10 text-neon-cyan' : 'text-white/50'}`}
+            className={`flex flex-1 flex-col items-center gap-0.5 min-h-11 justify-center py-2 font-mono text-xs ${tab === id ? 'bg-neon-cyan/10 text-neon-cyan' : 'text-white/50'}`}
           >
             {icon}
             {t(label)}

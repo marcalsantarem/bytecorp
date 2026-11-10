@@ -50,16 +50,16 @@ const FOOTER: { key: MessageKey; icon: ReactNode }[] = [
 export function FooterActions() {
   const { t } = useI18n()
   return (
-    <footer className="flex shrink-0 items-center justify-center gap-2 border-t border-neon-cyan/15 bg-panel/90 px-2 py-2">
+    <footer className="flex shrink-0 items-center justify-center gap-1.5 border-t border-neon-cyan/15 bg-panel/90 px-2 py-2">
       {FOOTER.map(({ key, icon }) => (
         <button
           key={key}
           type="button"
           disabled
-          className="flex min-w-0 items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 font-mono text-xs text-white/60 disabled:cursor-not-allowed disabled:opacity-50 lg:px-4"
+          className="flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border border-white/10 px-1.5 py-1 text-center font-mono text-[11px] leading-tight lg:min-h-0 lg:flex-none lg:flex-row lg:gap-1.5 lg:px-4 lg:text-xs text-white/60 disabled:cursor-not-allowed disabled:opacity-50 lg:px-4"
         >
           {icon}
-          <span className="truncate">{t(key)}</span>
+          <span className="lg:truncate">{t(key)}</span>
         </button>
       ))}
     </footer>

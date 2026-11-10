@@ -80,7 +80,7 @@ export function EquipmentCard({ engine, def, info }: { engine: GameEngine; def: 
               type="button"
               aria-pressed={mode === m}
               onClick={() => setMode(m)}
-              className={`px-2 py-1 font-mono text-xs ${mode === m ? 'bg-neon-cyan/20 text-neon-cyan' : 'text-white/50 hover:text-white'}`}
+              className={`min-h-11 px-3 py-1 font-mono text-xs lg:min-h-0 lg:px-2 ${mode === m ? 'bg-neon-cyan/20 text-neon-cyan' : 'text-white/50 hover:text-white'}`}
             >
               {t(label)}
             </button>
@@ -90,7 +90,7 @@ export function EquipmentCard({ engine, def, info }: { engine: GameEngine; def: 
           type="button"
           disabled={quantity <= 0}
           onClick={() => engine.buyEquipment(def.id, mode)}
-          className="flex min-w-0 flex-1 items-center justify-between gap-2 rounded border border-neon-cyan/50 bg-neon-cyan/15 px-2 py-1 font-mono text-xs font-bold text-white hover:bg-neon-cyan/25 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-transparent disabled:text-white/40"
+          className="flex min-w-0 flex-1 items-center justify-between gap-2 min-h-11 rounded border border-neon-cyan/50 bg-neon-cyan/15 px-2 py-1 font-mono text-xs font-bold text-white hover:bg-neon-cyan/25 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-transparent disabled:text-white/40 lg:min-h-0"
         >
           <span className="shrink-0">{t('shop.buy', { quantity: formatCount(shown, locale) })}</span>
           <span className="truncate tabular-nums">{formatBytes(current.cost, locale)}</span>
