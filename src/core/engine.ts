@@ -9,9 +9,21 @@ export interface EngineConfig {
   // Maior passo de simulação. Entre dois passos a produção é constante e a
   // integração é exata; o passo limita só a granularidade de temporizadores.
   maxStepMs: number
+  // Chance de crítico por clique, de 0 a 1, e multiplicador sobre o ganho final
+  // (GDD 5.4 e 5.5). Valores provisórios (A-04).
+  criticalChance: number
+  criticalMultiplier: number
+  // Fonte de aleatoriedade em [0, 1). Injetável para testes.
+  random: () => number
 }
 
-export const DEFAULT_CONFIG: EngineConfig = { baseClick: 1, maxStepMs: 1000 }
+export const DEFAULT_CONFIG: EngineConfig = {
+  baseClick: 1,
+  maxStepMs: 1000,
+  criticalChance: 0.05,
+  criticalMultiplier: 5,
+  random: Math.random,
+}
 
 // Núcleo de lógica. Não conhece interface, renderização nem relógio: quem o
 // dirige chama advance(ms) com o tempo decorrido (GDD 4.1 e 24.4).
@@ -67,14 +79,20 @@ export class GameEngine {
     this.events.emit('tick', { dtMs: ms })
   }
 
+  // Um clique (GDD 5.3 a 5.5): sem limite nem combo. O crítico multiplica o
+  // ganho final, já com acréscimos e percentuais; clickValue segue sem crítico.
   click(): Decimal {
-    const gained = this.clickValue
+    const { criticalChance, criticalMultiplier, random } = this.config
+    const critical = random() < criticalChance
+    const value = this.clickValue
+    const gained = critical ? value.mul(criticalMultiplier) : value
     this.earn(gained)
     const { stats } = this._state
     stats.clicks++
+    if (critical) stats.criticalClicks++
     stats.bytesFromClicks = stats.bytesFromClicks.add(gained)
     this._revision++
-    this.events.emit('click', { gained, critical: false })
+    this.events.emit('click', { gained, critical })
     return gained
   }
 

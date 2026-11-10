@@ -1,8 +1,23 @@
 import { describe, expect, it } from 'vitest'
 import { DICTIONARIES, detectLocale, translate } from './index'
+import { contentEn } from './content/en'
+import { contentPtBR } from './content/pt-BR'
 import { ptBR } from './pt-BR'
+import { uiEn } from './ui/en'
+import { uiPtBR } from './ui/pt-BR'
 
 describe('i18n', () => {
+  it('nenhuma chave existe ao mesmo tempo em interface e conteúdo', () => {
+    const pairs: [Record<string, string>, Record<string, string>][] = [
+      [uiPtBR, contentPtBR],
+      [uiEn, contentEn],
+    ]
+    for (const [ui, content] of pairs) {
+      const overlap = Object.keys(ui).filter((key) => key in content)
+      expect(overlap).toEqual([])
+    }
+  })
+
   it('todos os idiomas têm exatamente as chaves do dicionário de referência', () => {
     const reference = Object.keys(ptBR).sort()
     for (const dict of Object.values(DICTIONARIES)) {

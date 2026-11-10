@@ -30,7 +30,21 @@ export function computeProduction(state: GameState, catalog: Catalog): Productio
   return { bySource: { equipment, agents }, base, multiplier, total: base.mul(multiplier) }
 }
 
-// Valor de um clique sem crítico (GDD 5.5, passos 1 e 2). O crítico entra no M1.
+// Soma dos efeitos clickFlat ativos. Ainda não há fontes (M2); hoje é 0.
+export function clickFlatBonus(_state: GameState, _catalog: Catalog): Decimal {
+  return D(0)
+}
+
+// Soma dos efeitos clickPercent ativos, em pontos percentuais. Ainda não há fontes (M2); hoje é 0.
+export function clickPercentBonus(_state: GameState, _catalog: Catalog): Decimal {
+  return D(0)
+}
+
+// Valor de um clique sem crítico (GDD 5.5, passos 1 e 2): acréscimos fixos sobre
+// o valor base, depois multiplicadores percentuais. O crítico (passo 3) incide
+// sobre este valor e é aplicado em GameEngine.click.
 export function computeClickValue(state: GameState, catalog: Catalog, baseClick: number): Decimal {
-  return D(baseClick).mul(globalMultiplier(state, catalog))
+  const flat = D(baseClick).add(clickFlatBonus(state, catalog))
+  const percent = clickPercentBonus(state, catalog).div(100).add(1)
+  return flat.mul(percent).mul(globalMultiplier(state, catalog))
 }
