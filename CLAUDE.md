@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado do repositório
 
-M0 (Fundação) implementado; o estado dos marcos está em [docs/roadmap.md](docs/roadmap.md). `bytecorp.md` (a "Bíblia") é o GDD/documento de requisitos do **Byte Corp Idle** (jogo incremental/idle tycoon cyberpunk, Web primeiro). Ele é a referência central: qualquer mudança de escopo deve ser registrada nele, e a seção 29 prevalece sobre propostas anteriores em caso de conflito.
+M0 e M1 fechados (tags `v0.1.0` e `v0.2.0`); o estado dos marcos está em [docs/roadmap.md](docs/roadmap.md). `bytecorp.md` (a "Bíblia") é o GDD/documento de requisitos do **Byte Corp Idle** (jogo incremental/idle tycoon cyberpunk, Web primeiro). Ele é a referência central: qualquer mudança de escopo deve ser registrada nele, e a seção 29 prevalece sobre propostas anteriores em caso de conflito.
 
 `cyber_corp_node_tycoon.html` é um protótipo descartável de validação da jogabilidade (ver "Protótipo" abaixo). Não é a base do projeto e não deve ser evoluído.
 
@@ -36,7 +36,7 @@ Definida pelo GDD (18.2 e 24.1): React, Tailwind CSS, Lucide Icons, Three.js (c�
   - `engine.ts`: `GameEngine`. Recebe tempo por `advance(ms)` e o fatia em passos de até `maxStepMs`; o resultado depende só do total de ms. Toda mudança que afete a produção deve chamar `invalidate()`, que limpa o cache de `production` e incrementa `revision`.
   - `clock.ts`: dirige o engine por `setInterval` e `performance.now()`, nunca por `requestAnimationFrame`.
   - `state.ts`: `GameState` dividido em `run` (zerado pelo Reboot), `meta` (permanente) e `stats` (histórico). Onde um campo novo entra define o que o Reboot faz com ele.
-  - `production.ts`: produção consolidada; `globalMultiplier` é o ponto onde a fórmula global (A-01 em `docs/decisoes.md`) será implementada.
+  - `production.ts`: produção consolidada; `globalMultiplier` é o ponto onde a fórmula global (D-10 em `docs/decisoes.md`, três camadas) será implementada na T-021.
   - `catalog/`: tipos e dados dos catálogos. Textos são `MessageKey` do i18n. `validateCatalog` roda nos testes e checa ids, chaves de i18n, custos e a ordem por custo crescente.
   - `save/`: `codec.ts` serializa (Decimal vira string), valida campo a campo e aplica `MIGRATIONS`. Ao mudar o formato do estado: incrementar `SAVE_VERSION`, adicionar a migração e atualizar `parseState`.
 - `src/i18n/`: `pt-BR.ts` é o dicionário de referência e define `MessageKey`; os outros idiomas são `Record<MessageKey, string>`, então chave faltando é erro de compilação. Interpolação com `{param}`.

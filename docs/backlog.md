@@ -41,7 +41,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-018 | Estágios corporativos: avanço de `run.stage` por requisito, evento `stageChanged` | AG01 | — | a fazer |
 | T-019 | Agentes (regras): contratação individual, custo com desconto, nível coletivo uma unidade por vez, eventos | AG01 | T-018 | a fazer |
 | T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | a fazer |
-| T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020, A-01 | bloqueada |
+| T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020 (fórmula em D-10) | a fazer |
 | T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | a fazer |
 | T-023 | Catálogo de agentes (4 a 5) com textos nos dois idiomas | AG07 | T-019 | a fazer |
 | T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | a fazer |
