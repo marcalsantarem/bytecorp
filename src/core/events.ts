@@ -10,6 +10,7 @@ export interface GameEvents {
   purchase: { id: string; quantity: number; cost: Decimal }
   agentHired: { id: string; count: number; cost: Decimal }
   agentLeveled: { id: string; level: number; cost: Decimal }
+  upgradePurchased: { id: string; cost: number }
   // Um por estágio avançado, em ordem (GDD 1.2). Não é emitido ao carregar um estado.
   stageChanged: { from: StageId; to: StageId }
   stateReplaced: Record<string, never>

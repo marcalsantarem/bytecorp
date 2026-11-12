@@ -5,7 +5,8 @@ export const PURCHASE_SAVE_DELAY_MS = 300
 
 export interface PersistenceControl {
   // Grava já, em fila: gravações nunca se sobrepõem e a última a começar vence.
-  saveNow: () => void
+  // A promessa resolve quando esta gravação termina (falhas são registradas, não propagadas).
+  saveNow: () => Promise<void>
   // Cancela o agendamento e remove a inscrição em purchase.
   dispose: () => void
 }
@@ -19,7 +20,7 @@ export function createPersistence(
   let queue: Promise<void> = Promise.resolve()
   let timer: ReturnType<typeof setTimeout> | undefined
 
-  const saveNow = () => {
+  const saveNow = (): Promise<void> => {
     if (timer !== undefined) {
       clearTimeout(timer)
       timer = undefined
@@ -27,6 +28,7 @@ export function createPersistence(
     queue = queue
       .then(() => saves.save(engine))
       .catch((error: unknown) => console.error('Falha ao salvar', error))
+    return queue
   }
 
   const off = engine.events.on('purchase', () => {

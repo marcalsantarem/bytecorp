@@ -63,14 +63,15 @@ export function App({ storage }: { storage: KeyValueStorage }) {
     )
   }
 
-  return <GameScreen engine={phase.session.engine} />
+  return <GameScreen engine={phase.session.engine} onReset={phase.session.reset} />
 }
 
-function GameScreen({ engine }: { engine: GameEngine }) {
+function GameScreen({ engine, onReset }: { engine: GameEngine; onReset: () => Promise<void> }) {
   useEngineRevision(engine)
   return (
     <GameLayout
       engine={engine}
+      onReset={onReset}
       left={
         <>
           <StatsPanel engine={engine} />

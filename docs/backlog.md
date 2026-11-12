@@ -40,7 +40,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 |---|---|---|---|---|
 | T-018 | Estágios corporativos: avanço de `run.stage` por requisito, evento `stageChanged` | AG01 | — | feita (BRF-019) |
 | T-019 | Agentes (regras): contratação individual, custo com desconto, nível coletivo uma unidade por vez, eventos | AG01 | T-018 | feita (BRF-020) |
-| T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | a fazer |
+| T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | feita (BRF-027) |
 | T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020 (fórmula em D-10) | a fazer |
 | T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | a fazer |
 | T-023 | Catálogo de agentes (4 a 5) com textos nos dois idiomas | AG07 | T-019 | feita (BRF-022) |
@@ -51,6 +51,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | feita (BRF-024); botões corrigidos após defeito de custo cortado em 1024 px |
 | T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | a fazer |
 | T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018, T-027 | a fazer |
+| T-053 | `GameSession.reset()`: reiniciar o jogo e o save por completo, sem apagar as configurações | AG03 | — | feita (BRF-025) |
+| T-054 | Botão Reset no lugar do seletor de idioma, idioma fixo em pt-BR (D-11) | AG04 | T-053 | feita (BRF-026) |
 | T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |
 | T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | a fazer |
 | T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva | AG07 | T-021, T-022, T-025, T-030 | a fazer |
@@ -87,5 +89,4 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 |---|---|---|
 | Testes de componentes React (exige ambiente DOM no Vitest) | M2 | AG03 e AG04 |
 | Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |
-| Definir `document.documentElement.lang` também ao restaurar o idioma salvo na abertura (hoje só muda ao trocar o idioma na tela) | M2 | AG04 |
 | Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |

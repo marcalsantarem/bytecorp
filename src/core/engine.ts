@@ -1,4 +1,4 @@
-import type { Catalog, Effect, StageDef } from './catalog/types'
+import type { Catalog, Effect, StageDef, UpgradeDef } from './catalog/types'
 import { D, type Decimal } from './decimal'
 import {
   advanceStageIndex,
@@ -11,9 +11,11 @@ import {
   orderedStages,
   purchasableQuantity,
   unitCost,
+  upgradeStatus,
   type AgentStatus,
   type BuyMode,
   type EquipmentStatus,
+  type UpgradeStatus,
 } from './economy'
 import { EventBus, type GameEvents } from './events'
 import { computeClickValue, computeProduction, costDiscountPercent, globalMultiplier, type ProductionBreakdown } from './production'
@@ -64,6 +66,16 @@ export interface AgentInfo {
   bonus: Effect[]
   // Fração de 0 a 1 do saldo em relação ao custo de evolução; null sem agente contratado.
   levelProgress: number | null
+}
+
+export interface UpgradeInfo {
+  id: string
+  status: UpgradeStatus
+  // Custo fixo e inteiro; descontos não se aplicam (GDD 4.6).
+  cost: number
+  effect: Effect
+  // Requisito de desbloqueio (Bytes gerados na execução), exibido quando locked.
+  unlockBytesEarnedInRun: number
 }
 
 export interface StageInfo {
@@ -269,6 +281,40 @@ export class GameEngine {
     return this.catalog.agents
       .map((a) => this.agentInfo(a.id)!)
       .sort((a, b) => a.hireCost.cmp(b.hireCost))
+  }
+
+  // Compra de melhoria comum (GDD 8): única por execução, imediata, custo fixo.
+  // Devolve false se inexistente, bloqueada, já comprada ou sem saldo.
+  buyUpgrade(id: string): boolean {
+    const def = this.catalog.upgrades.find((u) => u.id === id)
+    if (!def || upgradeStatus(def, this._state) !== 'available') return false
+    const { run } = this._state
+    if (run.bytes.lt(def.cost)) return false
+    run.bytes = run.bytes.sub(def.cost)
+    run.upgrades.push(id)
+    this.invalidate()
+    this.events.emit('upgradePurchased', { id, cost: def.cost })
+    return true
+  }
+
+  upgradeInfo(id: string): UpgradeInfo | undefined {
+    const def = this.catalog.upgrades.find((u) => u.id === id)
+    return def && this.toUpgradeInfo(def)
+  }
+
+  // Lista única ordenada por custo crescente (empate: ordem do catálogo).
+  upgradeList(): UpgradeInfo[] {
+    return this.catalog.upgrades.map((u) => this.toUpgradeInfo(u)).sort((a, b) => a.cost - b.cost)
+  }
+
+  private toUpgradeInfo(def: UpgradeDef): UpgradeInfo {
+    return {
+      id: def.id,
+      status: upgradeStatus(def, this._state),
+      cost: def.cost,
+      effect: def.effect,
+      unlockBytesEarnedInRun: def.unlockBytesEarnedInRun,
+    }
   }
 
   // Chamado por todo sistema que altere algo que afete a produção.
