@@ -18,7 +18,15 @@ import {
   type UpgradeStatus,
 } from './economy'
 import { EventBus, type GameEvents } from './events'
-import { computeClickValue, computeProduction, costDiscountPercent, globalMultiplier, type ProductionBreakdown } from './production'
+import {
+  computeClickValue,
+  computeProduction,
+  costDiscountPercent,
+  criticalChance,
+  criticalMultiplier,
+  globalMultiplier,
+  type ProductionBreakdown,
+} from './production'
 import { createInitialState, type GameState } from './state'
 
 export interface EngineConfig {
@@ -161,10 +169,12 @@ export class GameEngine {
   // Um clique (GDD 5.3 a 5.5): sem limite nem combo. O crítico multiplica o
   // ganho final, já com acréscimos e percentuais; clickValue segue sem crítico.
   click(): Decimal {
-    const { criticalChance, criticalMultiplier, random } = this.config
-    const critical = random() < criticalChance
+    const { random } = this.config
+    const critical = random() < criticalChance(this._state, this.catalog, this.config.criticalChance)
     const value = this.clickValue
-    const gained = critical ? value.mul(criticalMultiplier) : value
+    const gained = critical
+      ? value.mul(criticalMultiplier(this._state, this.catalog, this.config.criticalMultiplier))
+      : value
     this.earn(gained)
     const { stats } = this._state
     stats.clicks++

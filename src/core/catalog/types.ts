@@ -43,8 +43,8 @@ export interface EquipmentDef {
   reveal: Requirement
 }
 
-// Efeitos de bônus. A forma de combiná-los depende da fórmula global de produção,
-// ainda pendente de definição (CLAUDE.md, decisão 1).
+// Efeitos de bônus. Combinados pela fórmula global de três camadas (D-10, production.ts):
+// valores em pontos percentuais somam dentro da camada.
 export type Effect =
   | { kind: 'globalProductionPercent'; value: number }
   | { kind: 'clickFlat'; value: number }
