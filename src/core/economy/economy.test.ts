@@ -23,7 +23,13 @@ const eq = (id: string, over: Partial<EquipmentDef> = {}): EquipmentDef => ({
 const catalog: Catalog = {
   stages: [
     { id: 'solo_hacker', order: 0, nameKey: 'stage.solo_hacker', requirement: { kind: 'always' } },
-    { id: 'garage_company', order: 1, nameKey: 'stage.garage_company', requirement: { kind: 'always' } },
+    // Inalcançável aqui: os testes deste arquivo definem o estágio à mão.
+    {
+      id: 'garage_company',
+      order: 1,
+      nameKey: 'stage.garage_company',
+      requirement: { kind: 'bytesEarnedInRun', amount: 1e300 },
+    },
   ],
   equipment: [
     eq('a'),

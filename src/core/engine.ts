@@ -1,6 +1,15 @@
-import type { Catalog } from './catalog/types'
+import type { Catalog, StageDef } from './catalog/types'
 import { D, type Decimal } from './decimal'
-import { bulkCost, equipmentStatus, purchasableQuantity, unitCost, type BuyMode, type EquipmentStatus } from './economy'
+import {
+  advanceStageIndex,
+  bulkCost,
+  equipmentStatus,
+  orderedStages,
+  purchasableQuantity,
+  unitCost,
+  type BuyMode,
+  type EquipmentStatus,
+} from './economy'
 import { EventBus, type GameEvents } from './events'
 import { computeClickValue, computeProduction, costDiscountPercent, globalMultiplier, type ProductionBreakdown } from './production'
 import { createInitialState, type GameState } from './state'
@@ -36,6 +45,13 @@ export interface EquipmentInfo {
   unitProduction: Decimal
 }
 
+export interface StageInfo {
+  // undefined só se o estágio do estado não existir no catálogo.
+  current: StageDef | undefined
+  // Próximo estágio, com o requisito em `requirement`; null no último.
+  next: StageDef | null
+}
+
 export const DEFAULT_CONFIG: EngineConfig = {
   baseClick: 1,
   maxStepMs: 1000,
@@ -52,6 +68,9 @@ export class GameEngine {
   private cachedProduction: ProductionBreakdown | null = null
   // Incrementado a cada mudança; a interface usa como snapshot.
   private _revision = 0
+  // Estágios em ordem e a posição do atual, para olhar só o próximo a cada passo.
+  private readonly stages: StageDef[]
+  private stageIndex = -1
 
   constructor(
     readonly catalog: Catalog,
@@ -59,6 +78,8 @@ export class GameEngine {
     readonly config: EngineConfig = DEFAULT_CONFIG,
   ) {
     this._state = state
+    this.stages = orderedStages(catalog)
+    this.syncStage()
   }
 
   get state(): GameState {
@@ -80,8 +101,14 @@ export class GameEngine {
 
   replaceState(state: GameState): void {
     this._state = state
+    this.syncStage()
     this.invalidate()
     this.events.emit('stateReplaced', {})
+  }
+
+  // Estágio atual e o próximo, para a interface.
+  get stageInfo(): StageInfo {
+    return { current: this.stages[this.stageIndex], next: this.stages[this.stageIndex + 1] ?? null }
   }
 
   // Avança o tempo de jogo. O resultado depende só do total de ms, não de
@@ -110,6 +137,7 @@ export class GameEngine {
     stats.clicks++
     if (critical) stats.criticalClicks++
     stats.bytesFromClicks = stats.bytesFromClicks.add(gained)
+    this.checkStage()
     this._revision++
     this.events.emit('click', { gained, critical })
     return gained
@@ -130,6 +158,7 @@ export class GameEngine {
     run.equipment[id] = owned + quantity
     this.invalidate()
     this.events.emit('purchase', { id, quantity, cost })
+    this.checkStage()
     return quantity
   }
 
@@ -173,6 +202,24 @@ export class GameEngine {
       this._state.stats.bytesFromProduction = this._state.stats.bytesFromProduction.add(gained)
     }
     this._state.stats.playTimeMs += ms
+    this.checkStage()
+  }
+
+  // Ao carregar um estado: localiza o estágio salvo e corrige em silêncio o que
+  // estiver abaixo do que os requisitos já garantem. Estágio fora do catálogo
+  // fica como está e não avança.
+  private syncStage(): void {
+    const index = this.stages.findIndex((s) => s.id === this._state.run.stage)
+    this.stageIndex = index < 0 ? -1 : advanceStageIndex(this.stages, index, this._state, this.catalog)
+  }
+
+  // Avança enquanto o próximo estágio estiver atingido; um evento por estágio.
+  private checkStage(): void {
+    if (this.stageIndex < 0) return
+    this.stageIndex = advanceStageIndex(this.stages, this.stageIndex, this._state, this.catalog, (from, to) => {
+      this.invalidate()
+      this.events.emit('stageChanged', { from: from.id, to: to.id })
+    })
   }
 
   private earn(amount: Decimal): void {

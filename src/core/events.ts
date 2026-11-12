@@ -1,3 +1,4 @@
+import type { StageId } from './catalog/types'
 import type { Decimal } from './decimal'
 
 // Eventos internos do núcleo. Interface, cena e áudio reagem a eles sem que o
@@ -7,6 +8,8 @@ export interface GameEvents {
   tick: { dtMs: number }
   click: { gained: Decimal; critical: boolean }
   purchase: { id: string; quantity: number; cost: Decimal }
+  // Um por estágio avançado, em ordem (GDD 1.2). Não é emitido ao carregar um estado.
+  stageChanged: { from: StageId; to: StageId }
   stateReplaced: Record<string, never>
 }
 
