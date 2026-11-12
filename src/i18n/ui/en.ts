@@ -19,6 +19,7 @@ export const uiEn: Record<UiMessageKey, string> = {
   'save.corrupt.newGame': 'Start new game',
   'shop.title': 'Shop',
   'shop.category': 'Category',
+  'shop.category.available': 'equipment available',
   'shop.empty': 'Nothing available in this category yet.',
   'shop.locked': 'Unlocks: {requirement}',
   'shop.req.bytesEarned': 'generate {amount} this run',

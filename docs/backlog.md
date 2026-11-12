@@ -54,6 +54,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-055 | Compactar a cena do núcleo em telas baixas (1280x720): hoje o botão de clique fica 15 px cortado e a legenda do valor por clique exige rolagem | AG04 | T-028 | feita (BRF-032) |
 | T-053 | `GameSession.reset()`: reiniciar o jogo e o save por completo, sem apagar as configurações | AG03 | — | feita (BRF-025) |
 | T-054 | Botão Reset no lugar do seletor de idioma, idioma fixo em pt-BR (D-11) | AG04 | T-053 | feita (BRF-026) |
+| T-056 | PWA: manifesto, ícone `>_` verde sobre preto, service worker com cache offline do shell, nome de atalho "ByteCorp Idle" (D-12) | AG03 | — | feita (BRF-034); teste de instalação em aparelho real pendente, com o usuário |
+| T-057 | Categorias de equipamento em abas no mobile, com indicador de que há equipamento comprável | AG04 | — | reaberta (BRF-036): a barra rolável esconde 3 das 5 abas e seus pontos em 375 px |
 | T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |
 | T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | a fazer |
 | T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva | AG07 | T-021, T-022, T-025, T-030 | a fazer |

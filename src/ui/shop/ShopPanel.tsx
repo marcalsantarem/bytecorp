@@ -3,10 +3,10 @@ import type { EquipmentCategory } from '../../core/catalog'
 import type { GameEngine } from '../../core/engine'
 import { NeonPanel } from '../components/NeonPanel'
 import { useI18n } from '../i18n'
+import { CategoryTabs } from './CategoryTabs'
 import { EquipmentCard } from './EquipmentCard'
 import { UpgradeCard } from './UpgradeCard'
 
-const CATEGORIES: EquipmentCategory[] = ['networking', 'processing', 'storage', 'cooling', 'infrastructure']
 const VIEWS = ['equipment', 'upgrades'] as const
 
 export function ShopPanel({ engine }: { engine: GameEngine }) {
@@ -18,6 +18,12 @@ export function ShopPanel({ engine }: { engine: GameEngine }) {
     const info = infos[i]
     return info && def.category === category && info.status !== 'hidden' ? [{ def, info }] : []
   })
+  const available = new Set<EquipmentCategory>(
+    engine.catalog.equipment.flatMap((def, i) => {
+      const info = infos[i]
+      return info && info.status === 'unlocked' && info.modes.x1.quantity > 0 ? [def.category] : []
+    }),
+  )
   const upgrades = engine.upgradeList().flatMap((info) => {
     const def = engine.catalog.upgrades.find((u) => u.id === info.id)
     return def ? [{ def, info }] : []
@@ -48,32 +54,7 @@ export function ShopPanel({ engine }: { engine: GameEngine }) {
         </ul>
       ) : (
         <>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as EquipmentCategory)}
-            aria-label={t('shop.category')}
-            className="min-h-11 rounded border border-neon-cyan/30 bg-void px-2 py-1.5 font-mono text-sm text-neon-cyan lg:hidden"
-          >
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {t(`category.${c}`)}
-              </option>
-            ))}
-          </select>
-          <div role="tablist" aria-label={t('shop.category')} className="hidden flex-wrap gap-1 lg:flex">
-            {CATEGORIES.map((c) => (
-              <button
-                key={c}
-                type="button"
-                role="tab"
-                aria-selected={category === c}
-                onClick={() => setCategory(c)}
-                className={`rounded border px-2 py-1 font-mono text-[11px] ${category === c ? 'border-neon-cyan/60 bg-neon-cyan/15 text-neon-cyan' : 'border-white/10 text-white/50 hover:text-white'}`}
-              >
-                {t(`category.${c}`)}
-              </button>
-            ))}
-          </div>
+          <CategoryTabs value={category} onChange={setCategory} available={available} />
           {items.length === 0 ? (
             <p className="text-sm text-white/50">{t('shop.empty')}</p>
           ) : (
