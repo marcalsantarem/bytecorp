@@ -1,4 +1,5 @@
 import { isMessageKey } from '../../i18n'
+import { AGENTS } from './agents'
 import { EQUIPMENT } from './equipment'
 import { STAGES } from './stages'
 import type { Catalog, Requirement } from './types'
@@ -8,7 +9,7 @@ export * from './types'
 export const CATALOG: Catalog = {
   stages: STAGES,
   equipment: EQUIPMENT,
-  agents: [],
+  agents: AGENTS,
   upgrades: [],
   quantumNodes: [],
 }

@@ -65,6 +65,22 @@ export const contentPtBR = {
   'equipment.fusion_cell.desc': 'Um sol em miniatura no porão do prédio.',
   'equipment.orbital_plant.name': 'Usina orbital',
   'equipment.orbital_plant.desc': 'Painéis do tamanho de um bairro captando luz o tempo todo.',
+
+  'agent.echo_ai.name': 'ECHO_AI',
+  'agent.echo_ai.desc': 'Uma IA que aprendeu a clicar mais rápido que você.',
+  'agent.echo_ai.specialty': 'Cliques manuais',
+  'agent.kai_ver_3.name': 'KAI_VER_3',
+  'agent.kai_ver_3.desc': 'Otimiza cada processo da empresa, do roteador ao cofre.',
+  'agent.kai_ver_3.specialty': 'Produção global',
+  'agent.atlas_core.name': 'ATLAS_CORE',
+  'agent.atlas_core.desc': 'Negocia contratos e corta custos antes de você pedir.',
+  'agent.atlas_core.specialty': 'Redução de custos',
+  'agent.neo_gen_5.name': 'NEO_GEN_5',
+  'agent.neo_gen_5.desc': 'Coordena toda a malha de hardware para extrair o máximo de cada watt.',
+  'agent.neo_gen_5.specialty': 'Operações de hardware',
+  'agent.spectre_x.name': 'SPECTRE_X',
+  'agent.spectre_x.desc': 'Joga com as probabilidades e quase sempre ganha.',
+  'agent.spectre_x.specialty': 'Cliques críticos',
 } as const
 
 export type ContentMessageKey = keyof typeof contentPtBR
