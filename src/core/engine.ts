@@ -1,12 +1,17 @@
-import type { Catalog, StageDef } from './catalog/types'
+import type { Catalog, Effect, StageDef } from './catalog/types'
 import { D, type Decimal } from './decimal'
 import {
   advanceStageIndex,
+  agentBonus,
+  agentHireCost,
+  agentLevelCost,
+  agentStatus,
   bulkCost,
   equipmentStatus,
   orderedStages,
   purchasableQuantity,
   unitCost,
+  type AgentStatus,
   type BuyMode,
   type EquipmentStatus,
 } from './economy'
@@ -43,6 +48,22 @@ export interface EquipmentInfo {
   modes: Record<BuyMode, EquipmentModeInfo>
   // baseProduction × multiplicador global.
   unitProduction: Decimal
+}
+
+export interface AgentInfo {
+  id: string
+  status: AgentStatus
+  count: number
+  // 0 enquanto não há agente contratado.
+  level: number
+  // Custo da próxima contratação, já com desconto.
+  hireCost: Decimal
+  // Custo de evoluir o nível coletivo; null sem agente contratado.
+  levelCost: Decimal | null
+  // Bônus atuais por efeito (primário primeiro), conforme D-10; valores 0 sem agentes.
+  bonus: Effect[]
+  // Fração de 0 a 1 do saldo em relação ao custo de evolução; null sem agente contratado.
+  levelProgress: number | null
 }
 
 export interface StageInfo {
@@ -187,6 +208,67 @@ export class GameEngine {
   // Na ordem do catálogo.
   equipmentList(): EquipmentInfo[] {
     return this.catalog.equipment.map((e) => this.equipmentInfo(e.id)!)
+  }
+
+  // Contratação individual (GDD 7.2). Devolve false se bloqueado, inexistente ou sem saldo.
+  // O nível coletivo começa em 1 na primeira contratação.
+  hireAgent(id: string): boolean {
+    const def = this.catalog.agents.find((a) => a.id === id)
+    if (!def || agentStatus(def, this._state, this.catalog) !== 'unlocked') return false
+    const { run } = this._state
+    const entry = run.agents[id] ?? { count: 0, level: 0 }
+    const cost = agentHireCost(def, entry.count, costDiscountPercent(this._state, this.catalog))
+    if (run.bytes.lt(cost)) return false
+    run.bytes = run.bytes.sub(cost)
+    run.agents[id] = { count: entry.count + 1, level: Math.max(1, entry.level) }
+    this.invalidate()
+    this.events.emit('agentHired', { id, count: entry.count + 1, cost })
+    this.checkStage()
+    return true
+  }
+
+  // Evolui o nível coletivo em um (GDD 7.4). Exige ao menos um agente do tipo e saldo.
+  levelUpAgent(id: string): boolean {
+    const def = this.catalog.agents.find((a) => a.id === id)
+    if (!def || agentStatus(def, this._state, this.catalog) !== 'unlocked') return false
+    const { run } = this._state
+    const entry = run.agents[id]
+    if (!entry || entry.count < 1) return false
+    const cost = agentLevelCost(def, entry.level, costDiscountPercent(this._state, this.catalog))
+    if (run.bytes.lt(cost)) return false
+    run.bytes = run.bytes.sub(cost)
+    entry.level++
+    this.invalidate()
+    this.events.emit('agentLeveled', { id, level: entry.level, cost })
+    return true
+  }
+
+  agentInfo(id: string): AgentInfo | undefined {
+    const def = this.catalog.agents.find((a) => a.id === id)
+    if (!def) return undefined
+    const { run } = this._state
+    const count = run.agents[id]?.count ?? 0
+    const level = count > 0 ? (run.agents[id]?.level ?? 1) : 0
+    const discount = costDiscountPercent(this._state, this.catalog)
+    const levelCost = count > 0 ? agentLevelCost(def, level, discount) : null
+    return {
+      id,
+      status: agentStatus(def, this._state, this.catalog),
+      count,
+      level,
+      hireCost: agentHireCost(def, count, discount),
+      levelCost,
+      bonus: agentBonus(def, count, level),
+      levelProgress: levelCost ? Math.min(1, run.bytes.div(levelCost).toNumber()) : null,
+    }
+  }
+
+  // Lista única ordenada pelo próximo custo de contratação, do menor ao maior
+  // (empate: ordem do catálogo, pois a ordenação é estável).
+  agentList(): AgentInfo[] {
+    return this.catalog.agents
+      .map((a) => this.agentInfo(a.id)!)
+      .sort((a, b) => a.hireCost.cmp(b.hireCost))
   }
 
   // Chamado por todo sistema que altere algo que afete a produção.

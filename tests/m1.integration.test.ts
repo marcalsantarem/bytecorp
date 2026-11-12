@@ -21,7 +21,7 @@ function fund(engine: GameEngine, bytes: number, earned = bytes) {
 const isOk = (r: LoadResult) => 'ok' in r && r.ok
 
 describe('catálogo real: custos', () => {
-  it('tem 15 equipamentos', () => expect(CATALOG.equipment).toHaveLength(15))
+  it('tem 25 equipamentos', () => expect(CATALOG.equipment).toHaveLength(25))
 
   for (const discount of [0, 10, 50, 99, 100]) {
     it(`custo unitário inteiro e >= 1 para N de 0 a 200 (desconto ${discount}%)`, () => {

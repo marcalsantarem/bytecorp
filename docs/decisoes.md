@@ -22,7 +22,7 @@ Registro do AG00. Vale abaixo do usuário e da Bíblia, acima dos documentos dos
 | ID | Decisão | Trocar quando |
 |---|---|---|
 | P-01 | Unidades depois de YB: RB e QB (SI ronna e quetta), depois notação científica. | Usuário definir as unidades fictícias (Bíblia 4.7). |
-| P-02 | Limites de Bytes dos estágios (1e4 a 1e18) e valores dos 5 equipamentos vindos do protótipo. | Balanceamento do AG07 (M2 e M8). |
+| P-02 | 25 equipamentos (5 por categoria) cobrindo até Corporate Network, com fatores de 1,15 a 1,25 e desbloqueio igual à metade do custo base; limites de Bytes dos estágios (1e4 a 1e18) mantidos e documentados em `docs/AG07/equipamentos-m2.md`. Pendente: equipamentos de Quantum Facility e Mega Corporation (a simulação mostra 64,6 min até Quantum Facility e 85,5 h até Mega Corporation) e revisão do limite de 1e18. | Balanceamento do AG07 (M2 e M8). |
 
 ## A definir
 

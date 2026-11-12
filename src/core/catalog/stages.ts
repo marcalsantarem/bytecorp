@@ -1,6 +1,9 @@
 import type { StageDef } from './types'
 
 // Os limites de Bytes são provisórios e serão ajustados no balanceamento (GDD 28.4).
+// Lógica (T-025): cada estágio abre pouco antes do desbloqueio de um equipamento mais caro
+// e leva cerca de 1,7x a 2x o tempo do anterior na simulação (tools/simular-equipamentos.mjs).
+// Quantum Facility e Mega Corporation ainda não têm equipamentos próprios.
 export const STAGES: StageDef[] = [
   { id: 'solo_hacker', order: 0, nameKey: 'stage.solo_hacker', requirement: { kind: 'always' } },
   { id: 'garage_company', order: 1, nameKey: 'stage.garage_company', requirement: { kind: 'bytesEarnedInRun', amount: 1e4 } },
