@@ -7,7 +7,8 @@ import { useI18n } from './i18n'
 import { ClickButton } from './core/ClickButton'
 import { CoreScene } from './core/CoreScene'
 import { GameLayout } from './layout/GameLayout'
-import { AgentsPanel, StatsPanel } from './layout/Panels'
+import { AgentsPanel } from './agents/AgentsPanel'
+import { StatsPanel } from './layout/Panels'
 import { ShopPanel } from './shop/ShopPanel'
 import { useEngineRevision } from './useEngine'
 
@@ -73,7 +74,7 @@ function GameScreen({ engine }: { engine: GameEngine }) {
       left={
         <>
           <StatsPanel engine={engine} />
-          <AgentsPanel />
+          <AgentsPanel engine={engine} />
         </>
       }
       right={<ShopPanel engine={engine} />}
