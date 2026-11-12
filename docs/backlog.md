@@ -49,9 +49,9 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-051 | Acrescentar ao mapa de ícones os 10 ícones dos equipamentos novos (`radio-tower`, `globe`, `brain-circuit`, `server-cog`, `database-zap`, `layers`, `thermometer-snowflake`, `sun`, `atom`, `orbit`); hoje cai no ícone padrão | AG04 | T-025 | feita (BRF-023); inclui os 3 ícones dos agentes |
 | T-052 | Equipamentos de Quantum Facility e Mega Corporation e revisão do limite de 1e18 (salto de 64,6 min para 85,5 h na simulação) | AG07 | T-023, T-024 | a fazer |
 | T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | feita (BRF-024); botões corrigidos após defeito de custo cortado em 1024 px |
-| T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | a fazer |
+| T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | feita (BRF-033) |
 | T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018 | feita (BRF-031); corrigido o corte do topo na coluna central |
-| T-055 | Compactar a cena do núcleo em telas baixas (1280x720): hoje o botão de clique fica 15 px cortado e a legenda do valor por clique exige rolagem | AG04 | T-028 | a fazer |
+| T-055 | Compactar a cena do núcleo em telas baixas (1280x720): hoje o botão de clique fica 15 px cortado e a legenda do valor por clique exige rolagem | AG04 | T-028 | feita (BRF-032) |
 | T-053 | `GameSession.reset()`: reiniciar o jogo e o save por completo, sem apagar as configurações | AG03 | — | feita (BRF-025) |
 | T-054 | Botão Reset no lugar do seletor de idioma, idioma fixo em pt-BR (D-11) | AG04 | T-053 | feita (BRF-026) |
 | T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |
@@ -89,5 +89,6 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | Item | Marco | Dono provável |
 |---|---|---|
 | Testes de componentes React (exige ambiente DOM no Vitest) | M2 | AG03 e AG04 |
+| A altura da cena do núcleo usa a constante `25rem` para o resto da coluna; se o indicador de estágio crescer (texto do próximo estágio em mais linhas), o botão de clique volta a cortar em telas baixas | M6 | AG04 |
 | Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |
 | Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |

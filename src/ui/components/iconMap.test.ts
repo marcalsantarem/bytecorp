@@ -12,4 +12,9 @@ describe('mapa de ícones', () => {
     const faltando = CATALOG.agents.filter((a) => !(a.icon in ICONS)).map((a) => `${a.id}:${a.icon}`)
     expect(faltando).toEqual([])
   })
+
+  it('cobre o ícone de toda melhoria do catálogo', () => {
+    const faltando = CATALOG.upgrades.filter((u) => !(u.icon in ICONS)).map((u) => `${u.id}:${u.icon}`)
+    expect(faltando).toEqual([])
+  })
 })

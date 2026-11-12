@@ -10,5 +10,5 @@ export function CoreScene({ engine }: { engine: GameEngine }) {
     if (!canvas) return
     return mountCoreScene(canvas, engine.events)
   }, [engine])
-  return <canvas ref={canvasRef} className="pointer-events-none aspect-square w-full max-w-72 shrink-0 select-none lg:max-w-96" aria-hidden />
+  return <canvas ref={canvasRef} className="pointer-events-none aspect-square w-[clamp(10rem,calc(100dvh-25rem),18rem)] max-w-full shrink-0 select-none lg:w-[clamp(10rem,calc(100dvh-25rem),24rem)]" aria-hidden />
 }
