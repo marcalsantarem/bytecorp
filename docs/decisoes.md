@@ -23,6 +23,7 @@ Registro do AG00. Vale abaixo do usuário e da Bíblia, acima dos documentos dos
 | ID | Decisão | Trocar quando |
 |---|---|---|
 | P-01 | Unidades depois de YB: RB e QB (SI ronna e quetta), depois notação científica. | Usuário definir as unidades fictícias (Bíblia 4.7). |
+| P-05 | 12 melhorias comuns (5 de produção global, 4 de clique, 3 de desconto) com custo igual a 2x o desbloqueio, de 50 a 1e13 Bytes, até Quantum Facility; descontos das melhorias somam no máximo 4,5 pontos percentuais. Detalhes em `docs/AG07/melhorias-m2.md`. Ainda sem melhorias para Mega Corporation. | Balanceamento do AG07 (T-031 e M8). |
 | P-04 | Efeitos de crítico: a chance efetiva é a base mais a soma de `criticalChancePercent` em pontos percentuais, limitada a 0 a 1; o multiplicador crítico é a base mais a soma de `criticalMultiplier` (adição). Efeitos secundários dos agentes somam nas mesmas camadas das melhorias. | Teto e interação com a árvore Quantum em A-06 e M3. |
 | P-03 | 5 agentes (ECHO_AI, KAI_VER_3, ATLAS_CORE, NEO_GEN_5, SPECTRE_X), custo de contratação com fator 1,25 e de nível com 1,8, valores de bônus e desbloqueio em `docs/AG07/agentes-m2.md`. | Balanceamento do AG07 (T-031 e M8). |
 | P-02 | 25 equipamentos (5 por categoria) cobrindo até Corporate Network, com fatores de 1,15 a 1,25 e desbloqueio igual à metade do custo base; limites de Bytes dos estágios (1e4 a 1e18) mantidos e documentados em `docs/AG07/equipamentos-m2.md`. Pendente: equipamentos de Quantum Facility e Mega Corporation (a simulação mostra 64,6 min até Quantum Facility e 85,5 h até Mega Corporation) e revisão do limite de 1e18. | Balanceamento do AG07 (M2 e M8). |
@@ -34,5 +35,6 @@ Tasks que dependem destes itens ficam bloqueadas.
 | ID | Questão | Bloqueia |
 |---|---|---|
 | A-06 | Teto para o desconto de custo acumulado (agentes, melhorias e árvore Quantum) e para a chance de crítico acumulada (hoje a soma é sem limite; a base do crítico depende de A-04). | M4 (decidir antes dele); o M2 segue sem teto |
+| A-07 | Relevância do ganho fixo por clique (`clickFlat`): perde peso depois de cerca de 10 min de jogo e todas as melhorias de clique ficam disponíveis até 7 min. Decidir se `clickFlat` escala com a produção ou se fica como está. | Nada; revisar no balanceamento do M8 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |
 | A-02 | Fórmula de Quantum Cores e condição para habilitar o Reboot (Bíblia 9.4, 9.6, 28.2). | M3 |

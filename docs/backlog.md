@@ -42,9 +42,9 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-019 | Agentes (regras): contratação individual, custo com desconto, nível coletivo uma unidade por vez, eventos | AG01 | T-018 | feita (BRF-020) |
 | T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | feita (BRF-027) |
 | T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020 (fórmula em D-10) | feita (BRF-028) |
-| T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | a fazer |
+| T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | feita (BRF-030) |
 | T-023 | Catálogo de agentes (4 a 5) com textos nos dois idiomas | AG07 | T-019 | feita (BRF-022) |
-| T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | a fazer |
+| T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | feita (BRF-029); ícones novos listados em `docs/AG07/melhorias-m2.md` para a T-027 |
 | T-025 | Catálogo: equipamentos extras por estágio e revisão dos limites dos estágios | AG07 | T-018 (T-024 dispensada por ordem do usuário; revisar depois) | feita (BRF-021) |
 | T-051 | Acrescentar ao mapa de ícones os 10 ícones dos equipamentos novos (`radio-tower`, `globe`, `brain-circuit`, `server-cog`, `database-zap`, `layers`, `thermometer-snowflake`, `sun`, `atom`, `orbit`); hoje cai no ícone padrão | AG04 | T-025 | feita (BRF-023); inclui os 3 ícones dos agentes |
 | T-052 | Equipamentos de Quantum Facility e Mega Corporation e revisão do limite de 1e18 (salto de 64,6 min para 85,5 h na simulação) | AG07 | T-023, T-024 | a fazer |

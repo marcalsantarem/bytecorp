@@ -68,6 +68,43 @@ describe('catálogo', () => {
     expect(info.bonus[0]!.value).toBeCloseTo(2 * 5 * 1.5, 9)
   })
 
+  it('tem 12 melhorias nos três tipos, ordenadas por custo e sem efeito específico de item', () => {
+    expect(CATALOG.upgrades).toHaveLength(12)
+    const costs = CATALOG.upgrades.map((u) => u.cost)
+    expect(costs).toEqual([...costs].sort((a, b) => a - b))
+    const unlocks = CATALOG.upgrades.map((u) => u.unlockBytesEarnedInRun)
+    expect(unlocks).toEqual([...unlocks].sort((a, b) => a - b))
+    for (const u of CATALOG.upgrades) {
+      expect(Number.isInteger(u.cost)).toBe(true)
+      expect(u.unlockBytesEarnedInRun).toBeLessThan(u.cost)
+    }
+    const kinds = new Set(CATALOG.upgrades.map((u) => u.effect.kind))
+    expect([...kinds].sort()).toEqual(['clickFlat', 'clickPercent', 'costDiscountPercent', 'globalProductionPercent'])
+    const discount = CATALOG.upgrades.filter((u) => u.effect.kind === 'costDiscountPercent').reduce((a, u) => a + u.effect.value, 0)
+    expect(discount).toBeLessThanOrEqual(5)
+  })
+
+  it('o engine lista, libera e aplica melhorias do catálogo', () => {
+    const state = createInitialState(0)
+    state.run.bytes = new Decimal(1e6)
+    state.run.bytesEarned = new Decimal(300)
+    state.run.equipment['home_router'] = 10
+    const engine = new GameEngine(CATALOG, state)
+    expect(engine.upgradeList().map((u) => u.id)).toEqual(CATALOG.upgrades.map((u) => u.id))
+    expect(engine.upgradeInfo('macro_script')!.status).toBe('available')
+    expect(engine.upgradeInfo('neural_macro')!.status).toBe('locked')
+    expect(engine.buyUpgrade('neural_macro')).toBe(false)
+    const clickBefore = engine.clickValue
+    expect(engine.buyUpgrade('macro_script')).toBe(true)
+    expect(engine.clickValue.toNumber()).toBeCloseTo(clickBefore.toNumber() + 1, 9)
+    expect(engine.buyUpgrade('macro_script')).toBe(false)
+    const prodBefore = engine.production.total.toNumber()
+    expect(engine.buyUpgrade('overclock_basic')).toBe(true)
+    expect(engine.production.total.toNumber()).toBeCloseTo(prodBefore * 1.05, 9)
+    state.run.bytesEarned = new Decimal(1e6)
+    expect(engine.upgradeInfo('neural_macro')!.status).toBe('available')
+  })
+
   it('detecta problemas comuns', () => {
     const broken = {
       ...CATALOG,

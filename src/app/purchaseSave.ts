@@ -3,11 +3,14 @@ import type { SaveManager } from '../core/save/saveManager'
 
 export const PURCHASE_SAVE_DELAY_MS = 300
 
+// Ações importantes que agendam gravação (Bíblia 21.2).
+const SAVE_TRIGGER_EVENTS = ['purchase', 'agentHired', 'agentLeveled', 'upgradePurchased', 'stageChanged'] as const
+
 export interface PersistenceControl {
   // Grava já, em fila: gravações nunca se sobrepõem e a última a começar vence.
   // A promessa resolve quando esta gravação termina (falhas são registradas, não propagadas).
   saveNow: () => Promise<void>
-  // Cancela o agendamento e remove a inscrição em purchase.
+  // Cancela o agendamento e remove as inscrições nos eventos de ação.
   dispose: () => void
 }
 
@@ -31,15 +34,16 @@ export function createPersistence(
     return queue
   }
 
-  const off = engine.events.on('purchase', () => {
+  const schedule = () => {
     if (timer !== undefined) return
     timer = setTimeout(saveNow, delayMs)
-  })
+  }
+  const offs = SAVE_TRIGGER_EVENTS.map((name) => engine.events.on(name, schedule))
 
   return {
     saveNow,
     dispose: () => {
-      off()
+      for (const off of offs) off()
       if (timer !== undefined) clearTimeout(timer)
       timer = undefined
     },
