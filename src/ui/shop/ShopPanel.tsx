@@ -5,6 +5,7 @@ import { NeonPanel } from '../components/NeonPanel'
 import { useI18n } from '../i18n'
 import { CategoryTabs } from './CategoryTabs'
 import { EquipmentCard } from './EquipmentCard'
+import { categoriesWithNewEquipment } from './newEquipment'
 import { UpgradeCard } from './UpgradeCard'
 
 const VIEWS = ['equipment', 'upgrades'] as const
@@ -18,12 +19,7 @@ export function ShopPanel({ engine }: { engine: GameEngine }) {
     const info = infos[i]
     return info && def.category === category && info.status !== 'hidden' ? [{ def, info }] : []
   })
-  const available = new Set<EquipmentCategory>(
-    engine.catalog.equipment.flatMap((def, i) => {
-      const info = infos[i]
-      return info && info.status === 'unlocked' && info.modes.x1.quantity > 0 ? [def.category] : []
-    }),
-  )
+  const available = categoriesWithNewEquipment(engine.catalog.equipment, infos)
   const upgrades = engine.upgradeList().flatMap((info) => {
     const def = engine.catalog.upgrades.find((u) => u.id === info.id)
     return def ? [{ def, info }] : []

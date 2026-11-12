@@ -18,7 +18,7 @@ export const uiPtBR = {
   'save.corrupt.newGame': 'Iniciar novo jogo',
   'shop.title': 'Loja',
   'shop.category': 'Categoria',
-  'shop.category.available': 'tem equipamento disponível',
+  'shop.category.available': 'novo equipamento disponível',
   'shop.empty': 'Nada disponível nesta categoria ainda.',
   'shop.locked': 'Desbloqueio: {requirement}',
   'shop.req.bytesEarned': 'gere {amount} nesta rodada',

@@ -22,7 +22,7 @@ const CATEGORY_ICON: Record<EquipmentCategory, string> = {
 interface Props {
   value: EquipmentCategory;
   onChange: (c: EquipmentCategory) => void;
-  /** Categorias com ao menos um equipamento possível de comprar. */
+  /** Categorias com ao menos um equipamento novo (ainda não comprado) possível de comprar. */
   available: ReadonlySet<EquipmentCategory>;
 }
 
