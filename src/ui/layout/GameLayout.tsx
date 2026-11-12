@@ -33,7 +33,7 @@ export function GameLayout({ engine, onReset, left, center, right }: Props) {
       <ResourceBar engine={engine} onReset={onReset} />
       <main className="flex min-h-0 flex-1 lg:grid lg:grid-cols-[18rem_minmax(0,1fr)_22rem]">
         <div className={`${show('agents')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-r lg:border-neon-cyan/10`}>{left}</div>
-        <div className={`${show('core')} min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-6 overflow-y-auto p-3`}>{center}</div>
+        <div className={`${show('core')} min-h-0 min-w-0 flex-1 flex-col items-center justify-center-safe gap-6 overflow-y-auto p-3`}>{center}</div>
         <div className={`${show('shop')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-l lg:border-neon-cyan/10`}>{right}</div>
       </main>
       <nav className="flex shrink-0 border-t border-neon-cyan/20 bg-panel lg:hidden" aria-label={t('tab.label')}>

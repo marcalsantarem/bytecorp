@@ -50,7 +50,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-052 | Equipamentos de Quantum Facility e Mega Corporation e revisão do limite de 1e18 (salto de 64,6 min para 85,5 h na simulação) | AG07 | T-023, T-024 | a fazer |
 | T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | feita (BRF-024); botões corrigidos após defeito de custo cortado em 1024 px |
 | T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | a fazer |
-| T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018, T-027 | a fazer |
+| T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018 | feita (BRF-031); corrigido o corte do topo na coluna central |
+| T-055 | Compactar a cena do núcleo em telas baixas (1280x720): hoje o botão de clique fica 15 px cortado e a legenda do valor por clique exige rolagem | AG04 | T-028 | a fazer |
 | T-053 | `GameSession.reset()`: reiniciar o jogo e o save por completo, sem apagar as configurações | AG03 | — | feita (BRF-025) |
 | T-054 | Botão Reset no lugar do seletor de idioma, idioma fixo em pt-BR (D-11) | AG04 | T-053 | feita (BRF-026) |
 | T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |

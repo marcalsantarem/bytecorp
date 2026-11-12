@@ -6,6 +6,7 @@ import type { KeyValueStorage } from '../core/save/storage'
 import { useI18n } from './i18n'
 import { ClickButton } from './core/ClickButton'
 import { CoreScene } from './core/CoreScene'
+import { StageIndicator } from './core/StageIndicator'
 import { GameLayout } from './layout/GameLayout'
 import { AgentsPanel } from './agents/AgentsPanel'
 import { StatsPanel } from './layout/Panels'
@@ -81,6 +82,7 @@ function GameScreen({ engine, onReset }: { engine: GameEngine; onReset: () => Pr
       right={<ShopPanel engine={engine} />}
       center={
         <>
+          <StageIndicator engine={engine} />
           <CoreScene engine={engine} />
           <ClickButton engine={engine} />
         </>
