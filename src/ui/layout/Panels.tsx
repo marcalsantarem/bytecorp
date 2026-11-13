@@ -15,16 +15,6 @@ export function Panel({ title, children }: { title: string; children: ReactNode 
   )
 }
 
-// Lugar reservado para os agentes.
-export function AgentsPanel() {
-  const { t } = useI18n()
-  return (
-    <Panel title={t('agents.title')}>
-      <p className="text-sm text-white/50">{t('agents.placeholder')}</p>
-    </Panel>
-  )
-}
-
 export function StatsPanel({ engine }: { engine: GameEngine }) {
   const { t, locale } = useI18n()
   const { stats } = engine.state

@@ -16,6 +16,7 @@ const TABS: { id: Tab; label: MessageKey; icon: ReactNode }[] = [
 
 interface Props {
   engine: GameEngine
+  onReset: () => Promise<void>
   left: ReactNode
   center: ReactNode
   right: ReactNode
@@ -23,16 +24,16 @@ interface Props {
 
 // Casca: desktop em três colunas (lg+); mobile mostra uma coluna por vez, com abas inferiores.
 // `left` = estatísticas e agentes (aba "agentes"); `center` = núcleo; `right` = loja.
-export function GameLayout({ engine, left, center, right }: Props) {
+export function GameLayout({ engine, onReset, left, center, right }: Props) {
   const { t } = useI18n()
   const [tab, setTab] = useState<Tab>('core')
   const show = (own: Tab) => (tab === own ? 'flex' : 'hidden') + ' lg:flex'
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
-      <ResourceBar engine={engine} />
+      <ResourceBar engine={engine} onReset={onReset} />
       <main className="flex min-h-0 flex-1 lg:grid lg:grid-cols-[18rem_minmax(0,1fr)_22rem]">
         <div className={`${show('agents')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-r lg:border-neon-cyan/10`}>{left}</div>
-        <div className={`${show('core')} min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-6 overflow-y-auto p-3`}>{center}</div>
+        <div className={`${show('core')} min-h-0 min-w-0 flex-1 flex-col items-center justify-center-safe gap-6 overflow-y-auto p-3`}>{center}</div>
         <div className={`${show('shop')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-l lg:border-neon-cyan/10`}>{right}</div>
       </main>
       <nav className="flex shrink-0 border-t border-neon-cyan/20 bg-panel lg:hidden" aria-label={t('tab.label')}>

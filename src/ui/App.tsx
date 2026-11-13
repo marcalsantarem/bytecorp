@@ -6,8 +6,10 @@ import type { KeyValueStorage } from '../core/save/storage'
 import { useI18n } from './i18n'
 import { ClickButton } from './core/ClickButton'
 import { CoreScene } from './core/CoreScene'
+import { StageIndicator } from './core/StageIndicator'
 import { GameLayout } from './layout/GameLayout'
-import { AgentsPanel, StatsPanel } from './layout/Panels'
+import { AgentsPanel } from './agents/AgentsPanel'
+import { StatsPanel } from './layout/Panels'
 import { ShopPanel } from './shop/ShopPanel'
 import { useEngineRevision } from './useEngine'
 
@@ -62,23 +64,25 @@ export function App({ storage }: { storage: KeyValueStorage }) {
     )
   }
 
-  return <GameScreen engine={phase.session.engine} />
+  return <GameScreen engine={phase.session.engine} onReset={phase.session.reset} />
 }
 
-function GameScreen({ engine }: { engine: GameEngine }) {
+function GameScreen({ engine, onReset }: { engine: GameEngine; onReset: () => Promise<void> }) {
   useEngineRevision(engine)
   return (
     <GameLayout
       engine={engine}
+      onReset={onReset}
       left={
         <>
           <StatsPanel engine={engine} />
-          <AgentsPanel />
+          <AgentsPanel engine={engine} />
         </>
       }
       right={<ShopPanel engine={engine} />}
       center={
         <>
+          <StageIndicator engine={engine} />
           <CoreScene engine={engine} />
           <ClickButton engine={engine} />
         </>

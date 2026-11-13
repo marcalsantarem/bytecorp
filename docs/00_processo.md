@@ -28,7 +28,7 @@ Em caso de conflito, vale nesta ordem: usuário, Bíblia (`bytecorp.md`), [decis
 2. O AG00 escreve o briefing em `docs/briefings/BRF-xxx_AGxx_<entrega>.md` (modelo em [briefings/_modelo.md](briefings/_modelo.md)), com critério de pronto testável. Nenhum agente trabalha sem briefing.
 3. O especialista entrega no formato: **entregue, validação, suposições, não testado, próximo passo**.
 4. O AG00 valida (lê o diff, roda lint, typecheck, testes e build) antes de seguir.
-5. Ao fechar a etapa, o AG00 commita e envia, e publica o relatório de fechamento: concluídas (ID e descrição) e próximas (ID, descrição e agente), sempre do marco atual.
+5. Ao fechar a etapa, o AG00 commita e envia, e publica o relatório de fechamento no formato aprovado pelo usuário: sem tabelas, agrupado por marco (título em negrito com id, versão e nome), uma linha por task com ✅ (feita) ou ⬜ (a fazer), id, descrição curta e responsável `AGxx (nome)`; marco atual inteiro e, quando fizer sentido, o próximo.
 
 **O AG00 só dispara tasks com autorização do usuário.** Escrever briefing e preparar o backlog pode; delegar a um especialista, não. A autorização vale para as tasks que o usuário nomear.
 

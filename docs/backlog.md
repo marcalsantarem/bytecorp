@@ -21,7 +21,7 @@ Mantido pelo AG00. Status: a fazer, pronta para briefing, em andamento, em valid
 | T-049 | Ajustes no mobile: alvos de toque de 44 px, truncamentos e nome acessível do seletor de idioma (D2, D4, D5) | AG04 | T-048 | feita (BRF-016); conferida pelo AG00 em 375 px com Bytes grandes |
 | T-050 | Rótulos das categorias de equipamento em pt-BR (D1) | AG07 | A-05 (resolvida) | feita (BRF-017) |
 | T-016 | Versão 0.2.0 no `package.json` e no `package-lock.json` | AG03 | T-049, T-050 | feita (BRF-018) |
-| T-017 | PR `dev` → `main` e tag `v0.2.0` | AG00 | T-016, pedido do usuário | em andamento: PR a abrir pelo usuário; tag após o merge |
+| T-017 | PR `dev` → `main` e tag `v0.2.0` | AG00 | T-016, pedido do usuário | feita (PR #2, tag v0.2.0) |
 
 Ondas possíveis em paralelo (arquivos diferentes):
 
@@ -38,21 +38,35 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 
 | ID | Task | Dono | Depende de | Status |
 |---|---|---|---|---|
-| T-018 | Estágios corporativos: avanço de `run.stage` por requisito, evento `stageChanged` | AG01 | — | a fazer |
-| T-019 | Agentes (regras): contratação individual, custo com desconto, nível coletivo uma unidade por vez, eventos | AG01 | T-018 | a fazer |
-| T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | a fazer |
-| T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020, A-01 | bloqueada |
-| T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | a fazer |
-| T-023 | Catálogo de agentes (4 a 5) com textos nos dois idiomas | AG07 | T-019 | a fazer |
-| T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | a fazer |
-| T-025 | Catálogo: equipamentos extras por estágio e revisão dos limites dos estágios | AG07 | T-018, T-024 | a fazer |
-| T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | a fazer |
-| T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | a fazer |
-| T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018, T-027 | a fazer |
-| T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |
-| T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | a fazer |
-| T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva | AG07 | T-021, T-022, T-025, T-030 | a fazer |
-| T-032 | Versão 0.3.0 | AG03 | T-031 | a fazer |
+| T-018 | Estágios corporativos: avanço de `run.stage` por requisito, evento `stageChanged` | AG01 | — | feita (BRF-019) |
+| T-019 | Agentes (regras): contratação individual, custo com desconto, nível coletivo uma unidade por vez, eventos | AG01 | T-018 | feita (BRF-020) |
+| T-020 | Melhorias comuns (regras): desbloqueio por Bytes da execução, compra única, eventos | AG01 | T-019 | feita (BRF-027) |
+| T-021 | Fórmula global de produção: ligar bônus de agentes e melhorias, rastrear origem para estatísticas | AG01 | T-020 (fórmula em D-10) | feita (BRF-028) |
+| T-022 | Save: revisar o formato e migrar se mudar (`SAVE_VERSION` 2), salvar após contratar, evoluir e comprar | AG03 | T-019, T-020 | feita (BRF-030) |
+| T-023 | Catálogo de agentes (4 a 5) com textos nos dois idiomas | AG07 | T-019 | feita (BRF-022) |
+| T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | feita (BRF-029); ícones novos listados em `docs/AG07/melhorias-m2.md` para a T-027 |
+| T-025 | Catálogo: equipamentos extras por estágio e revisão dos limites dos estágios | AG07 | T-018 (T-024 dispensada por ordem do usuário; revisar depois) | feita (BRF-021) |
+| T-051 | Acrescentar ao mapa de ícones os 10 ícones dos equipamentos novos (`radio-tower`, `globe`, `brain-circuit`, `server-cog`, `database-zap`, `layers`, `thermometer-snowflake`, `sun`, `atom`, `orbit`); hoje cai no ícone padrão | AG04 | T-025 | feita (BRF-023); inclui os 3 ícones dos agentes |
+| T-052 | Equipamentos de Quantum Facility e Mega Corporation e revisão do limite de 1e18 (salto de 64,6 min para 85,5 h na simulação) | AG07 | T-023, T-024 | feita (BRF-039) |
+| T-059 | Melhorias comuns para Mega Corporation (as 12 atuais vão só até Quantum Facility): desbloqueios e efeitos de produção e clique para o último estágio | AG07 | T-052 | feita (BRF-041) |
+| T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | feita (BRF-024); botões corrigidos após defeito de custo cortado em 1024 px |
+| T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | feita (BRF-033) |
+| T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018 | feita (BRF-031); corrigido o corte do topo na coluna central |
+| T-055 | Compactar a cena do núcleo em telas baixas (1280x720): hoje o botão de clique fica 15 px cortado e a legenda do valor por clique exige rolagem | AG04 | T-028 | feita (BRF-032) |
+| T-053 | `GameSession.reset()`: reiniciar o jogo e o save por completo, sem apagar as configurações | AG03 | — | feita (BRF-025) |
+| T-054 | Botão Reset no lugar do seletor de idioma, idioma fixo em pt-BR (D-11) | AG04 | T-053 | feita (BRF-026) |
+| T-056 | PWA: manifesto, ícone `>_` verde sobre preto, service worker com cache offline do shell, nome de atalho "ByteCorp Idle" (D-12) | AG03 | — | feita (BRF-034); teste de instalação em aparelho real pendente, com o usuário |
+| T-057 | Categorias de equipamento em abas no mobile, com indicador de que há equipamento comprável | AG04 | — | feita (BRF-035 e BRF-036); no mobile as 5 abas ficam visíveis só com ícone, com o nome da ativa abaixo |
+| T-058 | Ponto da aba de categoria só para equipamento novo (desbloqueado, comprável e sem nenhuma unidade comprada) | AG04 | T-057 | feita (BRF-037) |
+| T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | feita (BRF-038) |
+| T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | feita (BRF-040); 29 testes de componentes, nenhum defeito achado |
+| T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva; escreve o roteiro manual do M2, sem executá-lo | AG07 | T-021, T-022, T-025, T-030 | feita (BRF-042): 32 testes de integração e simulação; achou a curva colapsando (Mega Corporation em 18,7 min contra 108 min sem bônus), em decisão A-08 |
+| T-061 | Tetos de desconto de custo e de chance de crítico no núcleo (50 pp e 25%, D-13), configuráveis, com testes | AG01 | D-13 | feita (BRF-043) |
+| T-062 | Reequilibrar o catálogo (bônus dos agentes, custos, limites de estágio) para a curva-alvo de cerca de 75 min (D-13), validada contra o motor real | AG07 | D-13, T-061 | feita (BRF-044); curva medida em 74,0 min contra o motor real |
+| T-063 | Medir o peso do clique na curva (0 a 10 cliques por segundo, fatia da renda dos cliques) e propor ajustes se a run encurtar demais (A-09) | AG07 | T-062 | feita (BRF-045): a run vai de 109,8 min (0 cliques/s) a 42,2 min (10 cliques/s); propostas P1 a P5 medidas em `docs/AG07/clique-m2.md` |
+| T-064 | Aplicar o ajuste de peso do clique escolhido pelo usuário (A-09) em `upgrades.ts`, medir de novo os ritmos e atualizar o teste de curva | AG07 | D-14 | feita (BRF-046); clique x0,1 e produção das melhorias x2,1; run de 74,2 min a 1 clique/s e 51,5 min a 10 |
+| T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | feita (BRF-047): 22 de 24 passos passaram nas duas larguras, os passos 21 e 22 (PWA) parciais por limite do navegador embutido; nenhum defeito de lógica; D1 a D4 de baixa gravidade em `docs/AG07/resultado-qa-m2.md` |
+| T-032 | Versão 0.3.0 | AG03 | T-031 (T-060 roda ao mesmo tempo, por ordem do usuário) | em andamento (BRF-048) |
 | T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
 
 ### M3 Prestígio (v0.4.0), fecha a primeira versão jogável
@@ -83,6 +97,12 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 
 | Item | Marco | Dono provável |
 |---|---|---|
-| Testes de componentes React (exige ambiente DOM no Vitest) | M2 | AG03 e AG04 |
+| QA do M2 (D1): o agente revelado mostra só nome e requisito, sem a especialidade (`src/ui/agents/AgentCard.tsx`, ramo não desbloqueado); a Bíblia 7.6 permite exibir "com suas informações"; decidir se é intencional | M3 | AG04 |
+| QA do M2 (D2): em 375x600 a legenda "+N B por clique" fica sob a barra de abas e só aparece rolando a coluna | M3 | AG04 |
+| QA do M2 (D4): descrições de `haptic_gloves` e `quantum_gloves` dizem "+30.000 Bytes" e "+3 bilhões" e o benefício formatado diz "+30 kB" e "+3 GB"; alinhar os textos | M3 | AG07 |
+| QA do M2 (D3): a janela de 4 s da confirmação do Reset é curta com latência alta; observação | M3 | AG04 |
+| Teste lento `src/core/economy/economy.test.ts` (cerca de 2 s) falhou uma vez por timeout sob carga, com a suíte rodando junto do teste de curva; dar folga de timeout ou reduzir os casos | M3 | AG01 |
+| `useEngineRevision` só re-renderiza em `tick`, `click` e `stateReplaced`; assinar também `purchase`, `agentHired`, `agentLeveled` e `upgradePurchased` para a tela atualizar na hora, sem depender do relógio | M3 | AG04 |
+| A altura da cena do núcleo usa a constante `25rem` para o resto da coluna; se o indicador de estágio crescer (texto do próximo estágio em mais linhas), o botão de clique volta a cortar em telas baixas | M6 | AG04 |
 | Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |
 | Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |

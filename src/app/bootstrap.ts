@@ -5,6 +5,7 @@ import { AUTOSAVE_INTERVAL_MS, SaveManager } from '../core/save/saveManager'
 import type { KeyValueStorage } from '../core/save/storage'
 import { createInitialState } from '../core/state'
 import { createPersistence } from './purchaseSave'
+import { resetGame } from './resetGame'
 
 export type BootResult =
   | { kind: 'ready'; session: GameSession }
@@ -13,6 +14,8 @@ export type BootResult =
 export interface GameSession {
   engine: GameEngine
   stop: () => void
+  // Reinicia o jogo e o save por completo (configurações ficam intactas).
+  reset: () => Promise<void>
 }
 
 // Liga núcleo, relógio e salvamento. Único ponto que conhece as três peças.
@@ -38,7 +41,7 @@ export async function boot(storage: KeyValueStorage): Promise<BootResult> {
 function start(engine: GameEngine, saves: SaveManager): GameSession {
   const stopClock = startClock(engine, browserClock)
   const persistence = createPersistence(engine, saves)
-  const save = persistence.saveNow
+  const save = () => void persistence.saveNow()
   const autosave = setInterval(save, AUTOSAVE_INTERVAL_MS)
   const onHide = () => {
     if (document.visibilityState === 'hidden') save()
@@ -48,6 +51,7 @@ function start(engine: GameEngine, saves: SaveManager): GameSession {
 
   return {
     engine,
+    reset: () => resetGame(engine, persistence),
     stop: () => {
       stopClock()
       clearInterval(autosave)

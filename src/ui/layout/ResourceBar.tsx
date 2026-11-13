@@ -1,13 +1,12 @@
-import { Activity, Cpu, Database, Languages } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { Activity, Cpu, Database, RotateCcw } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { GameEngine } from '../../core/engine'
-import { formatBytes, formatBytesPerSecond, formatCount, type Locale } from '../../core/format'
-import { LOCALES } from '../../i18n'
+import { formatBytes, formatBytesPerSecond, formatCount } from '../../core/format'
 import { useI18n } from '../i18n'
 
 // Cabeçalho de recursos: Bytes, B/s e Quantum Cores sempre visíveis (bíblia 15.1).
-export function ResourceBar({ engine }: { engine: GameEngine }) {
-  const { t, locale, setLocale } = useI18n()
+export function ResourceBar({ engine, onReset }: { engine: GameEngine; onReset: () => Promise<void> }) {
+  const { t, locale } = useI18n()
   const { run, meta } = engine.state
   return (
     <header className="z-10 flex shrink-0 items-center justify-between gap-2 border-b border-neon-cyan/20 bg-panel/90 px-3 py-2 backdrop-blur lg:px-4 lg:py-3">
@@ -19,21 +18,55 @@ export function ResourceBar({ engine }: { engine: GameEngine }) {
         <Stat icon={<Database className="size-4 shrink-0" aria-hidden />} label={t('hud.bytes')} value={formatBytes(run.bytes, locale)} />
         <Stat icon={<Activity className="size-4 shrink-0" aria-hidden />} label={t('hud.production')} value={formatBytesPerSecond(engine.production.total, locale)} />
         <Stat icon={<Cpu className="size-4 shrink-0" aria-hidden />} label={t('hud.quantumCores')} value={formatCount(meta.quantumCores, locale)} accent />
-        <label className="relative flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1 rounded border border-neon-cyan/20 px-1.5 py-1 text-white/70 lg:min-h-0 lg:min-w-0 lg:justify-start">
-          <Languages className="size-4" aria-hidden />
-          <select
-            aria-label={t('settings.language')}
-            className="absolute inset-0 w-full cursor-pointer opacity-0 lg:static lg:w-auto lg:bg-transparent lg:opacity-100 lg:text-white lg:outline-none" value={locale} onChange={(e) => setLocale(e.target.value as Locale)}
-          >
-            {LOCALES.map((l) => (
-              <option key={l} value={l} className="bg-panel">
-                {t(`language.${l}`)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <ResetButton onReset={onReset} />
       </div>
     </header>
+  )
+}
+
+const CONFIRM_TIMEOUT_MS = 4000
+
+// Ferramenta de teste: reinicia o jogo por completo, com confirmação em dois passos.
+function ResetButton({ onReset }: { onReset: () => Promise<void> }) {
+  const { t } = useI18n()
+  const [confirming, setConfirming] = useState(false)
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    if (!confirming) return
+    const id = setTimeout(() => setConfirming(false), CONFIRM_TIMEOUT_MS)
+    return () => clearTimeout(id)
+  }, [confirming])
+
+  const click = () => {
+    if (busy) return
+    if (!confirming) {
+      setConfirming(true)
+      return
+    }
+    setConfirming(false)
+    setBusy(true)
+    onReset()
+      .catch((error: unknown) => console.error('Falha ao reiniciar o jogo', error))
+      .finally(() => setBusy(false))
+  }
+
+  return (
+    <button
+      type="button"
+      aria-label={t(confirming ? 'reset.confirmLabel' : 'reset.label')}
+      disabled={busy}
+      onClick={click}
+      onBlur={() => setConfirming(false)}
+      className={`flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1 rounded border px-1.5 py-1 text-xs lg:min-h-0 lg:min-w-0 ${
+        confirming
+          ? 'border-neon-magenta/60 bg-neon-magenta/20 text-neon-magenta'
+          : 'border-white/10 text-white/40 hover:border-neon-cyan/30 hover:text-white/70'
+      }`}
+    >
+      <RotateCcw className="size-4 shrink-0" aria-hidden />
+      <span className={confirming ? 'text-[10px] leading-tight lg:text-xs' : 'hidden lg:inline'}>{t(confirming ? 'reset.confirm' : 'reset.button')}</span>
+    </button>
   )
 }
 

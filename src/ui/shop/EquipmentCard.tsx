@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import type { EquipmentDef, Requirement } from '../../core/catalog'
+import type { EquipmentDef } from '../../core/catalog'
 import type { BuyMode } from '../../core/economy'
 import type { EquipmentInfo, GameEngine } from '../../core/engine'
 import { formatBytes, formatBytesPerSecond, formatCount } from '../../core/format'
-import { isMessageKey, type MessageKey } from '../../i18n'
+import type { MessageKey } from '../../i18n'
 import { EquipmentIcon } from '../components/EquipmentIcon'
+import { useRequirementText } from '../components/useRequirementText'
 import { useI18n } from '../i18n'
 
 const MODES: { mode: BuyMode; label: MessageKey }[] = [
@@ -19,23 +20,7 @@ export function EquipmentCard({ engine, def, info }: { engine: GameEngine; def: 
   const { t, locale } = useI18n()
   const [mode, setMode] = useState<BuyMode>('x1')
 
-  const requirementText = (req: Requirement): string => {
-    switch (req.kind) {
-      case 'always':
-        return ''
-      case 'bytesEarnedInRun':
-        return t('shop.req.bytesEarned', { amount: formatBytes(req.amount, locale) })
-      case 'stageReached':
-        return t('shop.req.stage', { stage: t(`stage.${req.stage}`) })
-      case 'equipmentOwned': {
-        const key = engine.catalog.equipment.find((e) => e.id === req.equipment)?.nameKey
-        return t('shop.req.equipmentOwned', {
-          count: formatCount(req.count, locale),
-          name: key && isMessageKey(key) ? t(key) : req.equipment,
-        })
-      }
-    }
-  }
+  const requirementText = useRequirementText(engine)
 
   if (info.status !== 'unlocked') {
     return (

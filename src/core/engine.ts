@@ -1,8 +1,38 @@
-import type { Catalog } from './catalog/types'
+import type { Catalog, Effect, StageDef, UpgradeDef } from './catalog/types'
 import { D, type Decimal } from './decimal'
-import { bulkCost, equipmentStatus, purchasableQuantity, unitCost, type BuyMode, type EquipmentStatus } from './economy'
+import {
+  advanceStageIndex,
+  agentBonus,
+  agentHireCost,
+  agentLevelCost,
+  agentStatus,
+  bulkCost,
+  equipmentStatus,
+  orderedStages,
+  purchasableQuantity,
+  unitCost,
+  upgradeStatus,
+  type AgentStatus,
+  type BuyMode,
+  type EquipmentStatus,
+  type UpgradeStatus,
+} from './economy'
 import { EventBus, type GameEvents } from './events'
-import { computeClickValue, computeProduction, costDiscountPercent, globalMultiplier, type ProductionBreakdown } from './production'
+import {
+  computeClickValue,
+  computeProduction,
+  costDiscountInfo,
+  costDiscountPercent,
+  criticalChance,
+  criticalChanceInfo,
+  DEFAULT_MAX_COST_DISCOUNT_PERCENT,
+  DEFAULT_MAX_CRITICAL_CHANCE,
+  type CappedChance,
+  type CappedValue,
+  criticalMultiplier,
+  globalMultiplier,
+  type ProductionBreakdown,
+} from './production'
 import { createInitialState, type GameState } from './state'
 
 export interface EngineConfig {
@@ -14,6 +44,9 @@ export interface EngineConfig {
   // (GDD 5.4 e 5.5). Valores provisórios (A-04).
   criticalChance: number
   criticalMultiplier: number
+  // Tetos da D-13: desconto de custo acumulado (pontos percentuais) e chance de crítico (0 a 1).
+  maxCostDiscountPercent: number
+  maxCriticalChance: number
   // Fonte de aleatoriedade em [0, 1). Injetável para testes.
   random: () => number
 }
@@ -36,11 +69,46 @@ export interface EquipmentInfo {
   unitProduction: Decimal
 }
 
+export interface AgentInfo {
+  id: string
+  status: AgentStatus
+  count: number
+  // 0 enquanto não há agente contratado.
+  level: number
+  // Custo da próxima contratação, já com desconto.
+  hireCost: Decimal
+  // Custo de evoluir o nível coletivo; null sem agente contratado.
+  levelCost: Decimal | null
+  // Bônus atuais por efeito (primário primeiro), conforme D-10; valores 0 sem agentes.
+  bonus: Effect[]
+  // Fração de 0 a 1 do saldo em relação ao custo de evolução; null sem agente contratado.
+  levelProgress: number | null
+}
+
+export interface UpgradeInfo {
+  id: string
+  status: UpgradeStatus
+  // Custo fixo e inteiro; descontos não se aplicam (GDD 4.6).
+  cost: number
+  effect: Effect
+  // Requisito de desbloqueio (Bytes gerados na execução), exibido quando locked.
+  unlockBytesEarnedInRun: number
+}
+
+export interface StageInfo {
+  // undefined só se o estágio do estado não existir no catálogo.
+  current: StageDef | undefined
+  // Próximo estágio, com o requisito em `requirement`; null no último.
+  next: StageDef | null
+}
+
 export const DEFAULT_CONFIG: EngineConfig = {
   baseClick: 1,
   maxStepMs: 1000,
   criticalChance: 0.05,
   criticalMultiplier: 5,
+  maxCostDiscountPercent: DEFAULT_MAX_COST_DISCOUNT_PERCENT,
+  maxCriticalChance: DEFAULT_MAX_CRITICAL_CHANCE,
   random: Math.random,
 }
 
@@ -52,6 +120,9 @@ export class GameEngine {
   private cachedProduction: ProductionBreakdown | null = null
   // Incrementado a cada mudança; a interface usa como snapshot.
   private _revision = 0
+  // Estágios em ordem e a posição do atual, para olhar só o próximo a cada passo.
+  private readonly stages: StageDef[]
+  private stageIndex = -1
 
   constructor(
     readonly catalog: Catalog,
@@ -59,6 +130,8 @@ export class GameEngine {
     readonly config: EngineConfig = DEFAULT_CONFIG,
   ) {
     this._state = state
+    this.stages = orderedStages(catalog)
+    this.syncStage()
   }
 
   get state(): GameState {
@@ -78,10 +151,26 @@ export class GameEngine {
     return computeClickValue(this._state, this.catalog, this.config.baseClick)
   }
 
+  // Desconto de custo bruto e efetivo (depois do teto), para a interface e as estatísticas.
+  get costDiscount(): CappedValue {
+    return costDiscountInfo(this._state, this.catalog, this.config.maxCostDiscountPercent)
+  }
+
+  // Chance de crítico bruta e efetiva (depois do teto).
+  get criticalChanceInfo(): CappedChance {
+    return criticalChanceInfo(this._state, this.catalog, this.config.criticalChance, this.config.maxCriticalChance)
+  }
+
   replaceState(state: GameState): void {
     this._state = state
+    this.syncStage()
     this.invalidate()
     this.events.emit('stateReplaced', {})
+  }
+
+  // Estágio atual e o próximo, para a interface.
+  get stageInfo(): StageInfo {
+    return { current: this.stages[this.stageIndex], next: this.stages[this.stageIndex + 1] ?? null }
   }
 
   // Avança o tempo de jogo. O resultado depende só do total de ms, não de
@@ -101,15 +190,18 @@ export class GameEngine {
   // Um clique (GDD 5.3 a 5.5): sem limite nem combo. O crítico multiplica o
   // ganho final, já com acréscimos e percentuais; clickValue segue sem crítico.
   click(): Decimal {
-    const { criticalChance, criticalMultiplier, random } = this.config
-    const critical = random() < criticalChance
+    const { random } = this.config
+    const critical = random() < criticalChance(this._state, this.catalog, this.config.criticalChance, this.config.maxCriticalChance)
     const value = this.clickValue
-    const gained = critical ? value.mul(criticalMultiplier) : value
+    const gained = critical
+      ? value.mul(criticalMultiplier(this._state, this.catalog, this.config.criticalMultiplier))
+      : value
     this.earn(gained)
     const { stats } = this._state
     stats.clicks++
     if (critical) stats.criticalClicks++
     stats.bytesFromClicks = stats.bytesFromClicks.add(gained)
+    this.checkStage()
     this._revision++
     this.events.emit('click', { gained, critical })
     return gained
@@ -122,7 +214,7 @@ export class GameEngine {
     if (!def || equipmentStatus(def, this._state, this.catalog) !== 'unlocked') return 0
     const { run } = this._state
     const owned = run.equipment[id] ?? 0
-    const discount = costDiscountPercent(this._state, this.catalog)
+    const discount = costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent)
     const quantity = purchasableQuantity(mode, def.baseCost, def.costGrowth, owned, run.bytes, discount)
     if (quantity <= 0) return 0
     const cost = bulkCost(def.baseCost, def.costGrowth, owned, quantity, discount)
@@ -130,6 +222,7 @@ export class GameEngine {
     run.equipment[id] = owned + quantity
     this.invalidate()
     this.events.emit('purchase', { id, quantity, cost })
+    this.checkStage()
     return quantity
   }
 
@@ -138,7 +231,7 @@ export class GameEngine {
     if (!def) return undefined
     const { run } = this._state
     const owned = run.equipment[id] ?? 0
-    const discount = costDiscountPercent(this._state, this.catalog)
+    const discount = costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent)
     const status = equipmentStatus(def, this._state, this.catalog)
     const mode = (m: BuyMode, want: number): EquipmentModeInfo => {
       const q =
@@ -160,6 +253,101 @@ export class GameEngine {
     return this.catalog.equipment.map((e) => this.equipmentInfo(e.id)!)
   }
 
+  // Contratação individual (GDD 7.2). Devolve false se bloqueado, inexistente ou sem saldo.
+  // O nível coletivo começa em 1 na primeira contratação.
+  hireAgent(id: string): boolean {
+    const def = this.catalog.agents.find((a) => a.id === id)
+    if (!def || agentStatus(def, this._state, this.catalog) !== 'unlocked') return false
+    const { run } = this._state
+    const entry = run.agents[id] ?? { count: 0, level: 0 }
+    const cost = agentHireCost(def, entry.count, costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent))
+    if (run.bytes.lt(cost)) return false
+    run.bytes = run.bytes.sub(cost)
+    run.agents[id] = { count: entry.count + 1, level: Math.max(1, entry.level) }
+    this.invalidate()
+    this.events.emit('agentHired', { id, count: entry.count + 1, cost })
+    this.checkStage()
+    return true
+  }
+
+  // Evolui o nível coletivo em um (GDD 7.4). Exige ao menos um agente do tipo e saldo.
+  levelUpAgent(id: string): boolean {
+    const def = this.catalog.agents.find((a) => a.id === id)
+    if (!def || agentStatus(def, this._state, this.catalog) !== 'unlocked') return false
+    const { run } = this._state
+    const entry = run.agents[id]
+    if (!entry || entry.count < 1) return false
+    const cost = agentLevelCost(def, entry.level, costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent))
+    if (run.bytes.lt(cost)) return false
+    run.bytes = run.bytes.sub(cost)
+    entry.level++
+    this.invalidate()
+    this.events.emit('agentLeveled', { id, level: entry.level, cost })
+    return true
+  }
+
+  agentInfo(id: string): AgentInfo | undefined {
+    const def = this.catalog.agents.find((a) => a.id === id)
+    if (!def) return undefined
+    const { run } = this._state
+    const count = run.agents[id]?.count ?? 0
+    const level = count > 0 ? (run.agents[id]?.level ?? 1) : 0
+    const discount = costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent)
+    const levelCost = count > 0 ? agentLevelCost(def, level, discount) : null
+    return {
+      id,
+      status: agentStatus(def, this._state, this.catalog),
+      count,
+      level,
+      hireCost: agentHireCost(def, count, discount),
+      levelCost,
+      bonus: agentBonus(def, count, level),
+      levelProgress: levelCost ? Math.min(1, run.bytes.div(levelCost).toNumber()) : null,
+    }
+  }
+
+  // Lista única ordenada pelo próximo custo de contratação, do menor ao maior
+  // (empate: ordem do catálogo, pois a ordenação é estável).
+  agentList(): AgentInfo[] {
+    return this.catalog.agents
+      .map((a) => this.agentInfo(a.id)!)
+      .sort((a, b) => a.hireCost.cmp(b.hireCost))
+  }
+
+  // Compra de melhoria comum (GDD 8): única por execução, imediata, custo fixo.
+  // Devolve false se inexistente, bloqueada, já comprada ou sem saldo.
+  buyUpgrade(id: string): boolean {
+    const def = this.catalog.upgrades.find((u) => u.id === id)
+    if (!def || upgradeStatus(def, this._state) !== 'available') return false
+    const { run } = this._state
+    if (run.bytes.lt(def.cost)) return false
+    run.bytes = run.bytes.sub(def.cost)
+    run.upgrades.push(id)
+    this.invalidate()
+    this.events.emit('upgradePurchased', { id, cost: def.cost })
+    return true
+  }
+
+  upgradeInfo(id: string): UpgradeInfo | undefined {
+    const def = this.catalog.upgrades.find((u) => u.id === id)
+    return def && this.toUpgradeInfo(def)
+  }
+
+  // Lista única ordenada por custo crescente (empate: ordem do catálogo).
+  upgradeList(): UpgradeInfo[] {
+    return this.catalog.upgrades.map((u) => this.toUpgradeInfo(u)).sort((a, b) => a.cost - b.cost)
+  }
+
+  private toUpgradeInfo(def: UpgradeDef): UpgradeInfo {
+    return {
+      id: def.id,
+      status: upgradeStatus(def, this._state),
+      cost: def.cost,
+      effect: def.effect,
+      unlockBytesEarnedInRun: def.unlockBytesEarnedInRun,
+    }
+  }
+
   // Chamado por todo sistema que altere algo que afete a produção.
   invalidate(): void {
     this.cachedProduction = null
@@ -173,6 +361,24 @@ export class GameEngine {
       this._state.stats.bytesFromProduction = this._state.stats.bytesFromProduction.add(gained)
     }
     this._state.stats.playTimeMs += ms
+    this.checkStage()
+  }
+
+  // Ao carregar um estado: localiza o estágio salvo e corrige em silêncio o que
+  // estiver abaixo do que os requisitos já garantem. Estágio fora do catálogo
+  // fica como está e não avança.
+  private syncStage(): void {
+    const index = this.stages.findIndex((s) => s.id === this._state.run.stage)
+    this.stageIndex = index < 0 ? -1 : advanceStageIndex(this.stages, index, this._state, this.catalog)
+  }
+
+  // Avança enquanto o próximo estágio estiver atingido; um evento por estágio.
+  private checkStage(): void {
+    if (this.stageIndex < 0) return
+    this.stageIndex = advanceStageIndex(this.stages, this.stageIndex, this._state, this.catalog, (from, to) => {
+      this.invalidate()
+      this.events.emit('stageChanged', { from: from.id, to: to.id })
+    })
   }
 
   private earn(amount: Decimal): void {
