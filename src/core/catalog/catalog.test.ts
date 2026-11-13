@@ -68,8 +68,8 @@ describe('catálogo', () => {
     expect(info.bonus[0]!.value).toBeCloseTo(2 * 5 * 1.5, 9)
   })
 
-  it('tem 12 melhorias nos três tipos, ordenadas por custo e sem efeito específico de item', () => {
-    expect(CATALOG.upgrades).toHaveLength(12)
+  it('tem 20 melhorias nos três tipos, ordenadas por custo e sem efeito específico de item', () => {
+    expect(CATALOG.upgrades).toHaveLength(20)
     const costs = CATALOG.upgrades.map((u) => u.cost)
     expect(costs).toEqual([...costs].sort((a, b) => a - b))
     const unlocks = CATALOG.upgrades.map((u) => u.unlockBytesEarnedInRun)
@@ -81,7 +81,9 @@ describe('catálogo', () => {
     const kinds = new Set(CATALOG.upgrades.map((u) => u.effect.kind))
     expect([...kinds].sort()).toEqual(['clickFlat', 'clickPercent', 'costDiscountPercent', 'globalProductionPercent'])
     const discount = CATALOG.upgrades.filter((u) => u.effect.kind === 'costDiscountPercent').reduce((a, u) => a + u.effect.value, 0)
-    expect(discount).toBeLessThanOrEqual(5)
+    expect(discount).toBeLessThanOrEqual(8)
+    expect(CATALOG.upgrades.slice(0, 12).map((u) => u.id).join()).toBe('macro_script,overclock_basic,ergonomic_keys,bulk_discount,neural_macro,task_scheduler,haptic_gloves,supplier_contract,distributed_cache,corporate_volume,load_balancer,quantum_scheduler')
+    expect(CATALOG.upgrades.filter((u) => u.unlockBytesEarnedInRun >= 1e18)).not.toHaveLength(0)
   })
 
   it('o engine lista, libera e aplica melhorias do catálogo', () => {

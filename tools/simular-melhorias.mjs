@@ -9,7 +9,7 @@ const items = [...read('equipment.ts').matchAll(/id: '(\w+)',[\s\S]*?baseCost: (
   cost: num(m[2]), growth: Number(m[3]), prod: num(m[4]),
   unlock: m[5].includes('always') ? 0 : num(m[5].match(/amount: ([\d_]+)/)[1]), owned: 0,
 }))
-const ups = [...read('upgrades.ts').matchAll(/id: '(\w+)'.*?cost: ([\d_]+), effect: \{ kind: '(\w+)', value: ([\d.]+) \}, unlockBytesEarnedInRun: ([\d_]+)/g)].map((m) => ({
+const ups = [...read('upgrades.ts').matchAll(/id: '(\w+)'.*?cost: ([\d_.e]+), effect: \{ kind: '(\w+)', value: ([\d.]+) \}, unlockBytesEarnedInRun: ([\d_.e]+)/g)].map((m) => ({
   id: m[1], cost: num(m[2]), kind: m[3], value: Number(m[4]), unlock: num(m[5]), t: null, rate: 0,
 }))
 let t = 0, bytes = 0, earned = 0

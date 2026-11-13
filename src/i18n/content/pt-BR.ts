@@ -126,6 +126,22 @@ export const contentPtBR = {
   'upgrade.load_balancer.desc': 'Distribui o trabalho sem desperdício: +25% de produção global.',
   'upgrade.quantum_scheduler.name': 'Escalonador quântico',
   'upgrade.quantum_scheduler.desc': 'Executa tarefas em superposição: +40% de produção global.',
+  'upgrade.photonic_bus.name': 'Barramento fotônico',
+  'upgrade.photonic_bus.desc': 'Dados na velocidade da luz entre os racks: +50% de produção global.',
+  'upgrade.quantum_gloves.name': 'Luvas quânticas',
+  'upgrade.quantum_gloves.desc': 'Cada toque ecoa em superposição: +200% de ganho por clique.',
+  'upgrade.facility_contract.name': 'Contrato da instalação',
+  'upgrade.facility_contract.desc': 'Energia e resfriamento em atacado: -1,5% no custo de equipamentos e agentes.',
+  'upgrade.entangled_cache.name': 'Cache emaranhado',
+  'upgrade.entangled_cache.desc': 'Dados disponíveis em qualquer nó ao mesmo tempo: +60% de produção global.',
+  'upgrade.neural_overdrive.name': 'Sobrecarga neural',
+  'upgrade.neural_overdrive.desc': 'O terminal responde ao pensamento: +100.000 Bytes por clique.',
+  'upgrade.orbital_orchestrator.name': 'Orquestrador orbital',
+  'upgrade.orbital_orchestrator.desc': 'Coordena a frota em órbita: +80% de produção global.',
+  'upgrade.megacorp_charter.name': 'Carta da megacorporação',
+  'upgrade.megacorp_charter.desc': 'Escala de conglomerado: -2% no custo de equipamentos e agentes.',
+  'upgrade.singularity_core.name': 'Núcleo de singularidade',
+  'upgrade.singularity_core.desc': 'Um ciclo que alimenta a si mesmo: +120% de produção global.',
 } as const
 
 export type ContentMessageKey = keyof typeof contentPtBR

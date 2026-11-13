@@ -1,6 +1,11 @@
 import {
   Archive,
   Brain,
+  Cable,
+  Crown,
+  Handshake,
+  Landmark,
+  Workflow,
   Gem,
   Infinity as InfinityIcon,
   Microchip,
@@ -98,4 +103,9 @@ export const ICONS: Record<string, LucideIcon> = {
   'sun-medium': SunMedium,
   infinity: InfinityIcon,
   brain: Brain,
+  cable: Cable,
+  crown: Crown,
+  handshake: Handshake,
+  landmark: Landmark,
+  workflow: Workflow,
 }
