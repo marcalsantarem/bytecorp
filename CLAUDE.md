@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado do repositório
 
-M0 e M1 fechados (tags `v0.1.0` e `v0.2.0`); o estado dos marcos está em [docs/roadmap.md](docs/roadmap.md). `bytecorp.md` (a "Bíblia") é o GDD/documento de requisitos do **Byte Corp Idle** (jogo incremental/idle tycoon cyberpunk, Web primeiro). Ele é a referência central: qualquer mudança de escopo deve ser registrada nele, e a seção 29 prevalece sobre propostas anteriores em caso de conflito.
+M0, M1 e M2 fechados (tags `v0.1.0`, `v0.2.0` e `v0.3.0`); o estado dos marcos está em [docs/roadmap.md](docs/roadmap.md). `bytecorp.md` (a "Bíblia") é o GDD/documento de requisitos do **Byte Corp Idle** (jogo incremental/idle tycoon cyberpunk, Web primeiro). Ele é a referência central: qualquer mudança de escopo deve ser registrada nele, e a seção 29 prevalece sobre propostas anteriores em caso de conflito.
 
 `cyber_corp_node_tycoon.html` é um protótipo descartável de validação da jogabilidade (ver "Protótipo" abaixo). Não é a base do projeto e não deve ser evoluído.
 

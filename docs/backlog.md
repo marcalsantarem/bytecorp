@@ -67,7 +67,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-064 | Aplicar o ajuste de peso do clique escolhido pelo usuário (A-09) em `upgrades.ts`, medir de novo os ritmos e atualizar o teste de curva | AG07 | D-14 | feita (BRF-046); clique x0,1 e produção das melhorias x2,1; run de 74,2 min a 1 clique/s e 51,5 min a 10 |
 | T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | feita (BRF-047): 22 de 24 passos passaram nas duas larguras, os passos 21 e 22 (PWA) parciais por limite do navegador embutido; nenhum defeito de lógica; D1 a D4 de baixa gravidade em `docs/AG07/resultado-qa-m2.md` |
 | T-032 | Versão 0.3.0 | AG03 | T-031 (T-060 roda ao mesmo tempo, por ordem do usuário) | em andamento (BRF-048) |
-| T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
+| T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | feita (PR #3, tag v0.3.0) |
 
 ### M3 Prestígio (v0.4.0), fecha a primeira versão jogável
 
