@@ -140,7 +140,7 @@ describe('M2 descontos', () => {
   })
 
   it('com muitos agentes de desconto o custo é inteiro e >= 1', () => {
-    const engine = newEngine()
+    const engine = newEngine({ maxCostDiscountPercent: 1e9 }) // sem teto, para forçar o piso
     setup(engine, { agents: { atlas_core: { count: 1000, level: 50 } } }) // desconto muito acima de 100%
     for (const e of engine.equipmentList()) {
       for (const owned of [0, 5, 80]) {
@@ -332,19 +332,20 @@ describe('M2 estados de agentes e melhorias', () => {
 })
 
 describe('M2 crítico', () => {
-  it('chance efetiva soma os agentes, fica entre 0 e 1', () => {
+  it('chance efetiva soma os agentes e fica entre 0 e o teto de 25% (D-13)', () => {
     const engine = newEngine()
     setup(engine, { agents: { spectre_x: { count: 10, level: 1 } } })
     close(criticalChance(engine.state, CATALOG, 0.05), 0.05 + (10 * 0.3) / 100)
     setup(engine, { agents: { spectre_x: { count: 500, level: 10 } } })
-    expect(criticalChance(engine.state, CATALOG, 0.05)).toBe(1)
+    expect(criticalChance(engine.state, CATALOG, 0.05)).toBe(0.25)
+    expect(criticalChance(engine.state, CATALOG, 0.05, 1)).toBe(1)
     expect(criticalChance(engine.state, CATALOG, -3)).toBeGreaterThanOrEqual(0)
-    expect(criticalChance(createInitialState(0), CATALOG, 2)).toBe(1)
+    expect(criticalChance(createInitialState(0), CATALOG, 2)).toBe(0.25)
     expect(criticalChance(createInitialState(0), CATALOG, -1)).toBe(0)
   })
 
   it('com chance 1 todo clique é crítico, mesmo com sorteio perto de 1', () => {
-    const engine = newEngine({ random: () => 0.999999 })
+    const engine = newEngine({ random: () => 0.999999, maxCriticalChance: 1 })
     setup(engine, { agents: { spectre_x: { count: 500, level: 10 } } })
     engine.click()
     expect(engine.state.stats.criticalClicks).toBe(1)
@@ -551,5 +552,80 @@ describe('M2 números grandes', () => {
     expect(q).toBeGreaterThanOrEqual(0)
     expect(engine.state.run.bytes.gte(0)).toBe(true)
     expect(engine.state.run.bytes.lte(before)).toBe(true)
+  })
+})
+
+describe('M2 tetos de bônus (D-13)', () => {
+  const heavy = { atlas_core: { count: 1000, level: 50 } }
+
+  it('desconto bruto acima do teto resulta em 50; abaixo fica inalterado', () => {
+    const engine = newEngine()
+    setup(engine, { agents: heavy })
+    const info = engine.costDiscount
+    expect(info.capped).toBe(true)
+    expect(num(info.effective)).toBe(50)
+    expect(num(info.raw)).toBeGreaterThan(50)
+    const low = newEngine()
+    setup(low, { agents: { atlas_core: { count: 5, level: 3 } } })
+    expect(low.costDiscount.capped).toBe(false)
+    expect(low.costDiscount.effective.eq(low.costDiscount.raw)).toBe(true)
+  })
+
+  it('todo custo usa o desconto limitado e continua inteiro e >= 1', () => {
+    const engine = newEngine()
+    setup(engine, { agents: heavy, bytes: 1e12 })
+    for (const e of engine.equipmentList()) {
+      const def = CATALOG.equipment.find((x) => x.id === e.id)!
+      expect(e.nextCost.eq(unitCost(def.baseCost, def.costGrowth, 0, 50))).toBe(true)
+      expect(e.modes.x10.cost.eq(bulkCost(def.baseCost, def.costGrowth, 0, 10, 50))).toBe(true)
+      expect(e.nextCost.gte(1) && Number.isInteger(num(e.nextCost))).toBe(true)
+    }
+    const a = agentDef('echo_ai')
+    const info = engine.agentInfo('echo_ai')!
+    expect(info.hireCost.eq(unitCost(a.baseCost, a.costGrowth, 0, 50))).toBe(true)
+    engine.hireAgent('echo_ai')
+    expect(engine.agentInfo('echo_ai')!.levelCost!.eq(unitCost(a.levelBaseCost, a.levelCostGrowth, 0, 50))).toBe(true)
+    for (const u of engine.upgradeList()) expect(u.cost).toBe(upgradeDef(u.id).cost)
+  })
+
+  it('MAX com desconto limitado nunca gasta mais que o saldo e +1 não caberia', () => {
+    for (const id of ['home_router', 'home_server']) {
+      const engine = newEngine()
+      setup(engine, { agents: heavy, bytes: 98_765 })
+      const def = CATALOG.equipment.find((e) => e.id === id)!
+      const before = engine.state.run.bytes
+      const q = engine.buyEquipment(id, 'max')
+      expect(q).toBeGreaterThan(0)
+      expect(before.sub(engine.state.run.bytes).eq(bulkCost(def.baseCost, def.costGrowth, 0, q, 50))).toBe(true)
+      expect(engine.state.run.bytes.lt(unitCost(def.baseCost, def.costGrowth, q, 50))).toBe(true)
+    }
+  })
+
+  it('teto configurável', () => {
+    const engine = newEngine({ maxCostDiscountPercent: 20, maxCriticalChance: 0.1 })
+    setup(engine, { agents: { atlas_core: { count: 100, level: 5 }, spectre_x: { count: 500, level: 1 } } })
+    expect(num(engine.costDiscount.effective)).toBe(20)
+    expect(engine.criticalChanceInfo.effective).toBe(0.1)
+    expect(engine.criticalChanceInfo.raw).toBeGreaterThan(0.1)
+    expect(engine.criticalChanceInfo.capped).toBe(true)
+  })
+
+  it('chance de crítico limitada a 25% com muitos SPECTRE_X (taxa real de críticos)', () => {
+    let i = 0
+    // Sorteio determinístico uniforme: 1000 valores em [0, 1).
+    const engine = newEngine({ random: () => (i++ % 1000) / 1000 })
+    setup(engine, { agents: { spectre_x: { count: 500, level: 10 } } })
+    for (let n = 0; n < 1000; n++) engine.click()
+    expect(engine.state.stats.criticalClicks).toBe(250)
+  })
+
+  it('resultado independe da taxa de quadros', () => {
+    const run = (step: number) => {
+      const engine = newEngine()
+      setup(engine, { equipment: { home_router: 12 }, agents: heavy })
+      for (let t = 0; t < 60_000; t += step) engine.advance(step)
+      return engine.state.run.bytes
+    }
+    expect(run(16).sub(run(1000)).abs().lt(1e-6 * num(run(1000)))).toBe(true)
   })
 })

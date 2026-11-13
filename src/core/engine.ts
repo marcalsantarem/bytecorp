@@ -21,8 +21,14 @@ import { EventBus, type GameEvents } from './events'
 import {
   computeClickValue,
   computeProduction,
+  costDiscountInfo,
   costDiscountPercent,
   criticalChance,
+  criticalChanceInfo,
+  DEFAULT_MAX_COST_DISCOUNT_PERCENT,
+  DEFAULT_MAX_CRITICAL_CHANCE,
+  type CappedChance,
+  type CappedValue,
   criticalMultiplier,
   globalMultiplier,
   type ProductionBreakdown,
@@ -38,6 +44,9 @@ export interface EngineConfig {
   // (GDD 5.4 e 5.5). Valores provisórios (A-04).
   criticalChance: number
   criticalMultiplier: number
+  // Tetos da D-13: desconto de custo acumulado (pontos percentuais) e chance de crítico (0 a 1).
+  maxCostDiscountPercent: number
+  maxCriticalChance: number
   // Fonte de aleatoriedade em [0, 1). Injetável para testes.
   random: () => number
 }
@@ -98,6 +107,8 @@ export const DEFAULT_CONFIG: EngineConfig = {
   maxStepMs: 1000,
   criticalChance: 0.05,
   criticalMultiplier: 5,
+  maxCostDiscountPercent: DEFAULT_MAX_COST_DISCOUNT_PERCENT,
+  maxCriticalChance: DEFAULT_MAX_CRITICAL_CHANCE,
   random: Math.random,
 }
 
@@ -140,6 +151,16 @@ export class GameEngine {
     return computeClickValue(this._state, this.catalog, this.config.baseClick)
   }
 
+  // Desconto de custo bruto e efetivo (depois do teto), para a interface e as estatísticas.
+  get costDiscount(): CappedValue {
+    return costDiscountInfo(this._state, this.catalog, this.config.maxCostDiscountPercent)
+  }
+
+  // Chance de crítico bruta e efetiva (depois do teto).
+  get criticalChanceInfo(): CappedChance {
+    return criticalChanceInfo(this._state, this.catalog, this.config.criticalChance, this.config.maxCriticalChance)
+  }
+
   replaceState(state: GameState): void {
     this._state = state
     this.syncStage()
@@ -170,7 +191,7 @@ export class GameEngine {
   // ganho final, já com acréscimos e percentuais; clickValue segue sem crítico.
   click(): Decimal {
     const { random } = this.config
-    const critical = random() < criticalChance(this._state, this.catalog, this.config.criticalChance)
+    const critical = random() < criticalChance(this._state, this.catalog, this.config.criticalChance, this.config.maxCriticalChance)
     const value = this.clickValue
     const gained = critical
       ? value.mul(criticalMultiplier(this._state, this.catalog, this.config.criticalMultiplier))
@@ -193,7 +214,7 @@ export class GameEngine {
     if (!def || equipmentStatus(def, this._state, this.catalog) !== 'unlocked') return 0
     const { run } = this._state
     const owned = run.equipment[id] ?? 0
-    const discount = costDiscountPercent(this._state, this.catalog)
+    const discount = costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent)
     const quantity = purchasableQuantity(mode, def.baseCost, def.costGrowth, owned, run.bytes, discount)
     if (quantity <= 0) return 0
     const cost = bulkCost(def.baseCost, def.costGrowth, owned, quantity, discount)
@@ -210,7 +231,7 @@ export class GameEngine {
     if (!def) return undefined
     const { run } = this._state
     const owned = run.equipment[id] ?? 0
-    const discount = costDiscountPercent(this._state, this.catalog)
+    const discount = costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent)
     const status = equipmentStatus(def, this._state, this.catalog)
     const mode = (m: BuyMode, want: number): EquipmentModeInfo => {
       const q =
@@ -239,7 +260,7 @@ export class GameEngine {
     if (!def || agentStatus(def, this._state, this.catalog) !== 'unlocked') return false
     const { run } = this._state
     const entry = run.agents[id] ?? { count: 0, level: 0 }
-    const cost = agentHireCost(def, entry.count, costDiscountPercent(this._state, this.catalog))
+    const cost = agentHireCost(def, entry.count, costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent))
     if (run.bytes.lt(cost)) return false
     run.bytes = run.bytes.sub(cost)
     run.agents[id] = { count: entry.count + 1, level: Math.max(1, entry.level) }
@@ -256,7 +277,7 @@ export class GameEngine {
     const { run } = this._state
     const entry = run.agents[id]
     if (!entry || entry.count < 1) return false
-    const cost = agentLevelCost(def, entry.level, costDiscountPercent(this._state, this.catalog))
+    const cost = agentLevelCost(def, entry.level, costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent))
     if (run.bytes.lt(cost)) return false
     run.bytes = run.bytes.sub(cost)
     entry.level++
@@ -271,7 +292,7 @@ export class GameEngine {
     const { run } = this._state
     const count = run.agents[id]?.count ?? 0
     const level = count > 0 ? (run.agents[id]?.level ?? 1) : 0
-    const discount = costDiscountPercent(this._state, this.catalog)
+    const discount = costDiscountPercent(this._state, this.catalog, this.config.maxCostDiscountPercent)
     const levelCost = count > 0 ? agentLevelCost(def, level, discount) : null
     return {
       id,

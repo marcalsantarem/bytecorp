@@ -139,8 +139,8 @@ describe('fórmula global de produção', () => {
     expect(gained.toNumber()).toBe(8) // 1 x (5 + 3)
   })
 
-  it('chance crítica fica limitada a 0..1', () => {
-    const e = make((s) => s.run.upgrades.push('u_crit'), { criticalChance: 0.9, random: () => 0.999 })
+  it('chance crítica fica limitada a 0..1 quando o teto é 1', () => {
+    const e = make((s) => s.run.upgrades.push('u_crit'), { criticalChance: 0.9, maxCriticalChance: 1, random: () => 0.999 })
     e.click()
     expect(e.state.stats.criticalClicks).toBe(1)
   })

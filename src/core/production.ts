@@ -99,10 +99,43 @@ export function clickFlatBonus(state: GameState, catalog: Catalog): Decimal {
   return totalEffect(state, catalog, 'clickFlat')
 }
 
-// Soma aditiva dos efeitos costDiscountPercent, em pontos percentuais, sem teto (GDD 4.6).
-// Vale para equipamentos e agentes (contratação e evolução), nunca para melhorias.
-export function costDiscountPercent(state: GameState, catalog: Catalog): Decimal {
+// Tetos da D-13: desconto de custo acumulado em pontos percentuais e chance de crítico (0 a 1).
+export const DEFAULT_MAX_COST_DISCOUNT_PERCENT = 50
+export const DEFAULT_MAX_CRITICAL_CHANCE = 0.25
+
+export interface CappedValue {
+  // Soma bruta dos bônus, sem teto.
+  raw: Decimal
+  // Valor depois do teto (é o que vale nas contas).
+  effective: Decimal
+  capped: boolean
+}
+
+// Soma aditiva bruta dos efeitos costDiscountPercent, em pontos percentuais (GDD 4.6).
+export function rawCostDiscountPercent(state: GameState, catalog: Catalog): Decimal {
   return totalEffect(state, catalog, 'costDiscountPercent')
+}
+
+// Desconto bruto e efetivo (com teto). Para a interface e as estatísticas.
+export function costDiscountInfo(
+  state: GameState,
+  catalog: Catalog,
+  max: number = DEFAULT_MAX_COST_DISCOUNT_PERCENT,
+): CappedValue {
+  const raw = rawCostDiscountPercent(state, catalog)
+  const cap = D(Math.max(0, max))
+  const capped = raw.gt(cap)
+  return { raw, effective: capped ? cap : raw, capped }
+}
+
+// Desconto efetivo em pontos percentuais, limitado pelo teto. Vale para equipamentos e
+// agentes (contratação e evolução), nunca para melhorias.
+export function costDiscountPercent(
+  state: GameState,
+  catalog: Catalog,
+  max: number = DEFAULT_MAX_COST_DISCOUNT_PERCENT,
+): Decimal {
+  return costDiscountInfo(state, catalog, max).effective
 }
 
 // Soma dos efeitos clickPercent, em pontos percentuais.
@@ -110,11 +143,33 @@ export function clickPercentBonus(state: GameState, catalog: Catalog): Decimal {
   return totalEffect(state, catalog, 'clickPercent')
 }
 
-// Chance efetiva de crítico: base mais Σ criticalChancePercent / 100, limitada a 0..1
-// por ser probabilidade.
-export function criticalChance(state: GameState, catalog: Catalog, baseChance: number): number {
-  const chance = D(baseChance).add(totalEffect(state, catalog, 'criticalChancePercent').div(100)).toNumber()
-  return Math.min(1, Math.max(0, chance))
+export interface CappedChance {
+  raw: number
+  effective: number
+  capped: boolean
+}
+
+// Chance de crítico: base mais Σ criticalChancePercent / 100. Bruta sem teto; efetiva
+// limitada a 0..max (D-13), com max também limitado a 1 por ser probabilidade.
+export function criticalChanceInfo(
+  state: GameState,
+  catalog: Catalog,
+  baseChance: number,
+  max: number = DEFAULT_MAX_CRITICAL_CHANCE,
+): CappedChance {
+  const raw = D(baseChance).add(totalEffect(state, catalog, 'criticalChancePercent').div(100)).toNumber()
+  const cap = Math.min(1, Math.max(0, max))
+  const effective = Math.min(cap, Math.max(0, raw))
+  return { raw, effective, capped: raw > cap }
+}
+
+export function criticalChance(
+  state: GameState,
+  catalog: Catalog,
+  baseChance: number,
+  max: number = DEFAULT_MAX_CRITICAL_CHANCE,
+): number {
+  return criticalChanceInfo(state, catalog, baseChance, max).effective
 }
 
 // Multiplicador crítico efetivo: base mais Σ criticalMultiplier (soma aditiva, suposição).
