@@ -65,8 +65,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-062 | Reequilibrar o catálogo (bônus dos agentes, custos, limites de estágio) para a curva-alvo de cerca de 75 min (D-13), validada contra o motor real | AG07 | D-13, T-061 | feita (BRF-044); curva medida em 74,0 min contra o motor real |
 | T-063 | Medir o peso do clique na curva (0 a 10 cliques por segundo, fatia da renda dos cliques) e propor ajustes se a run encurtar demais (A-09) | AG07 | T-062 | feita (BRF-045): a run vai de 109,8 min (0 cliques/s) a 42,2 min (10 cliques/s); propostas P1 a P5 medidas em `docs/AG07/clique-m2.md` |
 | T-064 | Aplicar o ajuste de peso do clique escolhido pelo usuário (A-09) em `upgrades.ts`, medir de novo os ritmos e atualizar o teste de curva | AG07 | D-14 | feita (BRF-046); clique x0,1 e produção das melhorias x2,1; run de 74,2 min a 1 clique/s e 51,5 min a 10 |
-| T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | a fazer |
-| T-032 | Versão 0.3.0 | AG03 | T-031, T-060 | a fazer |
+| T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | feita (BRF-047): 22 de 24 passos passaram nas duas larguras, os passos 21 e 22 (PWA) parciais por limite do navegador embutido; nenhum defeito de lógica; D1 a D4 de baixa gravidade em `docs/AG07/resultado-qa-m2.md` |
+| T-032 | Versão 0.3.0 | AG03 | T-031 (T-060 roda ao mesmo tempo, por ordem do usuário) | em andamento (BRF-048) |
 | T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
 
 ### M3 Prestígio (v0.4.0), fecha a primeira versão jogável
@@ -97,6 +97,10 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 
 | Item | Marco | Dono provável |
 |---|---|---|
+| QA do M2 (D1): o agente revelado mostra só nome e requisito, sem a especialidade (`src/ui/agents/AgentCard.tsx`, ramo não desbloqueado); a Bíblia 7.6 permite exibir "com suas informações"; decidir se é intencional | M3 | AG04 |
+| QA do M2 (D2): em 375x600 a legenda "+N B por clique" fica sob a barra de abas e só aparece rolando a coluna | M3 | AG04 |
+| QA do M2 (D4): descrições de `haptic_gloves` e `quantum_gloves` dizem "+30.000 Bytes" e "+3 bilhões" e o benefício formatado diz "+30 kB" e "+3 GB"; alinhar os textos | M3 | AG07 |
+| QA do M2 (D3): a janela de 4 s da confirmação do Reset é curta com latência alta; observação | M3 | AG04 |
 | Teste lento `src/core/economy/economy.test.ts` (cerca de 2 s) falhou uma vez por timeout sob carga, com a suíte rodando junto do teste de curva; dar folga de timeout ou reduzir os casos | M3 | AG01 |
 | `useEngineRevision` só re-renderiza em `tick`, `click` e `stateReplaced`; assinar também `purchase`, `agentHired`, `agentLeveled` e `upgradePurchased` para a tela atualizar na hora, sem depender do relógio | M3 | AG04 |
 | A altura da cena do núcleo usa a constante `25rem` para o resto da coluna; se o indicador de estágio crescer (texto do próximo estágio em mais linhas), o botão de clique volta a cortar em telas baixas | M6 | AG04 |
