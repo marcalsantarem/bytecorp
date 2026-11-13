@@ -35,6 +35,7 @@ Tasks que dependem destes itens ficam bloqueadas.
 
 | ID | Questão | Bloqueia |
 |---|---|---|
+| A-08 | Curva-alvo do jogo com agentes e melhorias: a simulação (T-031, `docs/AG07/qa-m2.md`) mostra Mega Corporation em 18,7 min contra 108 min sem bônus, porque os agentes de produção global somam sem teto e o desconto chega a 95,6%. Definir o tempo-alvo da primeira run completa e como domar os bônus. | T-061, T-062 e o fechamento do M2 |
 | A-06 | Teto para o desconto de custo acumulado (agentes, melhorias e árvore Quantum) e para a chance de crítico acumulada (hoje a soma é sem limite; a base do crítico depende de A-04). | M3 (decidir antes dele, porque a árvore Quantum soma desconto); o M2 segue sem teto. O máximo realista hoje é cerca de 54 pontos percentuais de desconto (melhorias 8 e agentes cerca de 46), sem a árvore; acima de 100% o custo cai a 1 Byte. |
 | A-07 | Relevância do ganho fixo por clique (`clickFlat`): perde peso depois de cerca de 10 min de jogo e todas as melhorias de clique ficam disponíveis até 7 min. Decidir se `clickFlat` escala com a produção ou se fica como está. | Nada; revisar no balanceamento do M8 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |

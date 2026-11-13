@@ -60,8 +60,11 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-058 | Ponto da aba de categoria só para equipamento novo (desbloqueado, comprável e sem nenhuma unidade comprada) | AG04 | T-057 | feita (BRF-037) |
 | T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | feita (BRF-038) |
 | T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | feita (BRF-040); 29 testes de componentes, nenhum defeito achado |
-| T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva | AG07 | T-021, T-022, T-025, T-030 | a fazer |
-| T-032 | Versão 0.3.0 | AG03 | T-031 | a fazer |
+| T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva; escreve o roteiro manual do M2, sem executá-lo | AG07 | T-021, T-022, T-025, T-030 | feita (BRF-042): 32 testes de integração e simulação; achou a curva colapsando (Mega Corporation em 18,7 min contra 108 min sem bônus), em decisão A-08 |
+| T-061 | Tetos de desconto de custo e de chance de crítico no núcleo (valores conforme A-06 e A-08), configuráveis, com testes | AG01 | A-06, A-08 | bloqueada |
+| T-062 | Reequilibrar o catálogo (bônus dos agentes, custos, limites de estágio) para a curva-alvo e rodar a simulação de novo | AG07 | A-08, T-061 | bloqueada |
+| T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | a fazer |
+| T-032 | Versão 0.3.0 | AG03 | T-031, T-060 | a fazer |
 | T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
 
 ### M3 Prestígio (v0.4.0), fecha a primeira versão jogável
