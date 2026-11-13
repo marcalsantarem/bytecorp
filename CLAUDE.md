@@ -101,6 +101,7 @@ Antes de agir, consulte:
 Lembretes que mais se perdem:
 
 - Só disparar tasks (delegar a um especialista) com autorização do usuário. Ao fechar cada etapa, listar as tasks concluídas e as próximas do marco atual.
+- **Formato da lista de tasks** (aprovado pelo usuário em 2026-11-13; vale ao fechar etapa e sempre que ele pedir a lista): sem tabelas; agrupar por marco, com o título em negrito (id do marco, versão e nome, por exemplo `**M2 (v0.3.0): Expansão da execução**`); uma linha por task, `- ✅ T-018: descrição curta (AG01 (Núcleo))` para feita e `- ⬜ T-064: descrição curta (AG07 (Conteúdo e QA))` para a fazer, em andamento ou bloqueada; mostrar o marco atual inteiro (feitas e pendentes) e, quando fizer sentido, o próximo marco; dados do `docs/backlog.md`.
 - Commits só na `dev`, agrupados por etapa, mensagem curta em português no imperativo, e só depois de lint, typecheck, testes e build passarem. Nada de push na `main` nem de outras branches.
 - PR `dev` → `main` só quando o usuário pedir; título e descrição também colados no chat.
 - Decisões criativas, de escopo e de stack vão ao usuário com 2 ou 3 opções e uma recomendação.
