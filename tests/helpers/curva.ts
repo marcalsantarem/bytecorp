@@ -11,6 +11,10 @@ export interface CurveOptions {
   useUpgrades?: boolean
   // Tempo virtual máximo, em segundos.
   maxSeconds?: number
+  // Cliques por segundo (padrão 1; aceita fração e 0).
+  clicksPerSecond?: number
+  // Segundos iniciais com pelo menos 1 clique por segundo (sem clique não há como comprar o primeiro item).
+  bootstrapSeconds?: number
 }
 
 export interface Purchase {
@@ -37,6 +41,9 @@ export interface CurveResult {
   finalRawDiscount: number
   finalCrit: number
   agentsFinal: Record<string, { count: number; level: number }>
+  // Fatia da renda total gerada que veio de cliques ao abrir cada estágio (0 a 1).
+  clickShareAtStage: Record<string, number>
+  finalClickShare: number
 }
 
 function mulberry32(seed: number) {
@@ -60,9 +67,13 @@ interface Candidate {
 }
 
 export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveResult {
-  const { useAgents = true, useUpgrades = true, maxSeconds = 4 * 3600 } = opts
+  const { useAgents = true, useUpgrades = true, maxSeconds = 4 * 3600, clicksPerSecond = 1, bootstrapSeconds = 0 } = opts
   const engine = new GameEngine(catalog, createInitialState(0), { ...DEFAULT_CONFIG, random: mulberry32(1234) })
   const { run } = engine.state
+  const share = () => {
+    const tot = engine.state.stats.bytesEarnedAllTime.toNumber()
+    return tot > 0 ? engine.state.stats.bytesFromClicks.toNumber() / tot : 0
+  }
   const cfg = engine.config
 
   const result: CurveResult = {
@@ -78,12 +89,15 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
     finalRawDiscount: 0,
     finalCrit: 0,
     agentsFinal: {},
+    clickShareAtStage: {},
+    finalClickShare: 0,
   }
   let t = 0
   result.stageAt[run.stage] = 0
   engine.events.on('stageChanged', ({ to }) => {
     result.stageAt[to] = t
     result.discountAtStage[to] = engine.costDiscount.effective.toNumber()
+    result.clickShareAtStage[to] = share()
   })
   result.discountAtStage[run.stage] = 0
 
@@ -91,7 +105,7 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
   const income = () => {
     const crit = engine.criticalChanceInfo.effective
     const critMult = cfg.criticalMultiplier + extraCritMult()
-    const click = engine.clickValue.toNumber() * (1 + crit * (critMult - 1))
+    const click = (t < bootstrapSeconds ? Math.max(1, clicksPerSecond) : clicksPerSecond) * engine.clickValue.toNumber() * (1 + crit * (critMult - 1))
     return engine.production.total.toNumber() + click
   }
   const extraCritMult = () => {
@@ -172,6 +186,7 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
 
   let target: Candidate | null = null
   let lastBuy = 0
+  let clickAcc = 0
   const record = (c: Candidate) => {
     result.purchases.push({ t, gap: t - lastBuy, kind: c.kind, id: c.id, cost: c.cost, payback: c.payback, income: income(), mult: engine.production.multiplier.toNumber() })
     lastBuy = t
@@ -181,7 +196,11 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
   }
 
   while (t < maxSeconds && result.stageAt.mega_corporation === undefined) {
-    engine.click()
+    clickAcc += t < bootstrapSeconds ? Math.max(1, clicksPerSecond) : clicksPerSecond
+    while (clickAcc >= 1) {
+      engine.click()
+      clickAcc -= 1
+    }
     engine.advance(1000)
     t++
     if (!target || t % 15 === 0) target = pick()
@@ -195,6 +214,7 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
   }
   result.seconds = t
   result.reachedMega = result.stageAt.mega_corporation !== undefined
+  result.finalClickShare = share()
   result.finalDiscount = engine.costDiscount.effective.toNumber()
   result.finalRawDiscount = engine.costDiscount.raw.toNumber()
   result.finalCrit = engine.criticalChanceInfo.effective

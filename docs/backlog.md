@@ -63,6 +63,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva; escreve o roteiro manual do M2, sem executá-lo | AG07 | T-021, T-022, T-025, T-030 | feita (BRF-042): 32 testes de integração e simulação; achou a curva colapsando (Mega Corporation em 18,7 min contra 108 min sem bônus), em decisão A-08 |
 | T-061 | Tetos de desconto de custo e de chance de crítico no núcleo (50 pp e 25%, D-13), configuráveis, com testes | AG01 | D-13 | feita (BRF-043) |
 | T-062 | Reequilibrar o catálogo (bônus dos agentes, custos, limites de estágio) para a curva-alvo de cerca de 75 min (D-13), validada contra o motor real | AG07 | D-13, T-061 | feita (BRF-044); curva medida em 74,0 min contra o motor real |
+| T-063 | Medir o peso do clique na curva (0 a 10 cliques por segundo, fatia da renda dos cliques) e propor ajustes se a run encurtar demais (A-09) | AG07 | T-062 | feita (BRF-045): a run vai de 109,8 min (0 cliques/s) a 42,2 min (10 cliques/s); propostas P1 a P5 medidas em `docs/AG07/clique-m2.md` |
+| T-064 | Aplicar o ajuste de peso do clique escolhido pelo usuário (A-09) em `upgrades.ts`, medir de novo os ritmos e atualizar o teste de curva | AG07 | decisão A-09 | bloqueada |
 | T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | a fazer |
 | T-032 | Versão 0.3.0 | AG03 | T-031, T-060 | a fazer |
 | T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
