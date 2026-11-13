@@ -5,17 +5,17 @@ Valores provisórios. Compra única por execução, custo fixo, sem desconto (4.
 | Melhoria | Tipo | Efeito | Ícone | Custo | Desbloqueia (Bytes na run) | Disponível em | Retorno |
 |---|---|---|---|---|---|---|---|
 | macro_script | clickFlat | +1 | terminal | 50 | 25 | 22 s | 50 s |
-| overclock_basic | globalProductionPercent | +5 | gauge | 400 | 200 | 88 s | 22 min |
+| overclock_basic | globalProductionPercent | +10 | gauge | 400 | 200 | 88 s | 22 min |
 | ergonomic_keys | clickPercent | +50 | keyboard | 1.500 | 750 | 2,3 min | 25 min |
 | bulk_discount | costDiscountPercent | +1 | ticket-percent | 2.500 | 1.000 | 2,5 min | 2,2 h |
 | neural_macro | clickFlat | +30 | zap | 20.000 | 10.000 | 4,5 min | 22 min |
-| task_scheduler | globalProductionPercent | +10 | layers | 100.000 | 50.000 | 6,3 min | 45 min |
-| haptic_gloves | clickFlat | +300.000 | hand-coins | 50 mi | 25 mi | 16 min | cerca de 100 s (motor real) |
+| task_scheduler | globalProductionPercent | +21 | layers | 100.000 | 50.000 | 6,3 min | 45 min |
+| haptic_gloves | clickFlat | +30.000 | hand-coins | 50 mi | 25 mi | 16 min | cerca de 100 s (motor real) |
 | supplier_contract | costDiscountPercent | +1,5 | piggy-bank | 5 mi | 2,5 mi | 10,5 min | 4 h |
-| distributed_cache | globalProductionPercent | +15 | rocket | 60 mi | 30 mi | 13,7 min | 36 min |
+| distributed_cache | globalProductionPercent | +32 | rocket | 60 mi | 30 mi | 13,7 min | 36 min |
 | corporate_volume | costDiscountPercent | +2 | badge-percent | 5 bi | 2,5 bi | 21,7 min | 5,3 h |
-| load_balancer | globalProductionPercent | +20 | trending-up | 100 bi | 50 bi | 28,6 min | 31 min |
-| quantum_scheduler | globalProductionPercent | +25 | sparkles | 10 tri | 5 tri | 41,7 min | 26 min |
+| load_balancer | globalProductionPercent | +85 | trending-up | 100 bi | 50 bi | 28,6 min | 31 min |
+| quantum_scheduler | globalProductionPercent | +60 | sparkles | 10 tri | 5 tri | 41,7 min | 26 min |
 
 Totais: produção global +75 (5, 10, 15, 20 e 25), desconto +4,5, clique +1/+30/+300.000 fixos e +50%.
 
@@ -38,3 +38,5 @@ Todos existem no lucide-react: `terminal`, `gauge`, `keyboard`, `ticket-percent`
 - Registrar como provisório: 12 melhorias, custo = 2x desbloqueio, soma de desconto das melhorias 4,5 pp.
 - Manter aberta A-06 (teto de desconto), indicando 4,5 pp vindos das melhorias.
 - Abrir decisão: `clickFlat` fixo perde relevância após ~10 min; escalar ou aceitar.
+
+**T-064 (BRF-046, A-09, P5 recalibrada):** produção global das melhorias ×2,1 aproximado (`overclock_basic` 10, `task_scheduler` 21, `distributed_cache` 32, `load_balancer` 85) e `haptic_gloves` ×0,1 (+30.000). As colunas de tempo acima seguem da simulação antiga; os tempos reais estão em `curva-m2.md` e `clique-m2.md`.

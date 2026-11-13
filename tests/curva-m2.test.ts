@@ -63,6 +63,13 @@ describe('curva do M2 contra o motor real', () => {
     expect(CATALOG.upgrades.filter((u) => !full.upgradeAt[u.id]).length).toBeLessThanOrEqual(3)
   })
 
+  // 0 cliques/s (até 110 min) e 5 cliques/s (mínimo 55 min) são medidos por CLIQUE_REPORT=1 (tests/clique-m2.test.ts); aqui só a verificação barata.
+  it('10 cliques/s não cai abaixo de 50 min (A-09)', () => {
+    const fast = simulateCurve(CATALOG, { clicksPerSecond: 10 })
+    expect(fast.reachedMega).toBe(true)
+    expect(fast.seconds / 60).toBeGreaterThanOrEqual(50)
+  }, 60_000)
+
   it.skipIf(!process.env.CURVA_REPORT)('sensibilidade (relatório)', () => {
     const over = (f: (c: Catalog) => void) => {
       const c = structuredClone(CATALOG)

@@ -141,4 +141,19 @@ Leitura: a curva depende sobretudo da economia dos equipamentos caros e dos cliq
 > 5 agentes (ECHO_AI, KAI_VER_3, ATLAS_CORE, NEO_GEN_5, SPECTRE_X), custo de contratação com fator 1,5 (ECHO_AI 2) e de nível com 2,5 (ECHO_AI 3). Valores por agente: ECHO +3 pp de clique; KAI +0,2 e NEO +0,5 pp de produção (D-13); ATLAS +0,35 pp de desconto; SPECTRE_X +0,5 pp de chance de crítico; crescimento por nível 0,25 (ATLAS 0,05; SPECTRE 0,1). Tetos da D-13 (desconto 50 pp, crítico 25%). Na simulação do motor real todos são contratados (10, 16, 18, 30 e 55 min) e o desconto chega a 45% no fim. Detalhes em `docs/AG07/agentes-m2.md`.
 
 **P-05**
-> 20 melhorias comuns (9 de produção global, 6 de clique, 5 de desconto), custo igual a 2x o desbloqueio, de 50 a 3e18 Bytes. T-062: produção global soma +245 pp (antes +405); desconto das melhorias 8 pp (inalterado); `clickFlat` das melhorias de clique escala com a renda (+30, +300.000, +3e10, +6e12) para o clique seguir relevante, o que beneficia quem clica mais de uma vez por segundo. 18 das 20 são compradas na simulação; `megacorp_charter` e `singularity_core` ficam para depois de Mega Corporation. Detalhes em `melhorias-m2.md`, `melhorias-m3.md` e `curva-m2.md`.
+> 20 melhorias comuns (9 de produção global, 6 de clique, 5 de desconto), custo igual a 2x o desbloqueio, de 50 a 3e18 Bytes. T-062: produção global soma +245 pp (antes +405; na T-064 passou a +510 pp e os `clickFlat` grandes caíram a 10%: +30.000, +3e9 e +6e11, ver `clique-m2.md`); desconto das melhorias 8 pp (inalterado); `clickFlat` das melhorias de clique escala com a renda (+30, +300.000, +3e10, +6e12) para o clique seguir relevante, o que beneficia quem clica mais de uma vez por segundo. 18 das 20 são compradas na simulação; `megacorp_charter` e `singularity_core` ficam para depois de Mega Corporation. Detalhes em `melhorias-m2.md`, `melhorias-m3.md` e `curva-m2.md`.
+
+## T-064 (BRF-046, A-09): P5 recalibrada
+
+Peso do clique reduzido e produção das melhorias elevada; detalhes e tabelas por ritmo em `clique-m2.md`. Resultado contra o motor real a 1 clique por segundo: **74,3 min** (faixa 64 a 86 min do teste).
+
+| Estágio | T-062 (74,0 min) | T-064 | Razão (T-064) | Desconto ao abrir |
+|---|---|---|---|---|
+| Garage Company | 3,8 min | 3,8 min | | 0,0% |
+| Startup Lab | 7,4 | 7,2 | 1,89 | 1,0% |
+| Data Center | 14,8 | 13,6 | 1,89 | 2,5% |
+| Corporate Network | 27,0 | 23,2 | 1,71 | 10,0% |
+| Quantum Facility | 44,6 | 37,7 | 1,62 | 21,9% |
+| Mega Corporation | 74,0 | **74,2** | 1,97 | 44,2% |
+
+Maior espera sem compra: 3,3 min (até `absolute_zero_chamber`, ao abrir Quantum), dentro do limite de 200 s (o teste passa). Todos os agentes são contratados (10,0; 16,1; 25,5; 30,0 e 49,9 min); 2 melhorias sem compra (`megacorp_charter`, `singularity_core`). `tests/curva-m2.test.ts` ganhou a verificação de que 10 cliques/s não cai abaixo de 50 min (cerca de 12 s).

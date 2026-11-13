@@ -104,7 +104,7 @@ describe('catálogo', () => {
     expect(engine.buyUpgrade('macro_script')).toBe(false)
     const prodBefore = engine.production.total.toNumber()
     expect(engine.buyUpgrade('overclock_basic')).toBe(true)
-    expect(engine.production.total.toNumber()).toBeCloseTo(prodBefore * 1.05, 9)
+    expect(engine.production.total.toNumber()).toBeCloseTo(prodBefore * (1 + (CATALOG.upgrades.find((u) => u.id === 'overclock_basic')!.effect.value) / 100), 9)
     state.run.bytesEarned = new Decimal(1e6)
     expect(engine.upgradeInfo('neural_macro')!.status).toBe('available')
   })

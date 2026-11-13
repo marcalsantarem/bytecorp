@@ -27,6 +27,7 @@ const base = (id: string) => CATALOG.equipment.find((e) => e.id === id)!.basePro
 const agentDef = (id: string) => CATALOG.agents.find((a) => a.id === id)!
 const upgradeDef = (id: string) => CATALOG.upgrades.find((u) => u.id === id)!
 const num = (d: Decimal) => d.toNumber()
+const gp = (id: string) => (upgradeDef(id).effect as { value: number }).value // pp de produção global
 const close = (a: number, b: number) => expect(Math.abs(a - b) <= Math.abs(b) * 1e-9 + 1e-12, `${a} vs ${b}`).toBe(true)
 
 // Estado "à mão": compra sem custo, sem passar pelas regras.
@@ -59,7 +60,7 @@ describe('M2 fórmula global (D-10) com catálogo real', () => {
     const p0 = 10 * base('home_router') + 3 * base('home_server')
     const kd = agentDef('kai_ver_3')
     const kai = 2 * kd.primary.value * (1 + kd.bonusGrowthPerLevel * 2) // pp, agente
-    const ups = 5 + 10 // 15 pp, melhorias
+    const ups = gp('overclock_basic') + gp('task_scheduler') // pp, melhorias
     const mult = 1 + (kai + ups) / 100
     const { production } = engine
     close(num(production.base), p0)
@@ -89,8 +90,8 @@ describe('M2 fórmula global (D-10) com catálogo real', () => {
       agents: { kai_ver_3: { count: 1, level: 1 }, neo_gen_5: { count: 1, level: 1 } },
       upgrades: ['overclock_basic', 'task_scheduler', 'distributed_cache'],
     })
-    // KAI + NEO + 5 + 10 + 15 pp, aditivo.
-    const pp = agentDef('kai_ver_3').primary.value + agentDef('neo_gen_5').primary.value + 5 + 10 + 15
+    // KAI + NEO + overclock_basic + task_scheduler + distributed_cache (pp), aditivo.
+    const pp = agentDef('kai_ver_3').primary.value + agentDef('neo_gen_5').primary.value + gp('overclock_basic') + gp('task_scheduler') + gp('distributed_cache')
     close(num(engine.production.total), 20 * base('home_router') * (1 + pp / 100))
   })
 
@@ -319,7 +320,7 @@ describe('M2 estados de agentes e melhorias', () => {
     engine.buyEquipment('home_router', 'x10')
     const p = num(engine.production.total)
     engine.buyUpgrade('overclock_basic')
-    close(num(engine.production.total), p * 1.05)
+    close(num(engine.production.total), p * (1 + gp('overclock_basic') / 100))
   })
 
   it('ordem: agentList pelo custo de contratação, upgradeList pelo custo, ambas estáveis', () => {

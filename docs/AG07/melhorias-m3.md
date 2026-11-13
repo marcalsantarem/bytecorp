@@ -4,14 +4,14 @@ Valores provisórios (reequilibrados na T-062: ver a nota abaixo; as colunas "Di
 
 | Melhoria | Tipo | Efeito | Ícone | Custo | Desbloqueia (Bytes na run) | Disponível em | Retorno |
 |---|---|---|---|---|---|---|---|
-| photonic_bus | globalProductionPercent | +30 | cable | 4e13 | 2e13 | 45 min | 14 min |
-| quantum_gloves | clickFlat | +3e10 | mouse-pointer-click | 3,5e13 | 1,75e13 | 36 min | cerca de 2 min (motor real) |
+| photonic_bus | globalProductionPercent | +70 | cable | 4e13 | 2e13 | 45 min | 14 min |
+| quantum_gloves | clickFlat | +3e9 | mouse-pointer-click | 3,5e13 | 1,75e13 | 36 min | cerca de 2 min (motor real) |
 | facility_contract | costDiscountPercent | +1,5 | handshake | 1e15 | 5e14 | 57 min | 18 h |
-| entangled_cache | globalProductionPercent | +35 | database-zap | 5e15 | 2,5e15 | 89 min | 5,4 h |
-| neural_overdrive | clickFlat | +6e12 | brain-circuit | 1e16 | 5e15 | 54 min | cerca de 40 s (motor real) |
-| orbital_orchestrator | globalProductionPercent | +45 | workflow | 4e16 | 2e16 | 64 min | cerca de 4 min (motor real) |
+| entangled_cache | globalProductionPercent | +74 | database-zap | 5e15 | 2,5e15 | 89 min | 5,4 h |
+| neural_overdrive | clickFlat | +6e11 | brain-circuit | 1e16 | 5e15 | 54 min | cerca de 40 s (motor real) |
+| orbital_orchestrator | globalProductionPercent | +95 | workflow | 4e16 | 2e16 | 64 min | cerca de 4 min (motor real) |
 | megacorp_charter | costDiscountPercent | +2 | landmark | 5e17 | 2,5e17 | 99 min | 6,5 h |
-| singularity_core | globalProductionPercent | +60 | crown | 3e18 | 1,5e18 | 113 min | 100 min |
+| singularity_core | globalProductionPercent | +63 | crown | 3e18 | 1,5e18 | 113 min | 100 min |
 
 Ícones novos no `iconMap`: `cable`, `handshake`, `workflow`, `landmark`, `crown`. Os demais já estavam mapeados.
 
@@ -33,3 +33,9 @@ Valores provisórios (reequilibrados na T-062: ver a nota abaixo; as colunas "Di
 ## Sugestão de texto para P-05 em `docs/decisoes.md`
 
 > Texto atualizado para P-05 em `curva-m2.md` (T-062).
+
+## T-064 (BRF-046, A-09)
+
+- Produção global das melhorias agora soma **+510 pp** (antes +245): 10, 21, 32, 85, 60, 70, 74, 95 e 63 (`overclock_basic`, `task_scheduler`, `distributed_cache`, `load_balancer`, `quantum_scheduler`, `photonic_bus`, `entangled_cache`, `orbital_orchestrator`, `singularity_core`). (`load_balancer` e `quantum_scheduler` estão na tabela de `melhorias-m2.md`.)
+- `clickFlat` grandes ×0,1: `haptic_gloves` +30.000, `quantum_gloves` +3e9, `neural_overdrive` +6e11. A fatia dos cliques ao abrir Mega cai de 65,6% para 10,5% a 1/s.
+- Custos e desbloqueios inalterados. As colunas de tempo acima são da simulação antiga.

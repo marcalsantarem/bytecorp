@@ -8,7 +8,7 @@ import { fmtTime, simulateCurve, type CurveResult } from './helpers/curva'
 // CLIQUE_PROPOSTAS=1 também mede as propostas de ajuste (cópias do catálogo, sem alterar o real).
 
 const STAGES = ['garage_company', 'startup_lab', 'data_center', 'corporate_network', 'quantum_facility', 'mega_corporation']
-const RATES = [0, 0.5, 1, 2, 3, 5, 10]
+const RATES = process.env.CLIQUE_RATES ? process.env.CLIQUE_RATES.split(',').map(Number) : [0, 0.5, 1, 2, 3, 5, 10]
 // Com 0 cliques/s o jogo não sai do zero (Bytes iniciais 0), então 0 usa 30 s de partida a 1 clique/s.
 const BOOT = 30
 const out = (t: string) => console.log(t)
@@ -67,6 +67,8 @@ describe.skipIf(!process.env.CLIQUE_REPORT)('peso do clique', () => {
       ['P4 clickFlat grandes x0,5 e produção global das melhorias x1,15', (c) => { flat(c, 0.5); prod(c, 1.15) }],
       ['P5 clickFlat grandes x0,25 e produção global das melhorias x1,3', (c) => { flat(c, 0.25); prod(c, 1.3) }],
     ]
+    // PK: clickFlat x0,25 e produção global x CLIQUE_K (calibração da P5, T-064).
+    if (process.env.CLIQUE_K) props.push([`PK clickFlat x0,25 e produção global x${process.env.CLIQUE_K}`, (c) => { flat(c, Number(process.env.CLIQUE_F ?? 0.25)); prod(c, Number(process.env.CLIQUE_K)) }])
     // CLIQUE_PROPOSTAS=P4,P5 mede só as citadas; =1 mede todas.
     const only = process.env.CLIQUE_PROPOSTAS === '1' ? null : process.env.CLIQUE_PROPOSTAS!.split(',')
     for (const [name, f] of props) if (!only || only.some((o) => name.startsWith(o + ' '))) table(name, over(f), base)
