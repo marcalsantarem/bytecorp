@@ -62,7 +62,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | feita (BRF-040); 29 testes de componentes, nenhum defeito achado |
 | T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva; escreve o roteiro manual do M2, sem executá-lo | AG07 | T-021, T-022, T-025, T-030 | feita (BRF-042): 32 testes de integração e simulação; achou a curva colapsando (Mega Corporation em 18,7 min contra 108 min sem bônus), em decisão A-08 |
 | T-061 | Tetos de desconto de custo e de chance de crítico no núcleo (50 pp e 25%, D-13), configuráveis, com testes | AG01 | D-13 | feita (BRF-043) |
-| T-062 | Reequilibrar o catálogo (bônus dos agentes, custos, limites de estágio) para a curva-alvo de cerca de 75 min (D-13), validada contra o motor real | AG07 | D-13, T-061 | em andamento (BRF-044) |
+| T-062 | Reequilibrar o catálogo (bônus dos agentes, custos, limites de estágio) para a curva-alvo de cerca de 75 min (D-13), validada contra o motor real | AG07 | D-13, T-061 | feita (BRF-044); curva medida em 74,0 min contra o motor real |
 | T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | a fazer |
 | T-032 | Versão 0.3.0 | AG03 | T-031, T-060 | a fazer |
 | T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
@@ -95,6 +95,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 
 | Item | Marco | Dono provável |
 |---|---|---|
+| Teste lento `src/core/economy/economy.test.ts` (cerca de 2 s) falhou uma vez por timeout sob carga, com a suíte rodando junto do teste de curva; dar folga de timeout ou reduzir os casos | M3 | AG01 |
 | `useEngineRevision` só re-renderiza em `tick`, `click` e `stateReplaced`; assinar também `purchase`, `agentHired`, `agentLeveled` e `upgradePurchased` para a tela atualizar na hora, sem depender do relógio | M3 | AG04 |
 | A altura da cena do núcleo usa a constante `25rem` para o resto da coluna; se o indicador de estágio crescer (texto do próximo estágio em mais linhas), o botão de clique volta a cortar em telas baixas | M6 | AG04 |
 | Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |

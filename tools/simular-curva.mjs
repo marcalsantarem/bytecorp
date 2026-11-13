@@ -1,6 +1,8 @@
 // Simulação integrada da curva (T-031): comprador guloso com 1 clique/s, equipamentos, agentes
 // (contratar e evoluir) e melhorias comuns, do início até Mega Corporation (1e18 gerados).
 // Compara com a linha de base sem agentes nem melhorias. Lê os catálogos por regex. Provisório.
+// Aproximação rápida (analítica, sem o motor): a referência da curva é tests/curva-m2.test.ts, que usa o GameEngine
+// real e protege o alvo de 64 a 86 min. Aqui valem os tetos da D-13 (desconto 50 pp, crítico 25%).
 // Uso: node tools/simular-curva.mjs
 import { readFileSync } from 'node:fs'
 const num = (s) => Number(String(s).replace(/_/g, ''))
@@ -18,13 +20,13 @@ const stageOrder = Object.fromEntries(stages.map((s) => [s.id, s.order]))
 const agents = [...read('agents.ts').matchAll(/id: '(\w+)',[\s\S]*?baseCost: ([\d_]+),\s*costGrowth: ([\d.]+),\s*levelBaseCost: ([\d_]+),\s*levelCostGrowth: ([\d.]+),\s*primary: \{ kind: '(\w+)', value: ([\d.]+) \},[\s\S]*?bonusGrowthPerLevel: ([\d.]+),\s*unlock: \{ kind: 'stageReached', stage: '(\w+)'/g)].map((m) => ({
   id: m[1], cost: num(m[2]), growth: Number(m[3]), lvCost: num(m[4]), lvGrowth: Number(m[5]), kind: m[6], value: Number(m[7]), perLevel: Number(m[8]), stage: stageOrder[m[9]],
 }))
-const upgrades = [...read('upgrades.ts').matchAll(/id: '(\w+)'.*?cost: ([\d_.e+]+), effect: \{ kind: '(\w+)', value: ([\d.]+) \}, unlockBytesEarnedInRun: ([\d_.e+]+)/g)].map((m) => ({
-  id: m[1], cost: num(m[2]), kind: m[3], value: Number(m[4]), unlock: num(m[5]),
+const upgrades = [...read('upgrades.ts').matchAll(/id: '(\w+)'.*?cost: ([\d_.e+]+), effect: \{ kind: '(\w+)', value: ([\d_.e+]+) \}, unlockBytesEarnedInRun: ([\d_.e+]+)/g)].map((m) => ({
+  id: m[1], cost: num(m[2]), kind: m[3], value: num(m[4]), unlock: num(m[5]),
 }))
 
 const unit = (base, g, n, d) => Math.max(1, Math.floor(base * g ** n * Math.max(0, 1 - d / 100) + 1e-6))
 
-function run({ useAgents, useUpgrades, limit = 1e18, discountCap = Infinity, skip = [], scale = {} }) {
+function run({ useAgents, useUpgrades, limit = 1e18, discountCap = 50, skip = [], scale = {} }) {
   const S = { t: 0, bytes: 0, earned: 0, eq: Object.fromEntries(equipment.map((e) => [e.id, 0])), ag: Object.fromEntries(agents.map((a) => [a.id, { n: 0, l: 0 }])), up: new Set() }
   const log = { stage: {}, agent: {}, level: [], upgrade: {}, discountAtStage: {}, buys: [] }
   const stageIdx = () => { let i = 0; for (const s of stages) if (S.earned >= s.amount) i = s.order; return i }
@@ -38,7 +40,7 @@ function run({ useAgents, useUpgrades, limit = 1e18, discountCap = Infinity, ski
     const p0 = equipment.reduce((s, e) => s + S.eq[e.id] * e.prod, 0)
     const mult = 1 + effects('globalProductionPercent') / 100
     const click = (1 + effects('clickFlat')) * (1 + effects('clickPercent') / 100) * mult
-    const pc = Math.min(1, CRIT.chance + effects('criticalChancePercent') / 100)
+    const pc = Math.min(0.25, CRIT.chance + effects('criticalChancePercent') / 100)
     const income = p0 * mult + click * (1 + pc * (CRIT.mult + effects('criticalMultiplier') - 1)) // 1 clique/s
     const d = Math.min(discountCap, effects('costDiscountPercent'))
     // Renda efetiva: o desconto equivale a mais renda para quem só gasta em itens com desconto.

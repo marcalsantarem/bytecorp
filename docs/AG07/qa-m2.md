@@ -2,7 +2,7 @@
 
 ## Testes de integração
 
-`tests/m2.integration.test.ts`: 32 testes, catálogo real, ambiente node, cerca de 0,5 s. `npm test` passa de 205 para 237 testes sem mudar de tempo (cerca de 4,5 s).
+`tests/m2.integration.test.ts`: 32 testes, catálogo real, ambiente node, cerca de 0,5 s (T-062: as expectativas numéricas de agentes e descontos agora leem os valores do catálogo, para não quebrar a cada reequilíbrio). `tests/curva-m2.test.ts`: 4 testes de curva, cerca de 8 s em um worker próprio. `npm test` passa de 205 para 237 testes sem mudar de tempo (cerca de 4,5 s).
 
 Cobertura: fórmula D-10 (soma na camada, mesmo multiplicador no passivo e no clique, rastreio em `production.layers`), descontos (equipamento, contratação e evolução com desconto; melhorias sem; custo inteiro e >= 1 com desconto acima de 100%; MAX para os 35 equipamentos com 5 descontos), estágios (um evento por degrau, salto de 4 estágios, sem regressão, `stageReached` junto), estados de agentes e melhorias, compra única, Evoluir só com agente, ordem das listas, crítico (chance limitada a 0..1, multiplicador somado), save (ida e volta, gravação após contratar/evoluir/melhoria/estágio, agrupamento, `resetGame`), independência de frames com 4 fatiamentos e 6 compras no meio, e números grandes.
 
@@ -13,6 +13,8 @@ Comportamento documentado, não defeito:
 - O catálogo real não tem fonte de `criticalMultiplier`; esse efeito foi testado com um clone do catálogo.
 
 ## Simulação da curva (`node tools/simular-curva.mjs`)
+
+> **Atualização T-062 (BRF-044):** o que segue é o diagnóstico original (valores antigos). A curva foi reequilibrada e agora é verificada contra o motor real por `tests/curva-m2.test.ts`: Mega Corporation em 74,0 min (alvo 64 a 86), todos os agentes contratados, 18 de 20 melhorias compradas, desconto de 45% no fim. Resultados, valores alterados e sensibilidade em `curva-m2.md`. Os achados 1 a 7 abaixo ficam como histórico: a proposta A foi adotada (D-13) e complementada com custos maiores de equipamentos, agentes e melhorias.
 
 Comprador guloso: 1 clique por segundo, crítico base (5%, x5), compra o item de menor retorno (custo / ganho de renda efetiva, onde desconto conta como renda). Linha de base (sem agentes e melhorias) reproduz o `simular-equipamentos`: 108,0 min até Mega Corporation (referência 108,1).
 

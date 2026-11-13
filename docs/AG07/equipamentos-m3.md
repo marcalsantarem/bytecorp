@@ -1,5 +1,7 @@
 # Equipamentos de Quantum Facility e Mega Corporation (M2, provisório)
 
+**T-062 (BRF-044):** valores abaixo já reequilibrados. Os cinco itens de Quantum Facility custam 1/4 do original (3e14 a 8e14, desbloqueio 1,5e14 a 4e14), com fator 1,3 e produção de 1/30 a 1/20 do original; os de Mega Corporation mantêm custo e desbloqueio, com produção cerca de 1/8. A simulação e as razões desta página (sem agentes nem melhorias, produção original) deixaram de valer: a curva atual está em `curva-m2.md`.
+
 BRF-039, T-052. Os 25 equipamentos de `equipamentos-m2.md` ficam como estão. Total: 35, sete por categoria.
 
 ## Novos equipamentos
@@ -8,16 +10,16 @@ Todos com fator de custo 1,25 (Quantum Facility) ou 1,28 (Mega Corporation), des
 
 | Id | Categoria | Estágio | Custo base | Produção/s | Desbloqueio | Ícone |
 |---|---|---|---|---|---|---|
-| absolute_zero_chamber | cooling | Quantum | 1,2e15 | 1,4e13 | 6e14 | wind |
-| quantum_relay | networking | Quantum | 1,6e15 | 1,9e13 | 8e14 | satellite-dish |
-| antimatter_reactor | infrastructure | Quantum | 2e15 | 2,4e13 | 1e15 | radiation |
-| crystal_vault | storage | Quantum | 2,4e15 | 2,8e13 | 1,2e15 | gem |
-| qubit_array | processing | Quantum | 3,2e15 | 3,8e13 | 1,6e15 | microchip |
-| stellar_sink | cooling | Mega | 1,5e18 | 1,8e16 | 7,5e17 | sun-snow |
-| planetary_mesh | networking | Mega | 2e18 | 2,4e16 | 1e18 | satellite |
-| dyson_swarm | infrastructure | Mega | 2,5e18 | 3e16 | 1,25e18 | sun-medium |
-| eternal_archive | storage | Mega | 3e18 | 3,5e16 | 1,5e18 | infinity |
-| hive_mind | processing | Mega | 4e18 | 4,8e16 | 2e18 | brain |
+| absolute_zero_chamber | cooling | Quantum | 3e14 | 6e11 | 1,5e14 | wind |
+| quantum_relay | networking | Quantum | 4e14 | 8,2e11 | 2e14 | satellite-dish |
+| antimatter_reactor | infrastructure | Quantum | 5e14 | 1e12 | 2,5e14 | radiation |
+| crystal_vault | storage | Quantum | 6e14 | 1,2e12 | 3e14 | gem |
+| qubit_array | processing | Quantum | 8e14 | 1,6e12 | 4e14 | microchip |
+| stellar_sink | cooling | Mega | 1,5e18 | 2,2e15 | 7,5e17 | sun-snow |
+| planetary_mesh | networking | Mega | 2e18 | 2,9e15 | 1e18 | satellite |
+| dyson_swarm | infrastructure | Mega | 2,5e18 | 3,6e15 | 1,25e18 | sun-medium |
+| eternal_archive | storage | Mega | 3e18 | 4,2e15 | 1,5e18 | infinity |
+| hive_mind | processing | Mega | 4e18 | 5,8e15 | 2e18 | brain |
 
 ## Estágios
 

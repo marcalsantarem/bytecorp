@@ -57,7 +57,8 @@ describe('M2 fórmula global (D-10) com catálogo real', () => {
       upgrades: ['macro_script', 'neural_macro', 'overclock_basic', 'task_scheduler', 'ergonomic_keys'],
     })
     const p0 = 10 * base('home_router') + 3 * base('home_server')
-    const kai = 2 * 2 * (1 + 0.5 * 2) // 8 pp, agente
+    const kd = agentDef('kai_ver_3')
+    const kai = 2 * kd.primary.value * (1 + kd.bonusGrowthPerLevel * 2) // pp, agente
     const ups = 5 + 10 // 15 pp, melhorias
     const mult = 1 + (kai + ups) / 100
     const { production } = engine
@@ -72,9 +73,11 @@ describe('M2 fórmula global (D-10) com catálogo real', () => {
     expect(num(production.bySource.agents)).toBe(0) // agentes só agem por bônus
     close(num(production.bySource.equipment), p0)
 
-    // Clique: (1 + 1 + 10) × (1 + (3×5×1,5 + 50)/100) × global.
-    const echo = 3 * 5 * (1 + 0.5 * 1)
-    close(num(engine.clickValue), (1 + 1 + 10) * (1 + (echo + 50) / 100) * mult)
+    // Clique: (1 + 1 + neural_macro) × (1 + (3×ECHO×(1 + crescimento) + 50)/100) × global.
+    const ed = agentDef('echo_ai')
+    const echo = 3 * ed.primary.value * (1 + ed.bonusGrowthPerLevel * 1)
+    const flat = (upgradeDef('neural_macro').effect as { value: number }).value
+    close(num(engine.clickValue), (1 + 1 + flat) * (1 + (echo + 50) / 100) * mult)
     // Mesmo multiplicador global no passivo e no clique: produção por unidade.
     close(num(engine.equipmentInfo('home_router')!.unitProduction), base('home_router') * mult)
   })
@@ -86,15 +89,16 @@ describe('M2 fórmula global (D-10) com catálogo real', () => {
       agents: { kai_ver_3: { count: 1, level: 1 }, neo_gen_5: { count: 1, level: 1 } },
       upgrades: ['overclock_basic', 'task_scheduler', 'distributed_cache'],
     })
-    // 2 + 5 + 5 + 10 + 15 = 37 pp, aditivo.
-    close(num(engine.production.total), 20 * base('home_router') * 1.37)
+    // KAI + NEO + 5 + 10 + 15 pp, aditivo.
+    const pp = agentDef('kai_ver_3').primary.value + agentDef('neo_gen_5').primary.value + 5 + 10 + 15
+    close(num(engine.production.total), 20 * base('home_router') * (1 + pp / 100))
   })
 
   it('crítico sobre o clique final e clickValue sem crítico', () => {
     const engine = newEngine({ random: () => 0 })
     setup(engine, { agents: { echo_ai: { count: 2, level: 1 } }, upgrades: ['macro_script'] })
     const v = num(engine.clickValue)
-    close(v, 2 * (1 + 10 / 100))
+    close(v, 2 * (1 + (2 * agentDef('echo_ai').primary.value) / 100))
     const gained = engine.click()
     close(num(gained), v * 5)
   })
@@ -103,7 +107,8 @@ describe('M2 fórmula global (D-10) com catálogo real', () => {
 describe('M2 descontos', () => {
   const owned = { home_router: 12 }
   const agentsDisc = { atlas_core: { count: 5, level: 3 }, echo_ai: { count: 4, level: 2 } }
-  const disc = 0.4 * 5 * (1 + 0.1 * 2) + 1 // atlas (2,4) + bulk_discount (1)
+  const ad = agentDef('atlas_core')
+  const disc = ad.primary.value * 5 * (1 + ad.bonusGrowthPerLevel * 2) + 1 // atlas + bulk_discount (1)
 
   it('valem para equipamento, contratação e evolução, e não para melhorias', () => {
     const engine = newEngine()
@@ -174,7 +179,7 @@ describe('M2 descontos', () => {
     for (const id of ['home_router', 'home_server']) {
       const engine = newEngine()
       setup(engine, { agents: { atlas_core: { count: 10, level: 1 } }, upgrades: ['bulk_discount'], bytes: 98_765 })
-      const d = num(engine.state.run.bytes) && 0.4 * 10 + 1
+      const d = num(engine.state.run.bytes) && agentDef('atlas_core').primary.value * 10 + 1
       const def = CATALOG.equipment.find((e) => e.id === id)!
       const before = engine.state.run.bytes
       const q = engine.buyEquipment(id, 'max')
@@ -274,15 +279,16 @@ describe('M2 estados de agentes e melhorias', () => {
     expect(engine.hireAgent('nope')).toBe(false)
   })
 
-  it('contratar mais de um aumenta o custo pelo fator 1,25 e o bônus escala por quantidade e nível', () => {
+  it('contratar mais de um aumenta o custo pelo fator do catálogo e o bônus escala por quantidade e nível', () => {
     const engine = newEngine()
     fund(engine, 1e9, 1e4)
     engine.hireAgent('echo_ai')
     engine.hireAgent('echo_ai')
-    expect(engine.agentInfo('echo_ai')!.hireCost.eq(unitCost(1_500, 1.25, 2))).toBe(true)
+    expect(engine.agentInfo('echo_ai')!.hireCost.eq(unitCost(agentDef('echo_ai').baseCost, agentDef('echo_ai').costGrowth, 2))).toBe(true)
     engine.levelUpAgent('echo_ai')
     const b = engine.agentInfo('echo_ai')!.bonus
-    expect(b).toEqual([{ kind: 'clickPercent', value: 2 * 5 * 1.5 }])
+    const ed = agentDef('echo_ai')
+    expect(b).toEqual([{ kind: 'clickPercent', value: 2 * ed.primary.value * (1 + ed.bonusGrowthPerLevel) }])
   })
 
   it('melhoria: bloqueada, disponível, comprada; compra única', () => {
@@ -335,7 +341,7 @@ describe('M2 crítico', () => {
   it('chance efetiva soma os agentes e fica entre 0 e o teto de 25% (D-13)', () => {
     const engine = newEngine()
     setup(engine, { agents: { spectre_x: { count: 10, level: 1 } } })
-    close(criticalChance(engine.state, CATALOG, 0.05), 0.05 + (10 * 0.3) / 100)
+    close(criticalChance(engine.state, CATALOG, 0.05), 0.05 + (10 * agentDef('spectre_x').primary.value) / 100)
     setup(engine, { agents: { spectre_x: { count: 500, level: 10 } } })
     expect(criticalChance(engine.state, CATALOG, 0.05)).toBe(0.25)
     expect(criticalChance(engine.state, CATALOG, 0.05, 1)).toBe(1)

@@ -8,16 +8,18 @@ Valores provisórios. Compra única por execução, custo fixo, sem desconto (4.
 | overclock_basic | globalProductionPercent | +5 | gauge | 400 | 200 | 88 s | 22 min |
 | ergonomic_keys | clickPercent | +50 | keyboard | 1.500 | 750 | 2,3 min | 25 min |
 | bulk_discount | costDiscountPercent | +1 | ticket-percent | 2.500 | 1.000 | 2,5 min | 2,2 h |
-| neural_macro | clickFlat | +10 | zap | 20.000 | 10.000 | 4,5 min | 22 min |
+| neural_macro | clickFlat | +30 | zap | 20.000 | 10.000 | 4,5 min | 22 min |
 | task_scheduler | globalProductionPercent | +10 | layers | 100.000 | 50.000 | 6,3 min | 45 min |
-| haptic_gloves | clickPercent | +100 | hand-coins | 150.000 | 75.000 | 7 min | 3,5 h |
+| haptic_gloves | clickFlat | +300.000 | hand-coins | 50 mi | 25 mi | 16 min | cerca de 100 s (motor real) |
 | supplier_contract | costDiscountPercent | +1,5 | piggy-bank | 5 mi | 2,5 mi | 10,5 min | 4 h |
 | distributed_cache | globalProductionPercent | +15 | rocket | 60 mi | 30 mi | 13,7 min | 36 min |
 | corporate_volume | costDiscountPercent | +2 | badge-percent | 5 bi | 2,5 bi | 21,7 min | 5,3 h |
-| load_balancer | globalProductionPercent | +25 | trending-up | 100 bi | 50 bi | 28,6 min | 31 min |
-| quantum_scheduler | globalProductionPercent | +40 | sparkles | 10 tri | 5 tri | 41,7 min | 26 min |
+| load_balancer | globalProductionPercent | +20 | trending-up | 100 bi | 50 bi | 28,6 min | 31 min |
+| quantum_scheduler | globalProductionPercent | +25 | sparkles | 10 tri | 5 tri | 41,7 min | 26 min |
 
-Totais: produção global +95, desconto +4,5, cliques +1/+10 fixos e +50%/+100%.
+Totais: produção global +75 (5, 10, 15, 20 e 25), desconto +4,5, clique +1/+30/+300.000 fixos e +50%.
+
+**T-062 (BRF-044):** `neural_macro` passou de +10 para +30, `haptic_gloves` virou `clickFlat` +300.000 com custo 5e7 (desbloqueio 2,5e7), `load_balancer` +25 para +20 e `quantum_scheduler` +40 para +25. Os tempos da coluna "Disponível em" e "Retorno" desta tabela vêm da simulação antiga (sem agentes, produção só dos equipamentos); os da curva atual estão em `curva-m2.md`. Lista reordenada por custo: `haptic_gloves` vem depois de `supplier_contract`.
 
 ## Ícones novos para o `iconMap` (AG04, T-027)
 

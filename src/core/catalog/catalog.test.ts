@@ -3,6 +3,7 @@ import { Decimal } from '../decimal'
 import { GameEngine } from '../engine'
 import { createInitialState } from '../state'
 import { agentBonus } from '../economy/agents'
+import { DEFAULT_MAX_COST_DISCOUNT_PERCENT } from '../production'
 import { CATALOG, validateCatalog } from './index'
 
 describe('catálogo', () => {
@@ -65,7 +66,7 @@ describe('catálogo', () => {
     const info = engine.agentInfo('echo_ai')!
     expect(info.count).toBe(2)
     expect(info.level).toBe(2)
-    expect(info.bonus[0]!.value).toBeCloseTo(2 * 5 * 1.5, 9)
+    expect(info.bonus[0]!.value).toBeCloseTo(2 * 3 * 1.25, 9)
   })
 
   it('tem 20 melhorias nos três tipos, ordenadas por custo e sem efeito específico de item', () => {
@@ -82,7 +83,8 @@ describe('catálogo', () => {
     expect([...kinds].sort()).toEqual(['clickFlat', 'clickPercent', 'costDiscountPercent', 'globalProductionPercent'])
     const discount = CATALOG.upgrades.filter((u) => u.effect.kind === 'costDiscountPercent').reduce((a, u) => a + u.effect.value, 0)
     expect(discount).toBeLessThanOrEqual(8)
-    expect(CATALOG.upgrades.slice(0, 12).map((u) => u.id).join()).toBe('macro_script,overclock_basic,ergonomic_keys,bulk_discount,neural_macro,task_scheduler,haptic_gloves,supplier_contract,distributed_cache,corporate_volume,load_balancer,quantum_scheduler')
+    expect(discount).toBeLessThan(DEFAULT_MAX_COST_DISCOUNT_PERCENT) // sobra espaço do teto (D-13) para ATLAS_CORE
+    expect(CATALOG.upgrades.slice(0, 12).map((u) => u.id).join()).toBe('macro_script,overclock_basic,ergonomic_keys,bulk_discount,neural_macro,task_scheduler,supplier_contract,haptic_gloves,distributed_cache,corporate_volume,load_balancer,quantum_scheduler')
     expect(CATALOG.upgrades.filter((u) => u.unlockBytesEarnedInRun >= 1e18)).not.toHaveLength(0)
   })
 

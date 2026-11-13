@@ -1,8 +1,9 @@
 import type { AgentDef } from './types'
 
-// Catálogo provisório de agentes (M2, T-023). Valores de efeito em pontos percentuais por
-// agente; o bônus real é quantidade × valor × (1 + bonusGrowthPerLevel × (nível − 1)) (D-10).
-// Custo cresce por fator próprio (1,25) e o nível custa mais a cada evolução.
+// Catálogo de agentes (M2, T-023; reequilibrado na T-062, BRF-044). Valores de efeito em pontos
+// percentuais por agente; o bônus real é quantidade × valor × (1 + bonusGrowthPerLevel × (nível − 1)) (D-10).
+// D-13: KAI_VER_3 0,2 pp e NEO_GEN_5 0,5 pp por agente, crescimento por nível 0,25; desconto limitado a 50 pp.
+// O custo cresce por fator próprio (1,5; ECHO_AI 2) e o nível custa mais a cada evolução (2,5; ECHO_AI 3).
 // Ordenados por custo base crescente, como a lista da loja (GDD 7.3). Detalhes em docs/AG07/agentes-m2.md.
 export const AGENTS: AgentDef[] = [
   {
@@ -12,12 +13,12 @@ export const AGENTS: AgentDef[] = [
     specialtyKey: 'agent.echo_ai.specialty',
     icon: 'mouse-pointer-click',
     baseCost: 1_500,
-    costGrowth: 1.25,
+    costGrowth: 2,
     levelBaseCost: 6_000,
-    levelCostGrowth: 1.8,
-    primary: { kind: 'clickPercent', value: 5 },
+    levelCostGrowth: 3,
+    primary: { kind: 'clickPercent', value: 3 },
     secondary: [],
-    bonusGrowthPerLevel: 0.5,
+    bonusGrowthPerLevel: 0.25,
     unlock: { kind: 'stageReached', stage: 'garage_company' },
     reveal: { kind: 'bytesEarnedInRun', amount: 3_000 },
   },
@@ -28,12 +29,12 @@ export const AGENTS: AgentDef[] = [
     specialtyKey: 'agent.kai_ver_3.specialty',
     icon: 'brain-circuit',
     baseCost: 60_000,
-    costGrowth: 1.25,
+    costGrowth: 1.5,
     levelBaseCost: 250_000,
-    levelCostGrowth: 1.8,
-    primary: { kind: 'globalProductionPercent', value: 2 },
+    levelCostGrowth: 2.5,
+    primary: { kind: 'globalProductionPercent', value: 0.2 },
     secondary: [],
-    bonusGrowthPerLevel: 0.5,
+    bonusGrowthPerLevel: 0.25,
     unlock: { kind: 'stageReached', stage: 'startup_lab' },
     reveal: { kind: 'stageReached', stage: 'garage_company' },
   },
@@ -44,13 +45,13 @@ export const AGENTS: AgentDef[] = [
     specialtyKey: 'agent.atlas_core.specialty',
     icon: 'badge-percent',
     baseCost: 40_000_000,
-    costGrowth: 1.25,
+    costGrowth: 1.5,
     levelBaseCost: 200_000_000,
-    levelCostGrowth: 1.8,
-    primary: { kind: 'costDiscountPercent', value: 0.4 },
+    levelCostGrowth: 2.5,
+    primary: { kind: 'costDiscountPercent', value: 0.35 },
     secondary: [],
     // Crescimento baixo: o desconto é aditivo e sem teto (GDD 4.6).
-    bonusGrowthPerLevel: 0.1,
+    bonusGrowthPerLevel: 0.05,
     unlock: { kind: 'stageReached', stage: 'data_center' },
     reveal: { kind: 'stageReached', stage: 'startup_lab' },
   },
@@ -61,12 +62,12 @@ export const AGENTS: AgentDef[] = [
     specialtyKey: 'agent.neo_gen_5.specialty',
     icon: 'cpu',
     baseCost: 30_000_000_000,
-    costGrowth: 1.25,
+    costGrowth: 1.5,
     levelBaseCost: 150_000_000_000,
-    levelCostGrowth: 1.8,
-    primary: { kind: 'globalProductionPercent', value: 5 },
+    levelCostGrowth: 2.5,
+    primary: { kind: 'globalProductionPercent', value: 0.5 },
     secondary: [],
-    bonusGrowthPerLevel: 0.5,
+    bonusGrowthPerLevel: 0.25,
     unlock: { kind: 'stageReached', stage: 'corporate_network' },
     reveal: { kind: 'stageReached', stage: 'data_center' },
   },
@@ -76,11 +77,11 @@ export const AGENTS: AgentDef[] = [
     descriptionKey: 'agent.spectre_x.desc',
     specialtyKey: 'agent.spectre_x.specialty',
     icon: 'dices',
-    baseCost: 50_000_000_000_000,
-    costGrowth: 1.25,
+    baseCost: 20_000_000_000_000,
+    costGrowth: 1.5,
     levelBaseCost: 250_000_000_000_000,
-    levelCostGrowth: 1.8,
-    primary: { kind: 'criticalChancePercent', value: 0.3 },
+    levelCostGrowth: 2.5,
+    primary: { kind: 'criticalChancePercent', value: 0.5 },
     secondary: [],
     bonusGrowthPerLevel: 0.1,
     unlock: { kind: 'stageReached', stage: 'quantum_facility' },
