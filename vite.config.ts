@@ -48,7 +48,21 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   test: {
-    include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
-    environment: 'node',
+    // Dois projetos: lógica em node (*.test.ts) e componentes em DOM (*.test.tsx).
+    projects: [
+      {
+        extends: true,
+        test: { name: 'node', environment: 'node', include: ['src/**/*.test.ts', 'tests/**/*.test.ts'] },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'dom',
+          environment: 'jsdom',
+          include: ['src/**/*.test.tsx'],
+          setupFiles: ['src/test/setup.ts'],
+        },
+      },
+    ],
   },
 })

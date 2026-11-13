@@ -21,7 +21,7 @@ function fund(engine: GameEngine, bytes: number, earned = bytes) {
 const isOk = (r: LoadResult) => 'ok' in r && r.ok
 
 describe('catálogo real: custos', () => {
-  it('tem 25 equipamentos', () => expect(CATALOG.equipment).toHaveLength(25))
+  it('tem 35 equipamentos', () => expect(CATALOG.equipment).toHaveLength(35))
 
   for (const discount of [0, 10, 50, 99, 100]) {
     it(`custo unitário inteiro e >= 1 para N de 0 a 200 (desconto ${discount}%)`, () => {
@@ -75,7 +75,7 @@ describe('catálogo real: ocultar, revelar, desbloquear', () => {
   for (const e of CATALOG.equipment) {
     it(`${e.id}: só compra ao atingir o requisito`, () => {
       const engine = newEngine()
-      fund(engine, 1e15, 0) // saldo enorme, nada gerado na execução
+      fund(engine, 1e19, 0) // saldo enorme, nada gerado na execução
       const req = e.unlock
       if (req.kind === 'always') {
         expect(engine.equipmentInfo(e.id)!.status).toBe('unlocked')
@@ -93,7 +93,7 @@ describe('catálogo real: ocultar, revelar, desbloquear', () => {
         expect(engine.equipmentInfo(e.id)!.status).toBe('revealed')
         expect(engine.buyEquipment(e.id, 'x1')).toBe(0)
       }
-      engine.state.run.bytesEarned = D(req.amount - 1)
+      engine.state.run.bytesEarned = D(req.amount * 0.999999) // -1 some em 1e18+ (precisão de double)
       expect(engine.buyEquipment(e.id, 'x1')).toBe(0)
       engine.state.run.bytesEarned = D(req.amount)
       expect(engine.equipmentInfo(e.id)!.status).toBe('unlocked')

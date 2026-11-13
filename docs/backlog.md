@@ -47,7 +47,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-024 | Catálogo de melhorias comuns (cerca de 12) com textos | AG07 | T-020, T-023 | feita (BRF-029); ícones novos listados em `docs/AG07/melhorias-m2.md` para a T-027 |
 | T-025 | Catálogo: equipamentos extras por estágio e revisão dos limites dos estágios | AG07 | T-018 (T-024 dispensada por ordem do usuário; revisar depois) | feita (BRF-021) |
 | T-051 | Acrescentar ao mapa de ícones os 10 ícones dos equipamentos novos (`radio-tower`, `globe`, `brain-circuit`, `server-cog`, `database-zap`, `layers`, `thermometer-snowflake`, `sun`, `atom`, `orbit`); hoje cai no ícone padrão | AG04 | T-025 | feita (BRF-023); inclui os 3 ícones dos agentes |
-| T-052 | Equipamentos de Quantum Facility e Mega Corporation e revisão do limite de 1e18 (salto de 64,6 min para 85,5 h na simulação) | AG07 | T-023, T-024 | a fazer |
+| T-052 | Equipamentos de Quantum Facility e Mega Corporation e revisão do limite de 1e18 (salto de 64,6 min para 85,5 h na simulação) | AG07 | T-023, T-024 | feita (BRF-039) |
+| T-059 | Melhorias comuns para Mega Corporation (as 12 atuais vão só até Quantum Facility): desbloqueios e efeitos de produção e clique para o último estágio | AG07 | T-052 | a fazer |
 | T-026 | Painel de agentes: cartões completos, contratar e evoluir | AG04 | T-019, T-023 | feita (BRF-024); botões corrigidos após defeito de custo cortado em 1024 px |
 | T-027 | Painel de melhorias comuns: lista única por custo, comprada continua visível e desabilitada | AG04 | T-020, T-024, T-026 | feita (BRF-033) |
 | T-028 | Indicador do estágio atual na interface; remover chave i18n sem uso | AG04 | T-018 | feita (BRF-031); corrigido o corte do topo na coluna central |
@@ -57,7 +58,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-056 | PWA: manifesto, ícone `>_` verde sobre preto, service worker com cache offline do shell, nome de atalho "ByteCorp Idle" (D-12) | AG03 | — | feita (BRF-034); teste de instalação em aparelho real pendente, com o usuário |
 | T-057 | Categorias de equipamento em abas no mobile, com indicador de que há equipamento comprável | AG04 | — | feita (BRF-035 e BRF-036); no mobile as 5 abas ficam visíveis só com ícone, com o nome da ativa abaixo |
 | T-058 | Ponto da aba de categoria só para equipamento novo (desbloqueado, comprável e sem nenhuma unidade comprada) | AG04 | T-057 | feita (BRF-037) |
-| T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | a fazer |
+| T-029 | Ambiente de teste de componentes React no Vitest | AG03 | — | feita (BRF-038) |
 | T-030 | Testes de componentes: cartões da loja, de agentes e de melhorias | AG04 | T-027, T-029 | a fazer |
 | T-031 | QA do M2: integração (descontos, MAX, agentes, melhorias, estágio, save e migração) e simulação da curva | AG07 | T-021, T-022, T-025, T-030 | a fazer |
 | T-032 | Versão 0.3.0 | AG03 | T-031 | a fazer |

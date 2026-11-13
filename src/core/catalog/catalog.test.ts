@@ -22,10 +22,10 @@ describe('catálogo', () => {
     ])
   })
 
-  it('tem 5 equipamentos por categoria e 25 no total', () => {
-    expect(CATALOG.equipment).toHaveLength(25)
+  it('tem 7 equipamentos por categoria e 35 no total', () => {
+    expect(CATALOG.equipment).toHaveLength(35)
     for (const category of ['networking', 'processing', 'storage', 'cooling', 'infrastructure']) {
-      expect(CATALOG.equipment.filter((e) => e.category === category)).toHaveLength(5)
+      expect(CATALOG.equipment.filter((e) => e.category === category)).toHaveLength(7)
     }
   })
 

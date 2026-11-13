@@ -24,7 +24,7 @@ npm run typecheck    # tsc -b
 npm run build        # typecheck + build de produção em dist/
 ```
 
-Testes ficam ao lado do código (`*.test.ts`) e só cobrem `src/core`, `src/i18n` e `src/platform`. O IndexedDB é testado com `fake-indexeddb`. Não há testes de componentes React ainda.
+Testes ficam ao lado do código. O Vitest tem dois projetos (`vite.config.ts`, `test.projects`): `*.test.ts` e `tests/**/*.test.ts` rodam em ambiente node (lógica, i18n, plataforma, integração); `*.test.tsx` rodam em jsdom com `@testing-library/react` e o preparo de `src/test/setup.ts` (componentes). O IndexedDB é testado com `fake-indexeddb`. Para testar um componente: `render(<I18nProvider><Componente engine={engine} /></I18nProvider>)`, `screen`/`fireEvent`; sem `user-event` instalado.
 
 ## Stack
 
