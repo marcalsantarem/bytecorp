@@ -59,4 +59,47 @@ describe('Árvore Quantum', () => {
     fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' })
     expect(onClose).toHaveBeenCalledTimes(2)
   })
+  it('prende o foco na árvore com Tab e Shift+Tab e devolve o foco ao fechar', () => {
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    outside.focus()
+    const { unmount } = open()
+    const dialog = screen.getByTestId('quantum-tree')
+    expect(dialog.contains(document.activeElement)).toBe(true)
+    const items = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled])')]
+    items[items.length - 1]!.focus()
+    fireEvent.keyDown(document.activeElement!, { key: 'Tab' })
+    expect(document.activeElement).toBe(items[0])
+    fireEvent.keyDown(document.activeElement!, { key: 'Tab', shiftKey: true })
+    expect(document.activeElement).toBe(items[items.length - 1])
+    outside.focus()
+    fireEvent.keyDown(document.body, { key: 'Tab' })
+    expect(dialog.contains(document.activeElement)).toBe(true)
+    unmount()
+    expect(document.activeElement).toBe(outside)
+    outside.remove()
+  })
+
+  it('Esc fecha só a janela de reset, mesmo com o foco fora dela, e depois a árvore', () => {
+    const engine = makeEngine()
+    engine.state.meta.quantumCores = D(5)
+    engine.state.meta.quantumNodes = { alpha_core: 1 }
+    const onClose = vi.fn()
+    open(engine, onClose)
+    fireEvent.click(screen.getByTestId('quantum-reset-open'))
+    const reset = screen.getByTestId('quantum-reset-dialog')
+    expect(reset.contains(document.activeElement)).toBe(true)
+    // Tab dentro da janela de reset não sai dela.
+    const buttons = [...reset.querySelectorAll<HTMLElement>('button')]
+    buttons[buttons.length - 1]!.focus()
+    fireEvent.keyDown(document.activeElement!, { key: 'Tab' })
+    expect(document.activeElement).toBe(buttons[0])
+    // Foco fora da janela: Esc ainda fecha só a janela.
+    screen.getByTestId('quantum-node-alpha_core').focus()
+    fireEvent.keyDown(document.activeElement!, { key: 'Escape' })
+    expect(screen.queryByTestId('quantum-reset-dialog')).toBeNull()
+    expect(onClose).not.toHaveBeenCalled()
+    fireEvent.keyDown(document.activeElement!, { key: 'Escape' })
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
 })

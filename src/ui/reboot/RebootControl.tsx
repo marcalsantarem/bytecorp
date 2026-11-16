@@ -35,8 +35,10 @@ export function RebootControl({ engine, buttonClass }: { engine: GameEngine; but
         className={buttonClass}
       >
         <RotateCcw className="size-4 shrink-0" aria-hidden />
-        <span className="lg:truncate">{t('footer.reboot')}</span>
-        {can && <span className="text-neon-magenta tabular-nums">+{formatCount(reward, locale)}</span>}
+        <span className="flex max-w-full items-baseline justify-center gap-1 whitespace-nowrap">
+          <span className="lg:truncate">{t('footer.reboot')}</span>
+          {can && <span className="text-neon-magenta tabular-nums">+{formatCount(reward, locale)}</span>}
+        </span>
       </button>
       {!can && (
         <span id="reboot-hint" className="sr-only">

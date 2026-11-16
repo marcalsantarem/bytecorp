@@ -6,6 +6,7 @@ import { formatCount } from '../../core/format'
 import type { MessageKey } from '../../i18n'
 import { ICONS } from '../components/iconMap'
 import { useI18n } from '../i18n'
+import { useModal } from '../useModal'
 import { PATH_COLOR, QuantumDetails } from './QuantumDetails'
 import { QuantumResetDialog } from './QuantumResetDialog'
 
@@ -14,6 +15,8 @@ const NODE = 76
 const MIN_ZOOM = 0.3
 const MAX_ZOOM = 2
 const DRAG_THRESHOLD = 5
+// Alvo de toque mínimo (px) que o nó deve ter no enquadramento inicial.
+const TOUCH_TARGET = 44
 
 interface View {
   x: number
@@ -23,13 +26,14 @@ interface View {
 
 const clampZoom = (k: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, k))
 
-// Enquadramento: centro dos nós no centro da área, com zoom que cabe o mapa inteiro.
+// Enquadramento: centro dos nós no centro da área, com zoom que cabe o mapa inteiro, mas nunca abaixo do
+// que dá 44 px de toque por nó (em telas estreitas o mapa passa da área; o pan e o zoom - dão a visão geral).
 function fitView(width: number, height: number): View {
   const xs = QUANTUM_NODES.map((n) => n.position.x * CELL)
   const ys = QUANTUM_NODES.map((n) => n.position.y * CELL)
   const w = Math.max(...xs) - Math.min(...xs) + NODE * 2
   const h = Math.max(...ys) - Math.min(...ys) + NODE * 2
-  const k = width > 0 && height > 0 ? clampZoom(Math.min(width / w, height / h)) : 1
+  const k = width > 0 && height > 0 ? clampZoom(Math.max(Math.min(width / w, height / h), TOUCH_TARGET / NODE)) : 1
   const cx = (Math.max(...xs) + Math.min(...xs)) / 2
   const cy = (Math.max(...ys) + Math.min(...ys)) / 2
   return { x: width / 2 - cx * k, y: height / 2 - cy * k, k }
@@ -66,10 +70,10 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
 
   const size = () => ({ w: area.current?.clientWidth ?? 0, h: area.current?.clientHeight ?? 0 })
 
+  const rootRef = useRef<HTMLDivElement>(null)
+  useModal(rootRef, onClose)
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null
     closeRef.current?.focus()
-    return () => previous?.focus?.()
   }, [])
 
   const zoomAt = useCallback(
@@ -142,13 +146,6 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
     if (area.current?.hasPointerCapture?.(e.pointerId)) area.current.releasePointerCapture(e.pointerId)
   }
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation()
-      onClose()
-    }
-  }
-
   useEffect(() => {
     if (!flash) return
     const timer = setTimeout(() => setFlash(null), 700)
@@ -168,7 +165,7 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
       aria-modal="true"
       aria-label={t('quantum.title')}
       data-testid="quantum-tree"
-      onKeyDown={onKeyDown}
+      ref={rootRef}
       className="fixed inset-0 z-40 flex flex-col bg-void"
     >
       <header className="flex shrink-0 items-center gap-3 border-b border-neon-cyan/20 bg-panel px-3 py-2">
@@ -185,7 +182,7 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
           disabled={engine.quantumCoresSpent <= 0}
           title={engine.quantumCoresSpent <= 0 ? t('quantum.reset.nothing') : undefined}
           aria-label={t('quantum.reset.open')}
-          className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg border border-neon-magenta/50 px-3 font-mono text-sm text-neon-magenta hover:bg-neon-magenta/10 disabled:opacity-40"
+          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-neon-magenta/50 px-3 font-mono text-sm text-neon-magenta hover:bg-neon-magenta/10 disabled:opacity-40"
         >
           <RotateCcw className="size-4" aria-hidden />
           <span className="hidden sm:inline">{t('quantum.reset.open')}</span>

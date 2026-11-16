@@ -45,6 +45,13 @@ describe('RebootEffect', () => {
     }
   })
 
+  it('o botão de pular tem alvo de toque mínimo de 44 px', () => {
+    render(<RebootEffect active onDone={vi.fn()} skipLabel="Pular" />)
+    const btn = screen.getByText('Pular')
+    expect(btn.className).toContain('min-h-11')
+    expect(btn.className).toContain('min-w-11')
+  })
+
   it('desmontar cancela sem chamar onDone', () => {
     const onDone = vi.fn()
     const { unmount } = render(<RebootEffect active onDone={onDone} />)

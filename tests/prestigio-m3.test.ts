@@ -162,7 +162,7 @@ describe('prestígio do M3 contra o motor real', () => {
     return { r, stages, firstCore, rewardAtMega: r.engine.rebootRewardNow }
   })()
 
-  it('primeira run: o Reboot habilita entre 3 e 12 min e a recompensa cresce a cada estágio', () => {
+  it('primeira run: o Reboot habilita entre 5 e 9 min (Startup Lab, D-15) e a recompensa cresce a cada estágio', () => {
     if (report) {
       const lines = ['\n== Run 1 (sem árvore) ==', `primeiro core em ${fmtTime(baseRun.firstCore)}`]
       for (const [id, s] of Object.entries(baseRun.stages)) lines.push(`${id.padEnd(18)} ${fmtTime(s.t).padStart(9)}  recompensa ${s.reward}`)
@@ -170,13 +170,13 @@ describe('prestígio do M3 contra o motor real', () => {
       out(lines.join('\n'))
     }
     expect(baseRun.firstCore).toBeDefined()
-    expect(baseRun.firstCore! / 60).toBeGreaterThanOrEqual(3)
-    expect(baseRun.firstCore! / 60).toBeLessThanOrEqual(12)
+    expect(baseRun.firstCore! / 60).toBeGreaterThanOrEqual(5)
+    expect(baseRun.firstCore! / 60).toBeLessThanOrEqual(9)
     const rewards = Object.values(baseRun.stages).map((s) => s.reward)
     for (let i = 1; i < rewards.length; i++) expect(rewards[i]!).toBeGreaterThanOrEqual(rewards[i - 1]!)
-    // Mega Corporation rende dezenas de cores (D-15 estimava 59 sem contar melhorias).
-    expect(baseRun.rewardAtMega).toBeGreaterThanOrEqual(40)
-    expect(baseRun.rewardAtMega).toBeLessThanOrEqual(90)
+    // Mega Corporation rende dezenas de cores (D-15 estimava 59 com peso 1; com peso 0,5 são 56).
+    expect(baseRun.rewardAtMega).toBeGreaterThanOrEqual(45)
+    expect(baseRun.rewardAtMega).toBeLessThanOrEqual(70)
   })
 
   // Uma só simulação de 10 runs serve aos dois testes abaixo (cerca de 2 min).

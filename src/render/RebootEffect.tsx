@@ -52,7 +52,7 @@ export function RebootEffect({ active, onDone, skipLabel = 'Skip', label = 'REBO
       <canvas ref={canvasRef} className="h-full w-full" aria-hidden />
       <button
         type="button"
-        className="absolute right-4 bottom-4 border border-neon-cyan px-3 py-1 font-mono text-sm text-neon-cyan"
+        className="absolute right-4 bottom-4 min-h-11 min-w-11 border border-neon-cyan px-3 py-1 font-mono text-sm text-neon-cyan"
         onClick={(e) => {
           e.stopPropagation()
           controlRef.current?.finish()

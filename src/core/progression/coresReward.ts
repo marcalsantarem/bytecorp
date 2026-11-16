@@ -15,7 +15,7 @@ export interface CoresRewardWeights {
 export const DEFAULT_CORES_WEIGHTS: CoresRewardWeights = {
   logDivisor: 2,
   logOffset: 4,
-  stageWeight: 1,
+  stageWeight: 0.5,
   upgradesPerCore: 4,
 }
 

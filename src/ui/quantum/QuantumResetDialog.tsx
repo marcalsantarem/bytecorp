@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import type { GameEngine } from '../../core/engine'
 import { formatCount } from '../../core/format'
 import { useI18n } from '../i18n'
+import { useModal } from '../useModal'
 
 // Janela de reset da árvore Quantum (Bíblia 10), em dois passos: resumo e confirmação final.
 // Reset da árvore não faz Reboot.
@@ -11,10 +12,8 @@ export function QuantumResetDialog({ engine, onDone, onCancel }: { engine: GameE
   const titleId = useId()
   const [step, setStep] = useState<1 | 2>(1)
   const cancelRef = useRef<HTMLButtonElement>(null)
-  const onCancelRef = useRef(onCancel)
-  useEffect(() => {
-    onCancelRef.current = onCancel
-  })
+  const dialogRef = useRef<HTMLDivElement>(null)
+  useModal(dialogRef, onCancel)
 
   const refunded = engine.quantumCoresSpent
   const cost = engine.quantumTreeResetCost
@@ -22,22 +21,10 @@ export function QuantumResetDialog({ engine, onDone, onCancel }: { engine: GameE
   const final = balance.add(refunded).sub(cost)
   const refused = final.lt(0)
 
-  useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null
-    cancelRef.current?.focus()
-    return () => previous?.focus?.()
-  }, [])
   // Ao trocar de passo o botão focado some; devolve o foco ao Cancelar.
   useEffect(() => {
     cancelRef.current?.focus()
   }, [step])
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation()
-      onCancelRef.current()
-    }
-  }
 
   const confirm = () => {
     engine.resetQuantumTree()
@@ -61,7 +48,7 @@ export function QuantumResetDialog({ engine, onDone, onCancel }: { engine: GameE
         aria-labelledby={titleId}
         data-testid="quantum-reset-dialog"
         data-step={step}
-        onKeyDown={onKeyDown}
+        ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
         className="flex max-h-full w-full max-w-md flex-col gap-3 overflow-y-auto rounded-xl border border-neon-magenta/40 bg-panel p-4 shadow-[0_0_24px_rgba(255,0,127,0.25)]"
       >

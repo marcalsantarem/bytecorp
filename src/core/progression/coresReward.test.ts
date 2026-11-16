@@ -19,7 +19,8 @@ describe('quantumCoresReward (D-15)', () => {
     expect(reward(createInitialState(0))).toBe(0)
     expect(reward(stateWith(0, 'solo_hacker'))).toBe(0)
     expect(reward(stateWith(5000, 'solo_hacker'))).toBe(0)
-    expect(reward(stateWith(1e4, 'garage_company'))).toBe(1)
+    expect(reward(stateWith(1e4, 'garage_company'))).toBe(0) // peso 0,5: índice 1 ainda não soma
+    expect(reward(stateWith(1e4, 'startup_lab'))).toBe(1)
   })
 
   it('L = 6 em Solo Hacker dá 1 core; L = 5 ainda 0', () => {
@@ -35,12 +36,13 @@ describe('quantumCoresReward (D-15)', () => {
   })
 
   it('bate com a tabela da D-15 nos estágios (com tolerância)', () => {
+    // Valores da D-15 refeitos com o peso de estágio 0,5 (antes 3, 10, 22, 38, 59).
     const rows: [number, string, number, number][] = [
       [1e6, 'startup_lab', 4, 3],
-      [1e9, 'data_center', 6, 10],
-      [1e12, 'corporate_network', 10, 22],
-      [1e15, 'quantum_facility', 14, 38],
-      [1e18, 'mega_corporation', 17, 59],
+      [1e9, 'data_center', 6, 8],
+      [1e12, 'corporate_network', 10, 20],
+      [1e15, 'quantum_facility', 14, 35],
+      [1e18, 'mega_corporation', 17, 56],
     ]
     for (const [earned, stage, ups, expected] of rows) {
       const got = reward(stateWith(earned, stage, ups))

@@ -94,3 +94,7 @@ Nenhum defeito de lógica (cores, custos, compras, reset, save, preservação do
 ## 5. Limpeza
 
 Banco `byte-corp-idle` apagado, janela restaurada ao preset desktop e servidor de desenvolvimento encerrado.
+
+## 6. Ajuste do D2 (T-047c)
+
+`stageWeight` baixou de 1 para 0,5 em `DEFAULT_CORES_WEIGHTS`. Run 1 sem árvore: o botão habilita aos 6,9 min (Startup Lab, antes 3,8 min). Cores por estágio: 0 (Garage), 3, 8, 20, 35, 56 (antes 3, 10, 22, 38, 59). A árvore completa em 10 Reboots, como antes (4,4 h no total); Mega por run: 74, 36, 29, 26, 19 min.
