@@ -53,7 +53,7 @@ Bíblia 7, 8, 1.2, 6.3.
 Bíblia 9, 10. Fecha a primeira versão jogável (25.1).
 
 - Reboot com estimativa, confirmação (o que perde e o que preserva) e animação pulável.
-- Quantum Cores (depende de A-02).
+- Quantum Cores pela fórmula da D-15.
 - Árvore Quantum com três caminhos, pan, zoom, painel de detalhes, compra por nível e reset com custo crescente.
 
 ## M4 Tempo

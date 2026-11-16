@@ -74,13 +74,13 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | ID | Task | Dono | Depende de | Status |
 |---|---|---|---|---|
 | T-034 | Reboot (regras): reset da execução, preservação do permanente, contagem de reboots, evento; recompensa injetável | AG02 | M2 | a fazer |
-| T-035 | Fórmula de Quantum Cores e condição para habilitar o Reboot | AG02 | T-034, A-02 | bloqueada |
+| T-035 | Fórmula de Quantum Cores e condição para habilitar o Reboot | AG02 | T-034, D-15 | a fazer |
 | T-036 | Árvore Quantum (regras): nós, níveis um por vez, custo exponencial, pré-requisitos, reset com custo crescente | AG02 | T-034 | a fazer |
-| T-037 | Aplicar os efeitos quânticos na fórmula de produção e no limite offline | AG01 | T-036, T-021 | bloqueada |
+| T-037 | Aplicar os efeitos quânticos na fórmula de produção e no limite offline | AG01 | T-036, T-021 | a fazer, espera a T-036 |
 | T-038 | Save: revisar o formato, salvar logo após Reboot e reset da árvore | AG03 | T-034, T-036 | a fazer |
 | T-039 | Catálogo da árvore Quantum: 3 caminhos, cerca de 12 nós, textos | AG07 | T-036 | a fazer |
 | T-040 | Efeito de Reboot em Canvas 2D (2 a 3 s, pulável) | AG05 | T-034 | a fazer |
-| T-041 | Janela de Reboot: estimativa, confirmação do que se perde e preserva, botão do rodapé | AG04 | T-035, T-040 | bloqueada |
+| T-041 | Janela de Reboot: estimativa, confirmação do que se perde e preserva, botão do rodapé | AG04 | T-035, T-040 | a fazer, espera a T-035 e a T-040 |
 | T-042 | Árvore Quantum na interface (1): visual com linhas neon, pan e zoom, seleção | AG04 | T-036, T-039, T-041 | a fazer |
 | T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | a fazer |
 | T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | a fazer |
