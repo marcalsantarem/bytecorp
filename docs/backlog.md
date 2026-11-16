@@ -102,7 +102,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-073 | Resumo de retorno: tempo de ausência, Bytes produzidos e ganhos relevantes | AG04 | T-068, T-069 | feita |
 | T-074 | QA do M4: simulação de offline e aceleradores, roteiro manual, curva | AG07 | T-067, T-069, T-072, T-073 | feita |
 | T-075 | Versão 0.5.0 | AG03 | T-074 | feita |
-| T-076 | PR `dev` → `main` e tag `v0.5.0` | AG00 | T-075, pedido do usuário | a fazer |
+| T-076 | PR `dev` → `main` e tag `v0.5.0` | AG00 | T-075, pedido do usuário | feita |
 
 ## Marcos fechados
 
