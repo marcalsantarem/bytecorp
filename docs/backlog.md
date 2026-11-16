@@ -83,8 +83,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-041 | Janela de Reboot: estimativa, confirmação do que se perde e preserva, botão do rodapé | AG04 | T-035, T-040 | feita |
 | T-042 | Árvore Quantum na interface (1): visual com linhas neon, pan e zoom, seleção | AG04 | T-036, T-039, T-041 | feita |
 | T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | feita |
-| T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | a fazer |
-| T-045 | Versão 0.4.0 | AG03 | T-044 | a fazer |
+| T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | feita |
+| T-045 | Versão 0.4.0 | AG03 | T-044 | feita |
 | T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | a fazer |
 
 ## Marcos fechados

@@ -1,6 +1,6 @@
 import type { Catalog } from '../../src/core/catalog/types'
 import { DEFAULT_CONFIG, GameEngine } from '../../src/core/engine'
-import { createInitialState } from '../../src/core/state'
+import { createInitialState, type GameState } from '../../src/core/state'
 
 // Comprador guloso contra o motor real (T-062): 1 clique por segundo (com o crítico real e
 // aleatoriedade determinística), compra o item de menor retorno (custo / ganho de renda efetiva)
@@ -15,6 +15,13 @@ export interface CurveOptions {
   clicksPerSecond?: number
   // Segundos iniciais com pelo menos 1 clique por segundo (sem clique não há como comprar o primeiro item).
   bootstrapSeconds?: number
+  // Estado inicial (padrão: jogo novo). Permite continuar com a árvore Quantum já comprada (M3).
+  state?: GameState
+  // Semente do sorteio de crítico.
+  seed?: number
+  // Chamado a cada segundo virtual (depois das compras); devolver true encerra a simulação.
+  // Sem ele, a simulação termina ao alcançar Mega Corporation.
+  stopWhen?: (engine: GameEngine, t: number) => boolean
 }
 
 export interface Purchase {
@@ -29,6 +36,8 @@ export interface Purchase {
 }
 
 export interface CurveResult {
+  // Motor ao final, para o chamador ler o estado ou aplicar o Reboot.
+  engine: GameEngine
   reachedMega: boolean
   seconds: number
   stageAt: Record<string, number>
@@ -67,8 +76,8 @@ interface Candidate {
 }
 
 export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveResult {
-  const { useAgents = true, useUpgrades = true, maxSeconds = 4 * 3600, clicksPerSecond = 1, bootstrapSeconds = 0 } = opts
-  const engine = new GameEngine(catalog, createInitialState(0), { ...DEFAULT_CONFIG, random: mulberry32(1234) })
+  const { useAgents = true, useUpgrades = true, maxSeconds = 4 * 3600, clicksPerSecond = 1, bootstrapSeconds = 0, stopWhen, seed = 1234 } = opts
+  const engine = new GameEngine(catalog, opts.state ?? createInitialState(0), { ...DEFAULT_CONFIG, random: mulberry32(seed) })
   const { run } = engine.state
   const share = () => {
     const tot = engine.state.stats.bytesEarnedAllTime.toNumber()
@@ -77,6 +86,7 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
   const cfg = engine.config
 
   const result: CurveResult = {
+    engine,
     reachedMega: false,
     seconds: 0,
     stageAt: {},
@@ -195,7 +205,8 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
     if (c.kind === 'level') result.levels[c.id] = (result.levels[c.id] ?? 0) + 1
   }
 
-  while (t < maxSeconds && result.stageAt.mega_corporation === undefined) {
+  let stop = false
+  while (t < maxSeconds && !stop) {
     clickAcc += t < bootstrapSeconds ? Math.max(1, clicksPerSecond) : clicksPerSecond
     while (clickAcc >= 1) {
       engine.click()
@@ -211,6 +222,7 @@ export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveR
       record(c)
       target = pick()
     }
+    stop = stopWhen ? stopWhen(engine, t) : result.stageAt.mega_corporation !== undefined
   }
   result.seconds = t
   result.reachedMega = result.stageAt.mega_corporation !== undefined
