@@ -1,7 +1,6 @@
 import { TriangleAlert } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { boot, type BootResult, type GameSession } from '../app/bootstrap'
-import type { GameEngine } from '../core/engine'
 import type { KeyValueStorage } from '../core/save/storage'
 import { useI18n } from './i18n'
 import { ClickButton } from './core/ClickButton'
@@ -11,6 +10,8 @@ import { GameLayout } from './layout/GameLayout'
 import { AgentsPanel } from './agents/AgentsPanel'
 import { StatsPanel } from './layout/Panels'
 import { ShopPanel } from './shop/ShopPanel'
+import { OfflineSummary } from './offline/OfflineSummary'
+import { sessionOfflineSource } from './offline/sessionSource'
 import { useEngineRevision } from './useEngine'
 
 type Phase = { kind: 'loading' } | BootResult
@@ -64,12 +65,16 @@ export function App({ storage }: { storage: KeyValueStorage }) {
     )
   }
 
-  return <GameScreen engine={phase.session.engine} onReset={phase.session.reset} />
+  return <GameScreen session={phase.session} />
 }
 
-function GameScreen({ engine, onReset }: { engine: GameEngine; onReset: () => Promise<void> }) {
+export function GameScreen({ session }: { session: Pick<GameSession, 'engine' | 'offline' | 'reset'> }) {
+  const { engine, offline, reset: onReset } = session
   useEngineRevision(engine)
+  const source = useMemo(() => sessionOfflineSource(engine, offline), [engine, offline])
   return (
+    <>
+    <OfflineSummary engine={engine} source={source} />
     <GameLayout
       engine={engine}
       onReset={onReset}
@@ -88,5 +93,6 @@ function GameScreen({ engine, onReset }: { engine: GameEngine; onReset: () => Pr
         </>
       }
     />
+    </>
   )
 }
