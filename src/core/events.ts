@@ -1,5 +1,6 @@
 import type { StageId } from './catalog/types'
 import type { Decimal } from './decimal'
+import type { OfflineResult } from './progression/offline'
 
 // Eventos internos do núcleo. Interface, cena e áudio reagem a eles sem que o
 // núcleo conheça nenhuma dessas camadas (GDD 24.2).
@@ -19,6 +20,8 @@ export interface GameEvents {
   quantumNodePurchased: { id: string; level: number; cost: number }
   // Reset da árvore: cores devolvidos, custo cobrado e número do reset (contagem já incrementada).
   quantumTreeReset: { refunded: number; cost: number; resetNumber: number }
+  // Ganho offline creditado (applyOffline), com o resultado completo.
+  offlineApplied: OfflineResult
   stateReplaced: Record<string, never>
 }
 

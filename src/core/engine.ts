@@ -33,6 +33,7 @@ import {
   globalMultiplier,
   type ProductionBreakdown,
 } from './production'
+import { computeOffline, type OfflineResult, type OfflineSegment } from './progression/offline'
 import { applyReboot, DEFAULT_REBOOT_REWARD, rebootRewardOf, type RebootResult, type RebootReward } from './progression/reboot'
 import {
   buyQuantumNode,
@@ -236,10 +237,23 @@ export class GameEngine {
   }
 
   // Limite de ganho offline em ms: base mais os níveis de offlineCapHours da árvore Quantum.
-  // Só exposto; o cálculo offline é do M4.
   get offlineCapMs(): number {
     const hours = BASE_OFFLINE_CAP_HOURS + (quantumEffects(this._state, this.catalog).offlineCapHours ?? 0)
     return Math.max(0, hours) * 3_600_000
+  }
+
+  // Credita a produção da ausência (GDD 14), limitada a offlineCapMs, com a
+  // produção atual do estado. Não simula compras, cliques nem eventos.
+  applyOffline(awayMs: number, segments: readonly OfflineSegment[] = []): OfflineResult {
+    const result = computeOffline(this.production.total, awayMs, this.offlineCapMs, segments)
+    if (result.bytes.gt(0)) {
+      this.earn(result.bytes)
+      this._state.stats.bytesFromProduction = this._state.stats.bytesFromProduction.add(result.bytes)
+    }
+    this.checkStage()
+    this.invalidate()
+    this.events.emit('offlineApplied', result)
+    return result
   }
 
   // Efeitos agregados por tipo (aplicados em production.ts).

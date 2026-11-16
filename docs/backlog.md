@@ -94,7 +94,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-065 | Aceleradores (regras): 2x e 5x, durações de 15, 30 e 60 min, um ativo por vez, maior multiplicador prevalece, inventário sem expiração, ativação, substituição com escolha de perder ou armazenar, temporizador por tempo decorrido | AG02 | A-10 | a fazer |
 | T-066 | Bônus temporários (regras): modelo genérico com multiplicador e tempo restante, expiração, camada de temporários da D-10 | AG02 | T-065 | a fazer |
 | T-067 | Aplicar aceleradores e bônus temporários na produção e no clique (camada de temporários da D-10; regra de interação) | AG01 | T-065, T-066, A-11 | a fazer |
-| T-068 | Produção offline (regras): cálculo por intervalos e expiração de efeitos, limite de 8 h mais o da árvore (`offlineCapMs`), sem compras nem eventos, resumo de ganhos | AG02 | T-067 | a fazer |
+| T-068 | Produção offline (regras): cálculo por intervalos e expiração de efeitos, limite de 8 h mais o da árvore (`offlineCapMs`), sem compras nem eventos, resumo de ganhos | AG02 | T-067 | feita |
 | T-069 | Save e relógio: último registro válido, inventário, acelerador ativo e bônus no save (versão e migração), aplicar o offline ao carregar e ao voltar à aba, proteção contra relógio retrocedido | AG03 | T-065, T-066, T-068 | a fazer |
 | T-070 | Catálogo inicial de aceleradores e de concessões do M4 (fontes definidas em A-10), textos | AG07 | A-10, T-065 | a fazer |
 | T-071 | Indicador persistente do acelerador ativo (multiplicador, tempo restante, aviso de encerramento) | AG04 | T-065 | a fazer |
