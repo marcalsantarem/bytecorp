@@ -138,5 +138,9 @@ export const uiEn: Record<UiMessageKey, string> = {
   'quantum.reset.continue': 'Continue',
   'quantum.reset.confirm': 'Confirm reset',
   'quantum.reset.close': 'Close',
+  'accel.label': 'Active accelerator',
+  'accel.multiplier': '{value}x',
+  'accel.ending': 'Accelerator ending',
+  'accel.expired': 'Accelerator ended',
   'loading':'Loading…',
 }

@@ -200,6 +200,12 @@ export class GameEngine {
     return this.cachedProduction
   }
 
+  // Produção por segundo sem temporários (base das camadas 1 e 2). Usada no ganho offline.
+  get productionBase(): Decimal {
+    return this.production.totalWithoutTemporary
+  }
+
+  // Valor de um clique sem crítico, já com os temporários.
   get clickValue(): Decimal {
     return computeClickValue(this._state, this.catalog, this.config.baseClick)
   }
@@ -221,8 +227,8 @@ export class GameEngine {
     this.events.emit('stateReplaced', {})
   }
 
-  // Multiplicador de temporários (D-17): acelerador ativo × bônus ativos. Ainda não entra na
-  // produção nem no clique (T-067).
+  // Multiplicador de temporários (D-17): acelerador ativo × bônus ativos. Entra na produção e
+  // no clique (camada 3).
   get temporaryMultiplier(): number {
     return temporaryMultiplier(this._state.meta)
   }
@@ -309,9 +315,9 @@ export class GameEngine {
   }
 
   // Credita a produção da ausência (GDD 14), limitada a offlineCapMs, com a
-  // produção atual do estado. Não simula compras, cliques nem eventos.
+  // produção base (sem temporários) vezes os trechos de offlineSegments. Não simula compras, cliques nem eventos.
   applyOffline(awayMs: number, segments: readonly OfflineSegment[] = []): OfflineResult {
-    const result = computeOffline(this.production.total, awayMs, this.offlineCapMs, segments)
+    const result = computeOffline(this.productionBase, awayMs, this.offlineCapMs, segments)
     if (result.bytes.gt(0)) {
       this.earn(result.bytes)
       this._state.stats.bytesFromProduction = this._state.stats.bytesFromProduction.add(result.bytes)

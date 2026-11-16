@@ -76,14 +76,15 @@ describe('bônus temporários', () => {
     expect(e.state.meta.temporaryBonuses).toEqual([{ id: 'ach', multiplier: 2, remainingMs: 25 * MIN }])
   })
 
-  it('não altera a produção nem o clique (T-067 ainda não aplicou)', () => {
+  it('multiplica a produção e o clique (T-067)', () => {
     const e = make()
     e.state.run.equipment[CATALOG.equipment[0]!.id] = 5
     e.invalidate()
     const prod = e.production.total
     const click = e.clickValue
     e.grantTemporaryBonus({ id: 'a', multiplier: 10, remainingMs: MIN })
-    expect(e.production.total.eq(prod)).toBe(true)
-    expect(e.clickValue.eq(click)).toBe(true)
+    expect(e.production.total.div(prod).toNumber()).toBeCloseTo(10, 9)
+    expect(e.clickValue.div(click).toNumber()).toBeCloseTo(10, 9)
+    expect(e.productionBase.eq(prod)).toBe(true)
   })
 })

@@ -166,4 +166,17 @@ export const contentEn: Record<ContentMessageKey, string> = {
   'quantum.gamma_offline.desc': 'Accumulates gains for longer while away: +2 h offline cap per level.',
   'quantum.gamma_chrono.name': 'Time dilation',
   'quantum.gamma_chrono.desc': 'The clock slows for your absence: +8 h offline cap per level.',
+
+  'accelerator.2x_15.name': '2x Accelerator (15 min)',
+  'accelerator.2x_15.desc': 'Multiplies production by 2 for 15 min. The timer only runs while it is active.',
+  'accelerator.2x_30.name': '2x Accelerator (30 min)',
+  'accelerator.2x_30.desc': 'Multiplies production by 2 for 30 min. The timer only runs while it is active.',
+  'accelerator.2x_60.name': '2x Accelerator (60 min)',
+  'accelerator.2x_60.desc': 'Multiplies production by 2 for 60 min. The timer only runs while it is active.',
+  'accelerator.5x_15.name': '5x Accelerator (15 min)',
+  'accelerator.5x_15.desc': 'Multiplies production by 5 for 15 min. The timer only runs while it is active.',
+  'accelerator.5x_30.name': '5x Accelerator (30 min)',
+  'accelerator.5x_30.desc': 'Multiplies production by 5 for 30 min. The timer only runs while it is active.',
+  'accelerator.5x_60.name': '5x Accelerator (60 min)',
+  'accelerator.5x_60.desc': 'Multiplies production by 5 for 60 min. The timer only runs while it is active.',
 }

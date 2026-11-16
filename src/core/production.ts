@@ -1,6 +1,7 @@
 import type { Catalog } from './catalog/types'
 import { D, type Decimal } from './decimal'
 import { effectsBySource, type EffectKind } from './economy'
+import { temporaryMultiplier } from './progression/accelerators'
 import { quantumEffects } from './progression/quantum'
 import type { GameState } from './state'
 
@@ -25,6 +26,8 @@ export interface ProductionBreakdown {
   // Multiplicador global combinado das três camadas (vale também para o clique).
   multiplier: Decimal
   total: Decimal
+  // Produção sem a camada 3 (temporários). É a que o ganho offline usa, com os trechos.
+  totalWithoutTemporary: Decimal
 }
 
 export interface LayerInputs {
@@ -50,9 +53,10 @@ export function quantumPercent(state: GameState, catalog: Catalog): Decimal {
   return D(quantumEffects(state, catalog).globalProductionPercent ?? 0)
 }
 
-// Camada 3: fatores multiplicativos temporários (aceleradores, eventos). Sem fonte até M4/M5.
-export function temporaryFactors(_state: GameState, _catalog: Catalog): Decimal[] {
-  return []
+// Camada 3: fatores multiplicativos temporários (D-17): acelerador ativo e bônus ativos.
+export function temporaryFactors(state: GameState, _catalog: Catalog): Decimal[] {
+  const m = temporaryMultiplier(state.meta)
+  return m === 1 ? [] : [D(m)]
 }
 
 export function productionLayers(state: GameState, catalog: Catalog): ProductionLayers {
@@ -87,7 +91,15 @@ export function computeProduction(state: GameState, catalog: Catalog): Productio
   const base = equipment.add(agents)
   const layers = productionLayers(state, catalog)
   const multiplier = layersMultiplier(layers)
-  return { bySource: { equipment, agents }, base, layers, multiplier, total: base.mul(multiplier) }
+  const withoutTemporary = base.mul(layersMultiplier({ ...layers, temporary: D(1) }))
+  return {
+    bySource: { equipment, agents },
+    base,
+    layers,
+    multiplier,
+    total: base.mul(multiplier),
+    totalWithoutTemporary: withoutTemporary,
+  }
 }
 
 // Soma de agentes, melhorias e árvore Quantum para os efeitos que não são da camada 2 da

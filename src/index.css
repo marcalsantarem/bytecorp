@@ -60,3 +60,13 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .quantum-flash { animation-duration: 0.01s; }
 }
+
+@keyframes accel-warning {
+  50% { opacity: 0.45; }
+}
+.accel-warning {
+  animation: accel-warning 1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .accel-warning { animation: none; }
+}

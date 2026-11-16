@@ -137,6 +137,10 @@ export const uiPtBR = {
   'quantum.reset.continue': 'Continuar',
   'quantum.reset.confirm': 'Confirmar reset',
   'quantum.reset.close': 'Fechar',
+  'accel.label': 'Acelerador ativo',
+  'accel.multiplier': '{value}x',
+  'accel.ending': 'Acelerador terminando',
+  'accel.expired': 'Acelerador encerrado',
   'loading':'Carregando…',
 } as const
 

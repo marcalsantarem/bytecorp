@@ -1,3 +1,4 @@
+import { ACCELERATOR_GRANTS as CATALOG_ACCELERATOR_GRANTS } from '../catalog/accelerators'
 import type { StageId } from '../catalog/types'
 import type { AcceleratorItem, MetaState, TemporaryBonus } from '../state'
 import type { OfflineSegment } from './offline'
@@ -21,18 +22,8 @@ export interface AcceleratorGrantTable {
   reboot: AcceleratorGrant[]
 }
 
-// PROVISÓRIO, só para o núcleo e os testes funcionarem. Os valores reais vêm da T-070 (AG07).
-export const ACCELERATOR_GRANTS: AcceleratorGrantTable = {
-  stage: {
-    garage_company: [{ multiplier: 2, durationMin: 15 }],
-    startup_lab: [{ multiplier: 2, durationMin: 30 }],
-    data_center: [{ multiplier: 2, durationMin: 60 }],
-    corporate_network: [{ multiplier: 5, durationMin: 15 }],
-    quantum_facility: [{ multiplier: 5, durationMin: 30 }],
-    mega_corporation: [{ multiplier: 5, durationMin: 60 }],
-  },
-  reboot: [{ multiplier: 2, durationMin: 30 }],
-}
+// Tabela real do catálogo (T-070, docs/AG07/aceleradores-m4.md).
+export const ACCELERATOR_GRANTS: AcceleratorGrantTable = CATALOG_ACCELERATOR_GRANTS
 
 // Aviso de fim: faltando este tempo, emite acceleratorEnding uma vez.
 export const DEFAULT_ACCELERATOR_ENDING_MS = 30_000

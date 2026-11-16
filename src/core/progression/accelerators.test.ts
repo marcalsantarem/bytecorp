@@ -77,7 +77,7 @@ describe('aceleradores: ativação', () => {
     e.events.on('acceleratorStored', (p) => stored.push(`${p.item.id}:${p.item.remainingMs}`))
     e.activateAccelerator(b, { replace: 'store' })
     expect(e.state.meta.accelerators.active?.id).toBe(b)
-    expect(e.state.meta.accelerators.inventory).toEqual([{ id: a, multiplier: 5, remainingMs: 20 * MIN }])
+    expect(e.state.meta.accelerators.inventory.filter((i) => i.id === a)).toEqual([{ id: a, multiplier: 5, remainingMs: 20 * MIN }])
     expect(stored).toEqual([`${a}:${20 * MIN}`])
   })
 
@@ -174,7 +174,7 @@ describe('aceleradores: offline', () => {
     const e = make()
     e.activateAccelerator(give(e, 5, 15 * MIN))
     const away = 60 * MIN
-    const perSec = e.production.total
+    const perSec = e.productionBase
     const segments = e.offlineSegments(away)
     expect(segments).toEqual([{ durationMs: 15 * MIN, multiplier: 5 }])
     expect(e.state.meta.accelerators.active).toBeNull()
