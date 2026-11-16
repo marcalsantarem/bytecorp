@@ -42,14 +42,14 @@ export function AcceleratorInventoryControl({ engine, buttonClass }: { engine: G
 
   return (
     <>
-      <button type="button" data-testid="accelerator-button" disabled={count === 0} onClick={() => setOpen(true)} className={buttonClass}>
+      <button type="button" data-testid="accelerator-button" disabled={count === 0} onClick={() => setOpen(true)} className={`relative ${buttonClass}`}>
         <Zap className="size-4 shrink-0" aria-hidden />
         <span className="flex max-w-full items-baseline justify-center gap-1 whitespace-nowrap">
           <span className="lg:truncate">{t('footer.accelerators')}</span>
-          {count > 0 && <span className="text-neon-cyan tabular-nums">{count}</span>}
+          {count > 0 && <span className="text-neon-cyan tabular-nums max-lg:absolute max-lg:top-0.5 max-lg:right-1.5">{count}</span>}
         </span>
       </button>
-      <div role="status" aria-live="polite" className={toast === null ? 'sr-only' : 'pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-3'}>
+      <div role="status" aria-live="polite" className={toast === null ? 'sr-only' : 'pointer-events-none fixed inset-x-0 top-28 z-30 flex justify-center px-3'}>
         {toast !== null && (
           <span data-testid="accelerator-toast" className="rounded border border-neon-cyan/50 bg-panel px-3 py-2 font-mono text-xs text-neon-cyan shadow-[0_0_16px_rgba(0,255,204,0.2)]">
             {t('accel.granted', { count: toast })}
