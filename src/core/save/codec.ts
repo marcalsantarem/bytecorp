@@ -4,7 +4,7 @@ import type { GameState } from '../state'
 
 // Formato persistido. Decimal vira string; tudo mais é JSON simples.
 // Ao mudar o formato: incrementar SAVE_VERSION e registrar a migração em MIGRATIONS.
-export const SAVE_VERSION = 1
+export const SAVE_VERSION = 2
 
 export interface SaveEnvelope {
   version: number
@@ -17,7 +17,21 @@ export type DecodeResult =
   | { ok: false; reason: 'corrupt' | 'invalid' | 'unsupportedVersion'; detail: string }
 
 // Migração da versão N para N+1, aplicada sobre o estado bruto.
-export const MIGRATIONS: Record<number, (state: unknown) => unknown> = {}
+export const MIGRATIONS: Record<number, (state: unknown) => unknown> = {
+  // v1 -> v2 (T-065/T-066): meta ganha aceleradores e bônus temporários, vazios.
+  1: (raw) => {
+    const root = obj(raw, 'state')
+    const meta = obj(root.meta, 'meta')
+    return {
+      ...root,
+      meta: {
+        ...meta,
+        accelerators: { active: null, inventory: [], granted: [], nextItemId: 1 },
+        temporaryBonuses: [],
+      },
+    }
+  },
+}
 
 const STAGE_IDS: readonly StageId[] = [
   'solo_hacker',
@@ -91,6 +105,31 @@ function countMap(value: unknown, path: string): Record<string, number> {
   return out
 }
 
+function timerItem(value: unknown, path: string) {
+  const o = obj(value, path)
+  if (typeof o.id !== 'string' || o.id === '') fail(`${path}.id`, 'texto')
+  const multiplier = num(o.multiplier, `${path}.multiplier`)
+  if (multiplier <= 0) fail(`${path}.multiplier`, 'número > 0')
+  const remainingMs = num(o.remainingMs, `${path}.remainingMs`)
+  if (remainingMs <= 0) fail(`${path}.remainingMs`, 'número > 0')
+  return { id: o.id, multiplier, remainingMs }
+}
+
+function timerList(value: unknown, path: string) {
+  if (!Array.isArray(value)) fail(path, 'lista')
+  return (value as unknown[]).map((v, i) => timerItem(v, `${path}[${i}]`))
+}
+
+function parseAccelerators(value: unknown): GameState['meta']['accelerators'] {
+  const a = obj(value, 'meta.accelerators')
+  return {
+    active: a.active === null ? null : timerItem(a.active, 'meta.accelerators.active'),
+    inventory: timerList(a.inventory, 'meta.accelerators.inventory'),
+    granted: stringList(a.granted, 'meta.accelerators.granted'),
+    nextItemId: num(a.nextItemId, 'meta.accelerators.nextItemId', { integer: true, min: 1 }),
+  }
+}
+
 function parseState(raw: unknown): GameState {
   const root = obj(raw, 'state')
   const run = obj(root.run, 'run')
@@ -125,6 +164,8 @@ function parseState(raw: unknown): GameState {
       quantumNodes: countMap(meta.quantumNodes, 'meta.quantumNodes'),
       treeResets: num(meta.treeResets, 'meta.treeResets', { integer: true }),
       achievements: stringList(meta.achievements, 'meta.achievements'),
+      accelerators: parseAccelerators(meta.accelerators),
+      temporaryBonuses: timerList(meta.temporaryBonuses, 'meta.temporaryBonuses'),
     },
     stats: {
       bytesEarnedAllTime: decimal(stats.bytesEarnedAllTime, 'stats.bytesEarnedAllTime'),

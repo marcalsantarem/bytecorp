@@ -58,6 +58,52 @@ describe('codec do save', () => {
     expect(decodeSave(JSON.stringify(b))).toMatchObject({ ok: false, reason: 'invalid' })
   })
 
+  it('preserva aceleradores e bônus temporários em ida e volta', () => {
+    const state = sampleState()
+    state.meta.accelerators = {
+      active: { id: 'acc-3', multiplier: 5, remainingMs: 61_000 },
+      inventory: [{ id: 'acc-4', multiplier: 2, remainingMs: 900_000 }],
+      granted: ['stage:garage_company', 'reboot:1'],
+      nextItemId: 5,
+    }
+    state.meta.temporaryBonuses = [{ id: 'ach', multiplier: 1.5, remainingMs: 5000 }]
+    const result = decodeSave(encodeSave(state, 0))
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.state.meta.accelerators).toEqual(state.meta.accelerators)
+    expect(result.state.meta.temporaryBonuses).toEqual(state.meta.temporaryBonuses)
+  })
+
+  it('migra a versão 1 sem os campos novos', () => {
+    const envelope = JSON.parse(encodeSave(sampleState(), 0))
+    envelope.version = 1
+    delete envelope.state.meta.accelerators
+    delete envelope.state.meta.temporaryBonuses
+    const result = decodeSave(JSON.stringify(envelope))
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.state.meta.accelerators).toEqual({ active: null, inventory: [], granted: [], nextItemId: 1 })
+    expect(result.state.meta.temporaryBonuses).toEqual([])
+    expect(result.state.meta.quantumNodes).toEqual({ a1: 3 })
+  })
+
+  it('rejeita aceleradores inválidos informando o campo', () => {
+    const base = () => JSON.parse(encodeSave(sampleState(), 0))
+    const a = base()
+    a.state.meta.accelerators.active = { id: 'x', multiplier: 2, remainingMs: 0 }
+    const ra = decodeSave(JSON.stringify(a))
+    expect(ra).toMatchObject({ ok: false, reason: 'invalid' })
+    if (!ra.ok) expect(ra.detail).toContain('meta.accelerators.active.remainingMs')
+
+    const b = base()
+    delete b.state.meta.temporaryBonuses
+    expect(decodeSave(JSON.stringify(b))).toMatchObject({ ok: false, reason: 'invalid' })
+
+    const c = base()
+    c.state.meta.accelerators.inventory = [{ id: 'x', multiplier: -1, remainingMs: 5 }]
+    expect(decodeSave(JSON.stringify(c))).toMatchObject({ ok: false, reason: 'invalid' })
+  })
+
   it('rejeita save de versão futura', () => {
     const envelope = JSON.parse(encodeSave(sampleState(), 0))
     envelope.version = SAVE_VERSION + 1

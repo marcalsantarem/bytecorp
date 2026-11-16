@@ -20,6 +20,32 @@ export interface MetaState {
   quantumNodes: Record<string, number>
   treeResets: number
   achievements: string[]
+  // Aceleradores (GDD 13): em meta porque o temporizador corre além do Reboot e offline (13.3).
+  accelerators: AcceleratorState
+  // Bônus temporários (D-10, camada Π temporários); sobrevivem ao Reboot (GDD 9.3).
+  temporaryBonuses: TemporaryBonus[]
+}
+
+// Acelerador ativo ou guardado: multiplicador e tempo restante. Itens do inventário não expiram.
+export interface AcceleratorItem {
+  id: string
+  multiplier: number
+  remainingMs: number
+}
+
+export interface AcceleratorState {
+  active: AcceleratorItem | null
+  inventory: AcceleratorItem[]
+  // Chaves das concessões já recebidas (`stage:<id>`, `reboot:<n>`), para não repetir (D-16).
+  granted: string[]
+  // Contador para gerar ids de itens (`acc-<n>`).
+  nextItemId: number
+}
+
+export interface TemporaryBonus {
+  id: string
+  multiplier: number
+  remainingMs: number
 }
 
 // Estatísticas históricas acumuladas, também preservadas no Reboot.
@@ -55,7 +81,14 @@ export function createRunState(now: number): RunState {
 export function createInitialState(now: number): GameState {
   return {
     run: createRunState(now),
-    meta: { quantumCores: D(0), quantumNodes: {}, treeResets: 0, achievements: [] },
+    meta: {
+      quantumCores: D(0),
+      quantumNodes: {},
+      treeResets: 0,
+      achievements: [],
+      accelerators: { active: null, inventory: [], granted: [], nextItemId: 1 },
+      temporaryBonuses: [],
+    },
     stats: {
       bytesEarnedAllTime: D(0),
       bytesFromClicks: D(0),
