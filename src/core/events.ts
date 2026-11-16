@@ -15,6 +15,10 @@ export interface GameEvents {
   stageChanged: { from: StageId; to: StageId }
   // Depois de um Reboot aceito: cores ganhos e número do reboot (contagem já incrementada).
   reboot: { reward: number; rebootNumber: number }
+  // Um nível de nó Quantum comprado: nível novo e custo em cores.
+  quantumNodePurchased: { id: string; level: number; cost: number }
+  // Reset da árvore: cores devolvidos, custo cobrado e número do reset (contagem já incrementada).
+  quantumTreeReset: { refunded: number; cost: number; resetNumber: number }
   stateReplaced: Record<string, never>
 }
 

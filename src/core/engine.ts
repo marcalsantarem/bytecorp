@@ -34,6 +34,20 @@ import {
   type ProductionBreakdown,
 } from './production'
 import { applyReboot, DEFAULT_REBOOT_REWARD, rebootRewardOf, type RebootResult, type RebootReward } from './progression/reboot'
+import {
+  buyQuantumNode,
+  DEFAULT_TREE_RESET_COST,
+  nodeLevelCost,
+  nodeStatus,
+  quantumEffects,
+  resetQuantumTree,
+  spentCores,
+  type BuyNodeResult,
+  type NodeStatus,
+  type QuantumEffects,
+  type ResetTreeResult,
+  type TreeResetCost,
+} from './progression/quantum'
 import { createInitialState, type GameState } from './state'
 
 export interface EngineConfig {
@@ -50,8 +64,10 @@ export interface EngineConfig {
   maxCriticalChance: number
   // Fonte de aleatoriedade em [0, 1). Injetável para testes.
   random: () => number
-  // Recompensa de Reboot em Quantum Cores; menos de 1 recusa o Reboot (T-034). Padrão provisório: 0.
+  // Recompensa de Reboot em Quantum Cores; menos de 1 recusa o Reboot (T-034). Padrão: fórmula da D-15 (T-035).
   rebootReward: RebootReward
+  // Custo em cores do reset da árvore Quantum, por número de resets já feitos (T-036).
+  treeResetCost: TreeResetCost
 }
 
 export interface EquipmentModeInfo {
@@ -114,6 +130,7 @@ export const DEFAULT_CONFIG: EngineConfig = {
   maxCriticalChance: DEFAULT_MAX_CRITICAL_CHANCE,
   random: Math.random,
   rebootReward: DEFAULT_REBOOT_REWARD,
+  treeResetCost: DEFAULT_TREE_RESET_COST,
 }
 
 // Núcleo de lógica. Não conhece interface, renderização nem relógio: quem o
@@ -174,17 +191,58 @@ export class GameEngine {
 
   // Cores que um Reboot daria agora (0 = Reboot indisponível).
   get rebootRewardNow(): number {
-    return rebootRewardOf(this._state, this.config.rebootReward)
+    return rebootRewardOf(this._state, this.catalog, this.config.rebootReward)
   }
 
   // Reboot (GDD 9.2 e 9.3): recusa sem recompensa; senão zera `run` e soma os cores.
   reboot(): RebootResult {
-    const result = applyReboot(this._state, this.config.rebootReward, Date.now())
+    const result = applyReboot(this._state, this.catalog, this.config.rebootReward, Date.now())
     if (!result.ok) return result
     this.syncStage()
     this.invalidate()
     this.events.emit('reboot', { reward: result.reward, rebootNumber: result.rebootNumber })
     return result
+  }
+
+  // Compra um nível do nó Quantum (GDD 10); recusa sem alterar o estado.
+  buyQuantumNode(id: string): BuyNodeResult {
+    const result = buyQuantumNode(this._state, this.catalog, id)
+    if (!result.ok) return result
+    this.invalidate()
+    this.events.emit('quantumNodePurchased', { id, level: result.level, cost: result.cost })
+    return result
+  }
+
+  // Reset da árvore: devolve os cores gastos e cobra o custo crescente; recusa sem saldo.
+  resetQuantumTree(): ResetTreeResult {
+    const result = resetQuantumTree(this._state, this.catalog, this.config.treeResetCost)
+    if (!result.ok) return result
+    this.invalidate()
+    this.events.emit('quantumTreeReset', { refunded: result.refunded, cost: result.cost, resetNumber: result.resetNumber })
+    return result
+  }
+
+  // Custo em cores do próximo reset da árvore.
+  get quantumTreeResetCost(): number {
+    return Math.max(0, Math.floor(this.config.treeResetCost(this._state.meta.treeResets)))
+  }
+
+  // Cores gastos na árvore (o que o reset devolveria).
+  get quantumCoresSpent(): number {
+    return spentCores(this._state, this.catalog)
+  }
+
+  // Efeitos agregados por tipo; ainda não aplicados à produção (T-037).
+  get quantumEffects(): QuantumEffects {
+    return quantumEffects(this._state, this.catalog)
+  }
+
+  // Nível, custo do próximo nível e situação do nó; undefined se o id não existe.
+  quantumNodeInfo(id: string): { level: number; nextCost: number; status: NodeStatus } | undefined {
+    const def = this.catalog.quantumNodes.find((n) => n.id === id)
+    if (!def) return undefined
+    const level = this._state.meta.quantumNodes[id] ?? 0
+    return { level, nextCost: nodeLevelCost(def, level), status: nodeStatus(def, this._state) }
   }
 
   // Estágio atual e o próximo, para a interface.

@@ -69,7 +69,7 @@ describe('Reboot', () => {
     }
   })
 
-  it('o padrão provisório recusa o Reboot', () => {
+  it('o padrão recusa o Reboot com a execução recém-zerada', () => {
     const e = new GameEngine(CATALOG, createInitialState(0))
     expect(e.rebootRewardNow).toBe(0)
     expect(e.reboot().ok).toBe(false)

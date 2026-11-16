@@ -93,7 +93,31 @@ export function validateCatalog(catalog: Catalog): string[] {
     checkKey(where, n.descriptionKey)
     checkCost(where, n.baseCost, n.costGrowth)
     for (const p of n.prerequisites) {
-      if (!nodeIds.has(p)) problems.push(`${where}: pré-requisito inexistente "${p}"`)
+      if (p === n.id) problems.push(`${where}: pré-requisito aponta para si mesmo`)
+      else if (!nodeIds.has(p)) problems.push(`${where}: pré-requisito inexistente "${p}"`)
+    }
+    if (n.maxLevel !== null && !(Number.isInteger(n.maxLevel) && n.maxLevel >= 1)) {
+      problems.push(`${where}: nível máximo deve ser inteiro >= 1 ou null`)
+    }
+    if (!Number.isFinite(n.effectPerLevel.value)) problems.push(`${where}: efeito por nível com valor inválido`)
+    if (!Number.isFinite(n.position.x) || !Number.isFinite(n.position.y)) problems.push(`${where}: posição inválida`)
+  }
+
+  // Pré-requisitos não podem formar ciclo (um nó teria de ser comprado antes de si mesmo).
+  const prereqs = new Map(catalog.quantumNodes.map((n) => [n.id, n.prerequisites]))
+  const visited = new Map<string, 'visiting' | 'done'>()
+  const hasCycle = (id: string): boolean => {
+    if (visited.get(id) === 'done') return false
+    if (visited.get(id) === 'visiting') return true
+    visited.set(id, 'visiting')
+    const cyclic = (prereqs.get(id) ?? []).some((p) => prereqs.has(p) && hasCycle(p))
+    visited.set(id, 'done')
+    return cyclic
+  }
+  for (const id of prereqs.keys()) {
+    if (hasCycle(id)) {
+      problems.push(`quantum: ciclo de pré-requisitos envolvendo "${id}"`)
+      break
     }
   }
 
