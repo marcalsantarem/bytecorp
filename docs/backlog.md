@@ -100,8 +100,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-071 | Indicador persistente do acelerador ativo (multiplicador, tempo restante, aviso de encerramento) | AG04 | T-065 | feita |
 | T-072 | Inventário e ativação de aceleradores: confirmação com comparação, escolha de perder ou armazenar | AG04 | T-065, T-070, T-071 | feita |
 | T-073 | Resumo de retorno: tempo de ausência, Bytes produzidos e ganhos relevantes | AG04 | T-068, T-069 | feita |
-| T-074 | QA do M4: simulação de offline e aceleradores, roteiro manual, curva | AG07 | T-067, T-069, T-072, T-073 | a fazer |
-| T-075 | Versão 0.5.0 | AG03 | T-074 | a fazer |
+| T-074 | QA do M4: simulação de offline e aceleradores, roteiro manual, curva | AG07 | T-067, T-069, T-072, T-073 | feita |
+| T-075 | Versão 0.5.0 | AG03 | T-074 | feita |
 | T-076 | PR `dev` → `main` e tag `v0.5.0` | AG00 | T-075, pedido do usuário | a fazer |
 
 ## Marcos fechados

@@ -1,5 +1,5 @@
 import type { Catalog } from '../../src/core/catalog/types'
-import { DEFAULT_CONFIG, GameEngine } from '../../src/core/engine'
+import { DEFAULT_CONFIG, GameEngine, type EngineConfig } from '../../src/core/engine'
 import { createInitialState, type GameState } from '../../src/core/state'
 
 // Comprador guloso contra o motor real (T-062): 1 clique por segundo (com o crítico real e
@@ -22,6 +22,10 @@ export interface CurveOptions {
   // Chamado a cada segundo virtual (depois das compras); devolver true encerra a simulação.
   // Sem ele, a simulação termina ao alcançar Mega Corporation.
   stopWhen?: (engine: GameEngine, t: number) => boolean
+  // Chamado uma vez com o motor recém-criado (antes do primeiro segundo), para o chamador assinar eventos.
+  onEngine?: (engine: GameEngine) => void
+  // Ajustes da configuração do motor (ex.: tabela de concessões de aceleradores).
+  config?: Partial<EngineConfig>
 }
 
 export interface Purchase {
@@ -77,7 +81,8 @@ interface Candidate {
 
 export function simulateCurve(catalog: Catalog, opts: CurveOptions = {}): CurveResult {
   const { useAgents = true, useUpgrades = true, maxSeconds = 4 * 3600, clicksPerSecond = 1, bootstrapSeconds = 0, stopWhen, seed = 1234 } = opts
-  const engine = new GameEngine(catalog, opts.state ?? createInitialState(0), { ...DEFAULT_CONFIG, random: mulberry32(seed) })
+  const engine = new GameEngine(catalog, opts.state ?? createInitialState(0), { ...DEFAULT_CONFIG, ...opts.config, random: mulberry32(seed) })
+  opts.onEngine?.(engine)
   const { run } = engine.state
   const share = () => {
     const tot = engine.state.stats.bytesEarnedAllTime.toNumber()
