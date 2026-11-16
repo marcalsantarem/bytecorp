@@ -84,7 +84,21 @@ export const uiPtBR = {
   'reboot.cancel': 'Cancelar',
   'reboot.skip': 'Pular',
   'reboot.effectLabel': 'REBOOT',
-  'loading': 'Carregando…',
+  'quantum.title': 'Árvore Quantum',
+  'quantum.balance': 'Quantum Cores',
+  'quantum.close': 'Fechar a árvore Quantum',
+  'quantum.map': 'Mapa da árvore Quantum',
+  'quantum.zoomIn': 'Aproximar',
+  'quantum.zoomOut': 'Afastar',
+  'quantum.path.alpha': 'caminho Alfa',
+  'quantum.path.beta': 'caminho Beta',
+  'quantum.path.gamma': 'caminho Gama',
+  'quantum.status.locked': 'bloqueado',
+  'quantum.status.available': 'disponível',
+  'quantum.status.partial': 'em evolução',
+  'quantum.status.maxed': 'no máximo',
+  'quantum.details.empty': 'Selecione um nó para ver os detalhes.',
+  'loading':'Carregando…',
 } as const
 
 export type UiMessageKey = keyof typeof uiPtBR

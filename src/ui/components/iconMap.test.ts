@@ -13,6 +13,11 @@ describe('mapa de ícones', () => {
     expect(faltando).toEqual([])
   })
 
+  it('cobre o ícone de todo nó Quantum do catálogo', () => {
+    const faltando = CATALOG.quantumNodes.filter((n) => !(n.icon in ICONS)).map((n) => `${n.id}:${n.icon}`)
+    expect(faltando).toEqual([])
+  })
+
   it('cobre o ícone de toda melhoria do catálogo', () => {
     const faltando = CATALOG.upgrades.filter((u) => !(u.icon in ICONS)).map((u) => `${u.id}:${u.icon}`)
     expect(faltando).toEqual([])
