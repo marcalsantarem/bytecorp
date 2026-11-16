@@ -39,5 +39,7 @@ Tasks que dependem destes itens ficam bloqueadas.
 
 | ID | Questão | Bloqueia |
 |---|---|---|
+| A-10 | Como o jogador obtém aceleradores no M4 (Bíblia 13.2: conquistas, eventos e anúncios só chegam depois). Opções: concessão por marcos de jogo (primeira entrada em cada estágio e em cada Reboot), recompensa no resumo de retorno offline, ou botão de depuração. | T-065, T-070 |
+| A-11 | O acelerador multiplica só a produção passiva ou também o clique; e como interage com bônus temporários (D-10 deixa para o M4). | T-067 |
 | A-07 | Relevância do ganho fixo por clique (`clickFlat`): perde peso depois de cerca de 10 min de jogo e todas as melhorias de clique ficam disponíveis até 7 min. Decidir se `clickFlat` escala com a produção ou se fica como está. | Nada; revisar no balanceamento do M8 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |
