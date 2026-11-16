@@ -104,6 +104,27 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-075 | Versão 0.5.0 | AG03 | T-074 | feita |
 | T-076 | PR `dev` → `main` e tag `v0.5.0` | AG00 | T-075, pedido do usuário | feita |
 
+### M5 Metajogo e fluxo (v0.6.0)
+
+| ID | Task | Dono | Depende de | Status |
+|---|---|---|---|---|
+| T-077 | Conquistas (regras): 7 categorias, 4 raridades, requisitos por tipo (produção, cliques e críticos, equipamentos, agentes, Reboots, Quantum, estágios, tempo de jogo acumulado), progresso imediato, secretas, recompensas (Bytes, bônus temporários de 15, 30 e 60 min, Quantum Cores), estado em `meta`, eventos | AG02 | M4 | a fazer |
+| T-078 | Catálogo de conquistas (intermediário, secretas com pista) e textos pt-BR e en | AG07 | T-077, A-13 | a fazer |
+| T-079 | Save: conquistas, estatísticas novas (tempo de jogo aberto) e progresso do tutorial, com versão e migração | AG03 | T-077 | a fazer |
+| T-080 | Notificação central de conquista: uma por vez, fila, fecha só manualmente, sem histórico | AG04 | T-077 | a fazer |
+| T-081 | Janela de conquistas (botão permanente do rodapé): lista por categoria, raridade, progresso, secretas com pista | AG04 | T-078, T-080 | a fazer |
+| T-082 | Estatísticas em modal: lista vertical única de totais acumulados, sem abas nem gráficos | AG04 | T-079 | a fazer |
+| T-083 | Configurações (modelo e persistência fora do save): volumes de música, efeitos e interface, qualidade gráfica, idioma, notificações por categoria, velocidade de jogo conforme A-12 | AG03 | A-12 | a fazer |
+| T-084 | Janela de Configurações; idioma pt-BR e en reativado (revoga D-11); volumes e qualidade só guardam o valor até o M6 | AG04 | T-083 | a fazer |
+| T-085 | Tela inicial: Continuar, Novo jogo com confirmação, Configurações e Créditos; destino do botão Reset conforme A-14 | AG04 | T-084, A-14 | a fazer |
+| T-086 | Fundo animado da tela inicial em Canvas 2D (infraestrutura tecnológica, logotipo) | AG05 | T-085 | a fazer |
+| T-087 | Tutorial contextual (regras): passos por marcos (cliques, primeiro equipamento, produção passiva, primeiro agente, melhorias, conquistas, Reboot, árvore Quantum), progresso no save, passo de eventos fica para o M7 | AG02 | T-079 | a fazer |
+| T-088 | Tutorial na interface: dicas guiadas e dispensáveis, uma por vez | AG04 | T-087 | a fazer |
+| T-089 | Notificações locais (API do navegador, permissão, categorias configuráveis, limite contra excesso) compatível com PWA | AG03 | T-083, T-077 | a fazer |
+| T-090 | QA do M5: conquistas, tutorial, configurações, tela inicial, notificações, save | AG07 | T-081, T-082, T-085, T-086, T-088, T-089 | a fazer |
+| T-091 | Versão 0.6.0 | AG03 | T-090 | a fazer |
+| T-092 | PR `dev` → `main` e tag `v0.6.0` | AG00 | T-091, pedido do usuário | a fazer |
+
 ## Marcos fechados
 
 | Marco | Versão | Tasks |

@@ -42,5 +42,8 @@ Tasks que dependem destes itens ficam bloqueadas.
 
 | ID | Questão | Bloqueia |
 |---|---|---|
+| A-12 | Velocidade de jogo nas configurações (Bíblia 15.8; 13.1 diz que o controle manual poderá ser desbloqueado por melhorias): o que entra no M5. Opções: (1) seletor 1x, 2x e 5x bloqueado até uma melhoria nova o liberar; (2) sem seletor, só o item reservado nas configurações (para o M8); (3) seletor livre desde o início. | T-083 |
+| A-13 | Tamanho do catálogo de conquistas (Bíblia 11.1, "intermediário"): cerca de 40 (cobre as 7 categorias e as 4 raridades, com 6 a 8 secretas) ou cerca de 70. | T-078 |
+| A-14 | Destino do botão Reset (D-11) depois da tela inicial com Novo jogo: remover do jogo, manter como está, ou mover para dentro das Configurações. | T-085 |
 | A-07 | Relevância do ganho fixo por clique (`clickFlat`): perde peso depois de cerca de 10 min de jogo e todas as melhorias de clique ficam disponíveis até 7 min. Decidir se `clickFlat` escala com a produção ou se fica como está. | Nada; revisar no balanceamento do M8 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |
