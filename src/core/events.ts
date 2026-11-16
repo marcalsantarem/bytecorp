@@ -13,6 +13,8 @@ export interface GameEvents {
   upgradePurchased: { id: string; cost: number }
   // Um por estágio avançado, em ordem (GDD 1.2). Não é emitido ao carregar um estado.
   stageChanged: { from: StageId; to: StageId }
+  // Depois de um Reboot aceito: cores ganhos e número do reboot (contagem já incrementada).
+  reboot: { reward: number; rebootNumber: number }
   stateReplaced: Record<string, never>
 }
 

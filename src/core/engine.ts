@@ -33,6 +33,7 @@ import {
   globalMultiplier,
   type ProductionBreakdown,
 } from './production'
+import { applyReboot, DEFAULT_REBOOT_REWARD, rebootRewardOf, type RebootResult, type RebootReward } from './progression/reboot'
 import { createInitialState, type GameState } from './state'
 
 export interface EngineConfig {
@@ -49,6 +50,8 @@ export interface EngineConfig {
   maxCriticalChance: number
   // Fonte de aleatoriedade em [0, 1). Injetável para testes.
   random: () => number
+  // Recompensa de Reboot em Quantum Cores; menos de 1 recusa o Reboot (T-034). Padrão provisório: 0.
+  rebootReward: RebootReward
 }
 
 export interface EquipmentModeInfo {
@@ -110,6 +113,7 @@ export const DEFAULT_CONFIG: EngineConfig = {
   maxCostDiscountPercent: DEFAULT_MAX_COST_DISCOUNT_PERCENT,
   maxCriticalChance: DEFAULT_MAX_CRITICAL_CHANCE,
   random: Math.random,
+  rebootReward: DEFAULT_REBOOT_REWARD,
 }
 
 // Núcleo de lógica. Não conhece interface, renderização nem relógio: quem o
@@ -166,6 +170,21 @@ export class GameEngine {
     this.syncStage()
     this.invalidate()
     this.events.emit('stateReplaced', {})
+  }
+
+  // Cores que um Reboot daria agora (0 = Reboot indisponível).
+  get rebootRewardNow(): number {
+    return rebootRewardOf(this._state, this.config.rebootReward)
+  }
+
+  // Reboot (GDD 9.2 e 9.3): recusa sem recompensa; senão zera `run` e soma os cores.
+  reboot(): RebootResult {
+    const result = applyReboot(this._state, this.config.rebootReward, Date.now())
+    if (!result.ok) return result
+    this.syncStage()
+    this.invalidate()
+    this.events.emit('reboot', { reward: result.reward, rebootNumber: result.rebootNumber })
+    return result
   }
 
   // Estágio atual e o próximo, para a interface.
