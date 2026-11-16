@@ -1,4 +1,5 @@
 import { isMessageKey } from '../../i18n'
+import { ACCELERATOR_GRANTS, ACCELERATOR_ITEMS, validateAccelerators } from './accelerators'
 import { AGENTS } from './agents'
 import { EQUIPMENT } from './equipment'
 import { QUANTUM_NODES } from './quantum'
@@ -7,6 +8,7 @@ import { UPGRADES } from './upgrades'
 import type { Catalog, Requirement } from './types'
 
 export * from './types'
+export * from './accelerators'
 
 export const CATALOG: Catalog = {
   stages: STAGES,
@@ -121,6 +123,15 @@ export function validateCatalog(catalog: Catalog): string[] {
       break
     }
   }
+
+  problems.push(
+    ...validateAccelerators(
+      ACCELERATOR_ITEMS,
+      ACCELERATOR_GRANTS,
+      catalog.stages.map((s) => s.id),
+      isMessageKey,
+    ),
+  )
 
   return problems
 }

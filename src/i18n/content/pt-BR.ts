@@ -166,6 +166,19 @@ export const contentPtBR = {
   'quantum.gamma_offline.desc': 'Acumula ganho por mais tempo longe do jogo: +2 h de limite offline por nível.',
   'quantum.gamma_chrono.name': 'Dilatação temporal',
   'quantum.gamma_chrono.desc': 'O relógio corre devagar para a ausência: +8 h de limite offline por nível.',
+
+  'accelerator.2x_15.name': 'Acelerador 2x (15 min)',
+  'accelerator.2x_15.desc': 'Multiplica a produção por 2 durante 15 min. O tempo só corre enquanto ele está ativo.',
+  'accelerator.2x_30.name': 'Acelerador 2x (30 min)',
+  'accelerator.2x_30.desc': 'Multiplica a produção por 2 durante 30 min. O tempo só corre enquanto ele está ativo.',
+  'accelerator.2x_60.name': 'Acelerador 2x (60 min)',
+  'accelerator.2x_60.desc': 'Multiplica a produção por 2 durante 60 min. O tempo só corre enquanto ele está ativo.',
+  'accelerator.5x_15.name': 'Acelerador 5x (15 min)',
+  'accelerator.5x_15.desc': 'Multiplica a produção por 5 durante 15 min. O tempo só corre enquanto ele está ativo.',
+  'accelerator.5x_30.name': 'Acelerador 5x (30 min)',
+  'accelerator.5x_30.desc': 'Multiplica a produção por 5 durante 30 min. O tempo só corre enquanto ele está ativo.',
+  'accelerator.5x_60.name': 'Acelerador 5x (60 min)',
+  'accelerator.5x_60.desc': 'Multiplica a produção por 5 durante 60 min. O tempo só corre enquanto ele está ativo.',
 } as const
 
 export type ContentMessageKey = keyof typeof contentPtBR

@@ -85,7 +85,24 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | feita |
 | T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | feita |
 | T-045 | Versão 0.4.0 | AG03 | T-044 | feita |
-| T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | a fazer |
+| T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | feita |
+
+### M4 Tempo (v0.5.0)
+
+| ID | Task | Dono | Depende de | Status |
+|---|---|---|---|---|
+| T-065 | Aceleradores (regras, com o inventário no estado e a concessão por marcos da D-16): 2x e 5x, durações de 15, 30 e 60 min, um ativo por vez, maior multiplicador prevalece, inventário sem expiração, ativação, substituição com escolha de perder ou armazenar, temporizador por tempo decorrido | AG02 | D-16 | feita |
+| T-066 | Bônus temporários (regras): modelo genérico com multiplicador e tempo restante, expiração, camada de temporários da D-10 | AG02 | T-065 | feita |
+| T-067 | Aplicar aceleradores e bônus temporários na produção e no clique (camada de temporários da D-10; regra de interação) | AG01 | T-065, T-066, D-17 | feita |
+| T-068 | Produção offline (regras): cálculo por intervalos e expiração de efeitos, limite de 8 h mais o da árvore (`offlineCapMs`), sem compras nem eventos, resumo de ganhos | AG02 | T-067 | feita |
+| T-069 | Save e relógio: último registro válido, inventário, acelerador ativo e bônus no save (versão e migração), aplicar o offline ao carregar e ao voltar à aba, proteção contra relógio retrocedido | AG03 | T-065, T-066, T-068 | feita |
+| T-070 | Catálogo inicial de aceleradores e de concessões do M4 (fontes definidas em A-10), textos | AG07 | D-16, T-065 | feita |
+| T-071 | Indicador persistente do acelerador ativo (multiplicador, tempo restante, aviso de encerramento) | AG04 | T-065 | feita |
+| T-072 | Inventário e ativação de aceleradores: confirmação com comparação, escolha de perder ou armazenar | AG04 | T-065, T-070, T-071 | feita |
+| T-073 | Resumo de retorno: tempo de ausência, Bytes produzidos e ganhos relevantes | AG04 | T-068, T-069 | feita |
+| T-074 | QA do M4: simulação de offline e aceleradores, roteiro manual, curva | AG07 | T-067, T-069, T-072, T-073 | feita |
+| T-075 | Versão 0.5.0 | AG03 | T-074 | feita |
+| T-076 | PR `dev` → `main` e tag `v0.5.0` | AG00 | T-075, pedido do usuário | a fazer |
 
 ## Marcos fechados
 
@@ -108,3 +125,6 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |
 | Árvore Quantum: o desconto de custo da árvore (+10 pp) pode não valer nada, pois melhorias e ATLAS_CORE já passam do teto de 50 pp (D-13); decidir na QA do M3 entre trocar o efeito do caminho gama ou reduzir o ATLAS_CORE. Custo total da árvore ~495 cores (8 a 10 Reboots) pode ser alto. Nós Quantum desconhecidos no save são preservados; confirmar que o motor os ignora | M3 (T-044) | AG07 |
 | Trap de foco (Tab) na tela da árvore Quantum e na janela de reset; botão de reset fica desabilitado sem nível comprado (revisar na QA do M3) | M3 (T-044) | AG04 |
+| Resumo de retorno: guardar `stageBefore` no `PendingOffline` (src/app) para mostrar "novo estágio"; conferir no navegador real a volta à aba oculta e o throttling do Chrome, e o resumo em mobile e en | M4 (T-074) | AG03 e AG07 |
+| Indicador do acelerador: reservar a altura para o conteúdo central não subir ~15 px quando o acelerador acaba; inventário mostra só "Nx" e tempo (sem nome do catálogo, exige id do catálogo no item, AG01); gravação em pagehide sobrescreve save semeado ao recarregar (cuidado em testes manuais); aviso de encerramento e reduced-motion sem conferência visual | M4 (T-074) | AG04 e AG01 |
+| Aceleradores: D3 (inventário mostra só "Nx" e tempo, sem nome do catálogo; exige id do catálogo no item, muda o save), D5 (ausência acima de 8 h desconta o acelerador pelo tempo todo, sem efeito prático até 60 min); aviso "acelerador recebido" no mobile cobre a legenda de clique por 5 s; medir "Data Center 2x/15" se a run 1 em -47% encadeando incomodar | M8 | AG07 |

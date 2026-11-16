@@ -4,6 +4,7 @@ import type { GameEngine } from '../../core/engine'
 import type { MessageKey } from '../../i18n'
 import { useI18n } from '../i18n'
 import { FooterActions } from './Panels'
+import { AcceleratorIndicator } from '../accelerator/AcceleratorIndicator'
 import { ResourceBar } from './ResourceBar'
 
 type Tab = 'shop' | 'agents' | 'core'
@@ -31,6 +32,7 @@ export function GameLayout({ engine, onReset, left, center, right }: Props) {
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
       <ResourceBar engine={engine} onReset={onReset} />
+      <AcceleratorIndicator engine={engine} />
       <main className="flex min-h-0 flex-1 lg:grid lg:grid-cols-[18rem_minmax(0,1fr)_22rem]">
         <div className={`${show('agents')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-r lg:border-neon-cyan/10`}>{left}</div>
         <div className={`${show('core')} min-h-0 min-w-0 flex-1 flex-col items-center justify-center-safe gap-6 overflow-y-auto p-3`}>{center}</div>

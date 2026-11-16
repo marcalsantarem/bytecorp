@@ -33,6 +33,22 @@ import {
   globalMultiplier,
   type ProductionBreakdown,
 } from './production'
+import {
+  ACCELERATOR_GRANTS,
+  activateAccelerator,
+  DEFAULT_ACCELERATOR_ENDING_MS,
+  grantAccelerators,
+  grantKey,
+  nextTimerMs,
+  offlineSegmentsFor,
+  temporaryMultiplier,
+  tickTimers,
+  type AcceleratorGrantTable,
+  type ActivateResult,
+  type ReplaceMode,
+} from './progression/accelerators'
+import { grantTemporaryBonus, type GrantBonusResult } from './progression/temporaryBonuses'
+import { computeOffline, type OfflineResult, type OfflineSegment } from './progression/offline'
 import { applyReboot, DEFAULT_REBOOT_REWARD, rebootRewardOf, type RebootResult, type RebootReward } from './progression/reboot'
 import {
   buyQuantumNode,
@@ -48,7 +64,7 @@ import {
   type ResetTreeResult,
   type TreeResetCost,
 } from './progression/quantum'
-import { createInitialState, type GameState } from './state'
+import { createInitialState, type GameState, type TemporaryBonus } from './state'
 
 export interface EngineConfig {
   baseClick: number
@@ -68,6 +84,10 @@ export interface EngineConfig {
   rebootReward: RebootReward
   // Custo em cores do reset da árvore Quantum, por número de resets já feitos (T-036).
   treeResetCost: TreeResetCost
+  // Concessões de aceleradores por marco (D-16); a tabela real vem da T-070.
+  acceleratorGrants: AcceleratorGrantTable
+  // Aviso acceleratorEnding quando faltar este tempo (ms) no acelerador ativo.
+  acceleratorEndingMs: number
 }
 
 export interface EquipmentModeInfo {
@@ -134,6 +154,8 @@ export const DEFAULT_CONFIG: EngineConfig = {
   random: Math.random,
   rebootReward: DEFAULT_REBOOT_REWARD,
   treeResetCost: DEFAULT_TREE_RESET_COST,
+  acceleratorGrants: ACCELERATOR_GRANTS,
+  acceleratorEndingMs: DEFAULT_ACCELERATOR_ENDING_MS,
 }
 
 // Núcleo de lógica. Não conhece interface, renderização nem relógio: quem o
@@ -156,6 +178,13 @@ export class GameEngine {
     this._state = state
     this.stages = orderedStages(catalog)
     this.syncStage()
+    // D-16: um acelerador na primeira entrada em cada estágio e um em cada Reboot.
+    this.events.on('stageChanged', ({ to }) => {
+      this.grantFor(grantKey('stage', to), this.config.acceleratorGrants.stage[to] ?? [])
+    })
+    this.events.on('reboot', ({ rebootNumber }) => {
+      this.grantFor(grantKey('reboot', rebootNumber), this.config.acceleratorGrants.reboot)
+    })
   }
 
   get state(): GameState {
@@ -171,6 +200,12 @@ export class GameEngine {
     return this.cachedProduction
   }
 
+  // Produção por segundo sem temporários (base das camadas 1 e 2). Usada no ganho offline.
+  get productionBase(): Decimal {
+    return this.production.totalWithoutTemporary
+  }
+
+  // Valor de um clique sem crítico, já com os temporários.
   get clickValue(): Decimal {
     return computeClickValue(this._state, this.catalog, this.config.baseClick)
   }
@@ -190,6 +225,44 @@ export class GameEngine {
     this.syncStage()
     this.invalidate()
     this.events.emit('stateReplaced', {})
+  }
+
+  // Multiplicador de temporários (D-17): acelerador ativo × bônus ativos. Entra na produção e
+  // no clique (camada 3).
+  get temporaryMultiplier(): number {
+    return temporaryMultiplier(this._state.meta)
+  }
+
+  // Ativa um acelerador do inventário (GDD 13). Com outro ativo e sem `replace`, devolve
+  // `needsDecision` sem alterar nada; 'discard' perde o tempo restante do anterior e 'store'
+  // o devolve ao inventário. Não lança.
+  activateAccelerator(itemId: string, options: { replace?: ReplaceMode } = {}): ActivateResult {
+    const result = activateAccelerator(this._state.meta, itemId, options.replace)
+    if (!result.ok) return result
+    this.invalidate()
+    if (result.replaced === 'store' && result.previous) this.events.emit('acceleratorStored', { item: { ...result.previous } })
+    this.events.emit('acceleratorActivated', { item: result.active, replaced: result.replaced })
+    return result
+  }
+
+  // Concede um bônus temporário (mesmo id renova). Sem fontes reais no M4.
+  grantTemporaryBonus(bonus: TemporaryBonus): GrantBonusResult {
+    const result = grantTemporaryBonus(this._state.meta, bonus)
+    if (!result.ok) return result
+    this.invalidate()
+    this.events.emit('temporaryBonusGranted', { bonus: result.bonus, refreshed: result.refreshed })
+    return result
+  }
+
+  // Offline (GDD 13.3): devolve os trechos `{durationMs, multiplier}` para applyOffline e
+  // desconta awayMs dos temporizadores (expirando o que acabou). Chamar uma vez por ausência,
+  // antes de applyOffline.
+  offlineSegments(awayMs: number): OfflineSegment[] {
+    const segments = offlineSegmentsFor(this._state.meta, awayMs)
+    if (Number.isFinite(awayMs) && awayMs > 0) {
+      this.applyTimerTick(tickTimers(this._state.meta, awayMs, 0), false)
+    }
+    return segments
   }
 
   // Cores que um Reboot daria agora (0 = Reboot indisponível).
@@ -236,10 +309,23 @@ export class GameEngine {
   }
 
   // Limite de ganho offline em ms: base mais os níveis de offlineCapHours da árvore Quantum.
-  // Só exposto; o cálculo offline é do M4.
   get offlineCapMs(): number {
     const hours = BASE_OFFLINE_CAP_HOURS + (quantumEffects(this._state, this.catalog).offlineCapHours ?? 0)
     return Math.max(0, hours) * 3_600_000
+  }
+
+  // Credita a produção da ausência (GDD 14), limitada a offlineCapMs, com a
+  // produção base (sem temporários) vezes os trechos de offlineSegments. Não simula compras, cliques nem eventos.
+  applyOffline(awayMs: number, segments: readonly OfflineSegment[] = []): OfflineResult {
+    const result = computeOffline(this.productionBase, awayMs, this.offlineCapMs, segments)
+    if (result.bytes.gt(0)) {
+      this.earn(result.bytes)
+      this._state.stats.bytesFromProduction = this._state.stats.bytesFromProduction.add(result.bytes)
+    }
+    this.checkStage()
+    this.invalidate()
+    this.events.emit('offlineApplied', result)
+    return result
   }
 
   // Efeitos agregados por tipo (aplicados em production.ts).
@@ -266,7 +352,8 @@ export class GameEngine {
     if (!(ms > 0)) return
     let remaining = ms
     while (remaining > 0) {
-      const step = Math.min(remaining, this.config.maxStepMs)
+      // O passo também termina no próximo vencimento de acelerador ou bônus.
+      const step = Math.min(remaining, this.config.maxStepMs, nextTimerMs(this._state.meta))
       this.step(step)
       remaining -= step
     }
@@ -448,7 +535,24 @@ export class GameEngine {
       this._state.stats.bytesFromProduction = this._state.stats.bytesFromProduction.add(gained)
     }
     this._state.stats.playTimeMs += ms
+    this.applyTimerTick(tickTimers(this._state.meta, ms, this.config.acceleratorEndingMs), true)
     this.checkStage()
+  }
+
+  private applyTimerTick(tick: ReturnType<typeof tickTimers>, warn: boolean): void {
+    if (tick.expiredAccelerator || tick.expiredBonuses.length > 0) this.invalidate()
+    if (tick.expiredAccelerator) this.events.emit('acceleratorExpired', { item: tick.expiredAccelerator })
+    if (warn && tick.endingAccelerator) {
+      this.events.emit('acceleratorEnding', { item: tick.endingAccelerator, remainingMs: tick.endingAccelerator.remainingMs })
+    }
+    for (const bonus of tick.expiredBonuses) this.events.emit('temporaryBonusExpired', { bonus })
+  }
+
+  private grantFor(key: string, grants: Parameters<typeof grantAccelerators>[2]): void {
+    const items = grantAccelerators(this._state.meta, key, grants)
+    if (items.length === 0) return
+    this._revision++
+    this.events.emit('acceleratorGranted', { source: key, items })
   }
 
   // Ao carregar um estado: localiza o estágio salvo e corrige em silêncio o que

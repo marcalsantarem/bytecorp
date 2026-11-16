@@ -1,5 +1,7 @@
 import type { StageId } from './catalog/types'
 import type { Decimal } from './decimal'
+import type { OfflineResult } from './progression/offline'
+import type { AcceleratorItem, TemporaryBonus } from './state'
 
 // Eventos internos do núcleo. Interface, cena e áudio reagem a eles sem que o
 // núcleo conheça nenhuma dessas camadas (GDD 24.2).
@@ -19,6 +21,19 @@ export interface GameEvents {
   quantumNodePurchased: { id: string; level: number; cost: number }
   // Reset da árvore: cores devolvidos, custo cobrado e número do reset (contagem já incrementada).
   quantumTreeReset: { refunded: number; cost: number; resetNumber: number }
+  // Ganho offline creditado (applyOffline), com o resultado completo.
+  offlineApplied: OfflineResult
+  // Itens concedidos por um marco (D-16); `source` é a chave (`stage:<id>`, `reboot:<n>`).
+  acceleratorGranted: { source: string; items: AcceleratorItem[] }
+  // Ativado: `replaced` diz o que houve com o anterior ('none' se não havia).
+  acceleratorActivated: { item: AcceleratorItem; replaced: 'none' | 'discard' | 'store' }
+  // O ativo substituído voltou ao inventário com o tempo restante.
+  acceleratorStored: { item: AcceleratorItem }
+  // Faltam `remainingMs` (limiar configurável) para o ativo acabar.
+  acceleratorEnding: { item: AcceleratorItem; remainingMs: number }
+  acceleratorExpired: { item: AcceleratorItem }
+  temporaryBonusGranted: { bonus: TemporaryBonus; refreshed: boolean }
+  temporaryBonusExpired: { bonus: TemporaryBonus }
   stateReplaced: Record<string, never>
 }
 
