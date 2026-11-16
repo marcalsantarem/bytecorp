@@ -85,7 +85,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | feita |
 | T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | feita |
 | T-045 | Versão 0.4.0 | AG03 | T-044 | feita |
-| T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | a fazer |
+| T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | feita |
 
 ## Marcos fechados
 
