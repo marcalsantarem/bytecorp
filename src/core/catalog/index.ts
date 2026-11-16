@@ -1,6 +1,7 @@
 import { isMessageKey } from '../../i18n'
 import { AGENTS } from './agents'
 import { EQUIPMENT } from './equipment'
+import { QUANTUM_NODES } from './quantum'
 import { STAGES } from './stages'
 import { UPGRADES } from './upgrades'
 import type { Catalog, Requirement } from './types'
@@ -12,7 +13,7 @@ export const CATALOG: Catalog = {
   equipment: EQUIPMENT,
   agents: AGENTS,
   upgrades: UPGRADES,
-  quantumNodes: [],
+  quantumNodes: QUANTUM_NODES,
 }
 
 // Verifica a consistência estrutural de um catálogo. Retorna a lista de problemas

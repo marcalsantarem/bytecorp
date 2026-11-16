@@ -66,13 +66,14 @@ export type ResetTreeResult =
   | { ok: true; refunded: number; cost: number; resetNumber: number }
   | { ok: false; reason: 'insufficient' }
 
-// Reset da árvore: cobra o custo do reset do saldo, devolve todos os cores gastos e zera os níveis.
-// O custo é checado contra o saldo antes da devolução. Não altera nada se recusar.
+// Reset da árvore: devolve todos os cores gastos, depois cobra o custo do reset e zera os níveis.
+// Recusa se saldo + devolução < custo; não altera nada se recusar.
 export function resetQuantumTree(state: GameState, catalog: Catalog, resetCost: TreeResetCost): ResetTreeResult {
   const cost = Math.max(0, Math.floor(resetCost(state.meta.treeResets)))
-  if (state.meta.quantumCores.lt(cost)) return { ok: false, reason: 'insufficient' }
   const refunded = spentCores(state, catalog)
-  state.meta.quantumCores = state.meta.quantumCores.sub(D(cost)).add(D(refunded))
+  const balance = state.meta.quantumCores.add(D(refunded))
+  if (balance.lt(cost)) return { ok: false, reason: 'insufficient' }
+  state.meta.quantumCores = balance.sub(D(cost))
   state.meta.quantumNodes = {}
   state.meta.treeResets++
   return { ok: true, refunded, cost, resetNumber: state.meta.treeResets }
@@ -81,7 +82,7 @@ export function resetQuantumTree(state: GameState, catalog: Catalog, resetCost: 
 export type QuantumEffects = Partial<Record<Effect['kind'], number>>
 
 // Soma, por tipo de efeito, o valor por nível x nível de cada nó comprado. Não aplica nada;
-// a produção e os descontos leem isto na T-037.
+// production.ts e o engine leem isto.
 export function quantumEffects(state: GameState, catalog: Catalog): QuantumEffects {
   const totals: QuantumEffects = {}
   for (const def of catalog.quantumNodes) {

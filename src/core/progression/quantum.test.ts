@@ -127,10 +127,18 @@ describe('árvore Quantum', () => {
     expect(e.quantumTreeResetCost).toBe(9)
   })
 
-  it('reset recusa sem saldo para o custo e não altera o estado', () => {
-    const e = engine(4)
-    e.buyQuantumNode('a')
-    e.buyQuantumNode('a') // gasta 6 e sobra 0? 4 cores: compra 2 e depois 4 falha
+  it('reset aceita se a devolução cobre o custo (gastou tudo)', () => {
+    const e = engine(6)
+    e.buyQuantumNode('a') // 2
+    e.buyQuantumNode('a') // 4 -> saldo 0, gasto 6
+    expect(e.state.meta.quantumCores.toNumber()).toBe(0)
+    expect(e.resetQuantumTree()).toEqual({ ok: true, refunded: 6, cost: 3, resetNumber: 1 })
+    expect(e.state.meta.quantumCores.toNumber()).toBe(3)
+  })
+
+  it('reset recusa se saldo + devolução < custo e não altera o estado', () => {
+    const e = engine(2)
+    e.buyQuantumNode('a') // gasta 2, saldo 0; 0 + 2 < 3
     const before = e.state.meta.quantumCores.toNumber()
     const nodes = { ...e.state.meta.quantumNodes }
     let fired = false

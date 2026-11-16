@@ -121,6 +121,9 @@ export interface StageInfo {
   next: StageDef | null
 }
 
+// Limite offline inicial (GDD 14): 8 h.
+export const BASE_OFFLINE_CAP_HOURS = 8
+
 export const DEFAULT_CONFIG: EngineConfig = {
   baseClick: 1,
   maxStepMs: 1000,
@@ -232,7 +235,14 @@ export class GameEngine {
     return spentCores(this._state, this.catalog)
   }
 
-  // Efeitos agregados por tipo; ainda não aplicados à produção (T-037).
+  // Limite de ganho offline em ms: base mais os níveis de offlineCapHours da árvore Quantum.
+  // Só exposto; o cálculo offline é do M4.
+  get offlineCapMs(): number {
+    const hours = BASE_OFFLINE_CAP_HOURS + (quantumEffects(this._state, this.catalog).offlineCapHours ?? 0)
+    return Math.max(0, hours) * 3_600_000
+  }
+
+  // Efeitos agregados por tipo (aplicados em production.ts).
   get quantumEffects(): QuantumEffects {
     return quantumEffects(this._state, this.catalog)
   }
