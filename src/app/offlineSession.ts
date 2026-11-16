@@ -57,7 +57,9 @@ export function creditAway(
 ): OfflineResult | null {
   const away = sanitizeAway(awayMs)
   if (away <= 0 || away < minMs) return null
-  const result = engine.applyOffline(away)
+  // Ordem importa: offlineSegments desconta os temporizadores e applyOffline os consome.
+  const segments = engine.offlineSegments(away)
+  const result = engine.applyOffline(away, segments)
   pending.set(result)
   return result
 }

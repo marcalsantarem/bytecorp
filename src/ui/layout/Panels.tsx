@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import type { GameEngine } from '../../core/engine'
 import { formatBytes, formatCount } from '../../core/format'
 import type { MessageKey } from '../../i18n'
+import { AcceleratorInventoryControl } from '../accelerator/AcceleratorInventory'
 import { NeonPanel } from '../components/NeonPanel'
 import { useI18n } from '../i18n'
 import { QuantumTreeControl } from '../quantum/QuantumTree'
@@ -48,6 +49,10 @@ export function FooterActions({ engine }: { engine: GameEngine }) {
         buttonClass={`${FOOTER_BUTTON} enabled:border-neon-cyan/50 enabled:text-white enabled:hover:bg-neon-cyan/10`}
         icon={<Network className="size-4 shrink-0" aria-hidden />}
         label={t('footer.quantumTree')}
+      />
+      <AcceleratorInventoryControl
+        engine={engine}
+        buttonClass={`${FOOTER_BUTTON} enabled:border-neon-cyan/50 enabled:text-white enabled:hover:bg-neon-cyan/10`}
       />
       {FOOTER.map(({ key, icon }) => (
         <button key={key} type="button" disabled className={FOOTER_BUTTON}>

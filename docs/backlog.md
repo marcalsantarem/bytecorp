@@ -98,7 +98,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-069 | Save e relógio: último registro válido, inventário, acelerador ativo e bônus no save (versão e migração), aplicar o offline ao carregar e ao voltar à aba, proteção contra relógio retrocedido | AG03 | T-065, T-066, T-068 | feita |
 | T-070 | Catálogo inicial de aceleradores e de concessões do M4 (fontes definidas em A-10), textos | AG07 | D-16, T-065 | feita |
 | T-071 | Indicador persistente do acelerador ativo (multiplicador, tempo restante, aviso de encerramento) | AG04 | T-065 | feita |
-| T-072 | Inventário e ativação de aceleradores: confirmação com comparação, escolha de perder ou armazenar | AG04 | T-065, T-070, T-071 | a fazer |
+| T-072 | Inventário e ativação de aceleradores: confirmação com comparação, escolha de perder ou armazenar | AG04 | T-065, T-070, T-071 | feita |
 | T-073 | Resumo de retorno: tempo de ausência, Bytes produzidos e ganhos relevantes | AG04 | T-068, T-069 | feita |
 | T-074 | QA do M4: simulação de offline e aceleradores, roteiro manual, curva | AG07 | T-067, T-069, T-072, T-073 | a fazer |
 | T-075 | Versão 0.5.0 | AG03 | T-074 | a fazer |

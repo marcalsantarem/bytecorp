@@ -204,3 +204,63 @@ describe('volta à aba', () => {
   })
 })
 
+
+describe('aceleradores durante a ausência', () => {
+  async function withAccelerator(remainingMs: number, wallOffset: number) {
+    const storage = new MemoryStorage()
+    const { state } = seededState()
+    state.meta.accelerators.active = { id: 'acc-1', multiplier: 5, remainingMs }
+    await new SaveManager(storage, () => T0).save(new GameEngine(CATALOG, state))
+    const wall = { t: T0 + wallOffset }
+    const d = deps(wall)
+    const s = await ready(storage, d.deps)
+    return { s, storage, wall, d }
+  }
+
+  it('1 h de ausência com 5x de 30 min: 30 min x5 + 30 min x1, acelerador expirado', async () => {
+    const { s } = await withAccelerator(30 * 60_000, HOUR)
+    const base = s.engine.productionBase
+    const r = s.offline.consume()!
+    expect(r.bytes.eq(base.mul(1800 * 5 + 1800))).toBe(true)
+    expect(s.engine.state.meta.accelerators.active).toBeNull()
+  })
+
+  it('acelerador maior que a ausência continua ativo com o tempo restante', async () => {
+    const { s } = await withAccelerator(2 * HOUR, HOUR)
+    const base = s.engine.productionBase
+    expect(s.offline.consume()!.bytes.eq(base.mul(3600 * 5))).toBe(true)
+    expect(s.engine.state.meta.accelerators.active?.remainingMs).toBe(HOUR)
+  })
+
+  it('dois créditos seguidos descontam o temporizador entre eles', async () => {
+    const { s, wall, d } = await withAccelerator(90 * 60_000, 0)
+    s.offline.consume()
+    const base = s.engine.productionBase
+    d.lifecycle.set(true)
+    wall.t += HOUR
+    d.lifecycle.set(false)
+    expect(s.engine.state.meta.accelerators.active?.remainingMs).toBe(30 * 60_000)
+    d.lifecycle.set(true)
+    wall.t += HOUR
+    d.lifecycle.set(false)
+    const r = s.offline.consume()!
+    expect(r.bytes.eq(base.mul(3600 * 5 + 1800 * 5 + 1800))).toBe(true)
+    expect(s.engine.state.meta.accelerators.active).toBeNull()
+  })
+
+  it('sem acelerador, credita como antes', async () => {
+    const storage = new MemoryStorage()
+    await seedSave(storage, T0)
+    const s = await ready(storage, deps({ t: T0 + HOUR }).deps)
+    expect(s.offline.consume()!.bytes.eq(s.engine.productionBase.mul(3600))).toBe(true)
+  })
+
+  it('recarregar logo depois não credita de novo nem desconta o acelerador outra vez', async () => {
+    const { s, storage, wall } = await withAccelerator(2 * HOUR, HOUR)
+    s.stop()
+    wall.t += 5_000
+    const second = await ready(storage, deps(wall).deps)
+    expect(second.offline.consume()).toBeNull()
+    expect(second.engine.state.meta.accelerators.active?.remainingMs).toBe(HOUR)
+  })
+})
