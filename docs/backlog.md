@@ -107,3 +107,4 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |
 | Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |
 | Árvore Quantum: o desconto de custo da árvore (+10 pp) pode não valer nada, pois melhorias e ATLAS_CORE já passam do teto de 50 pp (D-13); decidir na QA do M3 entre trocar o efeito do caminho gama ou reduzir o ATLAS_CORE. Custo total da árvore ~495 cores (8 a 10 Reboots) pode ser alto. Nós Quantum desconhecidos no save são preservados; confirmar que o motor os ignora | M3 (T-044) | AG07 |
+| Trap de foco (Tab) na tela da árvore Quantum e na janela de reset; botão de reset fica desabilitado sem nível comprado (revisar na QA do M3) | M3 (T-044) | AG04 |

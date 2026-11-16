@@ -1,22 +1,19 @@
-import { Minus, Network, Plus, X } from 'lucide-react'
+import { Minus, Network, Plus, RotateCcw, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { QUANTUM_NODES } from '../../core/catalog/quantum'
-import type { QuantumNodeDef } from '../../core/catalog/types'
 import type { GameEngine } from '../../core/engine'
 import { formatCount } from '../../core/format'
 import type { MessageKey } from '../../i18n'
 import { ICONS } from '../components/iconMap'
 import { useI18n } from '../i18n'
+import { PATH_COLOR, QuantumDetails } from './QuantumDetails'
+import { QuantumResetDialog } from './QuantumResetDialog'
 
 const CELL = 130
 const NODE = 76
 const MIN_ZOOM = 0.3
 const MAX_ZOOM = 2
 const DRAG_THRESHOLD = 5
-
-type Path = QuantumNodeDef['path']
-// Alfa ciano, beta magenta, gama âmbar.
-const PATH_COLOR: Record<Path, string> = { alpha: '#00ffcc', beta: '#ff007f', gamma: '#ffb000' }
 
 interface View {
   x: number
@@ -62,6 +59,8 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
   const closeRef = useRef<HTMLButtonElement>(null)
   const [view, setView] = useState<View>({ x: 0, y: 0, k: 1 })
   const [selected, setSelected] = useState<string | null>(null)
+  const [flash, setFlash] = useState<{ id: string; n: number } | null>(null)
+  const [resetOpen, setResetOpen] = useState(false)
   const pointers = useRef(new Map<number, { x: number; y: number }>())
   const gesture = useRef<{ moved: boolean; dist: number }>({ moved: false, dist: 0 })
 
@@ -150,9 +149,17 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
     }
   }
 
+  useEffect(() => {
+    if (!flash) return
+    const timer = setTimeout(() => setFlash(null), 700)
+    return () => clearTimeout(timer)
+  }, [flash])
+
+  const buy = (id: string) => {
+    if (engine.buyQuantumNode(id).ok) setFlash((f) => ({ id, n: (f?.n ?? 0) + 1 }))
+  }
+
   const levelOf = (id: string) => engine.state.meta.quantumNodes[id] ?? 0
-  const selectedDef = QUANTUM_NODES.find((n) => n.id === selected)
-  const selectedInfo = selected ? engine.quantumNodeInfo(selected) : undefined
   const zoomBtn = 'grid size-11 place-items-center rounded-lg border border-neon-cyan/40 bg-panel/90 text-neon-cyan hover:bg-neon-cyan/10 disabled:opacity-40'
 
   return (
@@ -172,6 +179,18 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
           <span className="font-bold text-neon-magenta tabular-nums">{formatCount(engine.state.meta.quantumCores, locale)}</span>
         </div>
         <button
+          type="button"
+          data-testid="quantum-reset-open"
+          onClick={() => setResetOpen(true)}
+          disabled={engine.quantumCoresSpent <= 0}
+          title={engine.quantumCoresSpent <= 0 ? t('quantum.reset.nothing') : undefined}
+          aria-label={t('quantum.reset.open')}
+          className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg border border-neon-magenta/50 px-3 font-mono text-sm text-neon-magenta hover:bg-neon-magenta/10 disabled:opacity-40"
+        >
+          <RotateCcw className="size-4" aria-hidden />
+          <span className="hidden sm:inline">{t('quantum.reset.open')}</span>
+        </button>
+        <button
           ref={closeRef}
           type="button"
           onClick={onClose}
@@ -182,6 +201,7 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
         </button>
       </header>
 
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
       <div
         ref={(el) => {
           area.current = el
@@ -263,6 +283,7 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
                   boxShadow: isSel ? `0 0 0 3px #fff, 0 0 18px ${color}` : visual === 'locked' ? 'none' : `0 0 ${visual === 'available' ? 6 : 14}px ${color}`,
                 }}
               >
+                {flash?.id === n.id && <span key={flash.n} data-testid={`quantum-flash-${n.id}`} aria-hidden className="quantum-flash pointer-events-none absolute -inset-1 rounded-xl border-2" style={{ borderColor: color, boxShadow: `0 0 24px ${color}` }} />}
                 {Icon && <Icon className="size-7" aria-hidden />}
                 <span className="text-[11px] leading-none font-bold text-white tabular-nums">
                   {level}/{max}
@@ -282,19 +303,9 @@ export function QuantumTree({ engine, onClose }: { engine: GameEngine; onClose: 
         </div>
       </div>
 
-      {/* Espaço reservado do painel de detalhes (T-043). */}
-      <footer data-testid="quantum-details" className="shrink-0 border-t border-neon-cyan/20 bg-panel px-3 py-2 font-mono text-sm">
-        {selectedDef && selectedInfo ? (
-          <div className="flex flex-wrap items-baseline gap-x-3">
-            <span className="font-bold" style={{ color: PATH_COLOR[selectedDef.path] }}>
-              {t(selectedDef.nameKey as MessageKey)}
-            </span>
-            <span className="text-white/60">{t(`quantum.status.${selectedInfo.status === 'locked' ? 'locked' : selectedInfo.status === 'maxed' ? 'maxed' : selectedInfo.level > 0 ? 'partial' : 'available'}` as MessageKey)}</span>
-          </div>
-        ) : (
-          <span className="text-white/50">{t('quantum.details.empty')}</span>
-        )}
-      </footer>
+      <QuantumDetails engine={engine} selected={selected} onBuy={buy} />
+      </div>
+      {resetOpen && <QuantumResetDialog engine={engine} onDone={() => setResetOpen(false)} onCancel={() => setResetOpen(false)} />}
     </div>
   )
 }
