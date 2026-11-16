@@ -83,5 +83,10 @@ describe('AcceleratorInventoryControl', () => {
     act(() => engine.events.emit('acceleratorGranted', { source: 'reboot:1', items: [item('n', 2, 900_000)] }))
     expect(screen.getByTestId('accelerator-toast').textContent).toBe(tr('accel.granted', { count: 1 }))
     expect(engine.state.meta.accelerators.active).toBeNull()
+    // Aviso ancorado ao rodapé (não fixo no topo), fora do painel de estágio.
+    const live = screen.getByTestId('accelerator-toast').parentElement
+    expect(live?.getAttribute('role')).toBe('status')
+    expect(live?.className).toContain('absolute')
+    expect(live?.className).not.toContain('top-28')
   })
 })

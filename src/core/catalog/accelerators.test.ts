@@ -12,9 +12,9 @@ describe('catálogo de aceleradores', () => {
     expect(ACCELERATOR_ITEMS).toHaveLength(6)
   })
 
-  it('concede em todo estágio exceto o inicial, e em cada Reboot', () => {
+  it('concede em todo estágio exceto o inicial e não concede no Reboot (D-18)', () => {
     expect(Object.keys(ACCELERATOR_GRANTS.stage)).toEqual(stageIds.slice(1))
-    expect(ACCELERATOR_GRANTS.reboot.length).toBeGreaterThan(0)
+    expect(ACCELERATOR_GRANTS.reboot).toEqual([])
   })
 
   it('toda concessão tem item no catálogo', () => {
@@ -22,11 +22,17 @@ describe('catálogo de aceleradores', () => {
     for (const g of all) expect(acceleratorItemFor(g.multiplier, g.durationMin)).toBeDefined()
   })
 
-  it('o 5x só aparece a partir da Corporate Network e nunca em Reboot', () => {
-    expect(ACCELERATOR_GRANTS.reboot.every((g) => g.multiplier === 2)).toBe(true)
-    for (const s of ['garage_company', 'startup_lab', 'data_center'] as const) {
-      expect(ACCELERATOR_GRANTS.stage[s]?.every((g) => g.multiplier === 2)).toBe(true)
-    }
+  it('toda concessão por marco é 2x (D-18); 5x e 60 min ficam sem concessão', () => {
+    const all = Object.values(ACCELERATOR_GRANTS.stage).flat()
+    expect(all.every((g) => g.multiplier === 2 && g.durationMin <= 30)).toBe(true)
+    expect(Object.fromEntries(Object.entries(ACCELERATOR_GRANTS.stage).map(([s, l]) => [s, l![0]!.durationMin]))).toEqual({
+      garage_company: 15, startup_lab: 15, data_center: 30, corporate_network: 15, quantum_facility: 15, mega_corporation: 30,
+    })
+  })
+
+  it('aceita a tabela de Reboot vazia, mas não a de um estágio', () => {
+    expect(check(ACCELERATOR_ITEMS, { stage: ACCELERATOR_GRANTS.stage, reboot: [] })).toEqual([])
+    expect(check(ACCELERATOR_ITEMS, { stage: { data_center: [] }, reboot: [] }).join()).toContain('sem concessão')
   })
 
   it('detecta multiplicador, duração, duplicata e estágio inválidos', () => {

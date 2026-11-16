@@ -87,7 +87,30 @@ describe('OfflineSummary', () => {
         <OfflineSummary engine={engine} source={s.source} />
       </I18nProvider>,
     )
-    expect(screen.getByTestId('offline-gains')).toBeInTheDocument()
+    expect(screen.getByTestId('offline-stage')).toBeInTheDocument()
+    expect(screen.queryByTestId('offline-grants')).toBeNull()
+  })
+
+  it('não mostra estágio quando não mudou', () => {
+    const engine = makeEngine({ stage: 'garage_company' })
+    const s = makeSource({ result: result(), stageBefore: 'garage_company' })
+    render(
+      <I18nProvider>
+        <OfflineSummary engine={engine} source={s.source} />
+      </I18nProvider>,
+    )
+    expect(screen.queryByTestId('offline-gains')).toBeNull()
+  })
+
+  it('mostra as concessões recebidas, sozinhas', () => {
+    setup({ result: result(), grants: 3 })
+    expect(screen.getByTestId('offline-grants')).toHaveTextContent(tr('offline.grantsReceived', { count: 3 }))
+    expect(screen.queryByTestId('offline-stage')).toBeNull()
+  })
+
+  it('omite a seção sem concessões nem estágio novo', () => {
+    setup({ result: result(), grants: 0 })
+    expect(screen.queryByTestId('offline-gains')).toBeNull()
   })
 
   it('abre quando o resultado chega depois da montagem', () => {

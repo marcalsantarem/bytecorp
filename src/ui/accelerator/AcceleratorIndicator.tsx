@@ -67,9 +67,10 @@ export function AcceleratorIndicator({ engine }: { engine: GameEngine }) {
   const tone = ending ? 'border-neon-magenta/70 text-neon-magenta accel-warning' : 'border-neon-cyan/40 text-neon-cyan'
 
   return (
-    <div className="shrink-0 px-3 empty:hidden" data-testid="accelerator-area">
+    // Faixa de altura fixa: o indicador aparecer ou sumir não desloca o layout.
+    <div className="flex h-8 shrink-0 items-center justify-center px-3" data-testid="accelerator-area">
       {active && (
-        <div className={`mx-auto mt-1 flex max-w-sm items-center gap-2 rounded border bg-panel/80 px-2 py-1 font-mono text-xs ${tone}`} role="group" aria-label={t('accel.label')}>
+        <div className={`flex w-full max-w-sm items-center gap-2 rounded border bg-panel/80 px-2 py-1 font-mono text-xs ${tone}`} role="group" aria-label={t('accel.label')}>
           <Zap className="size-4 shrink-0" aria-hidden />
           <span className="font-bold tabular-nums">{t('accel.multiplier', { value: active.multiplier })}</span>
           <span className="tabular-nums" data-testid="accelerator-time">
@@ -81,7 +82,7 @@ export function AcceleratorIndicator({ engine }: { engine: GameEngine }) {
           {ending && <span className="hidden text-[10px] sm:inline">{t('accel.ending')}</span>}
         </div>
       )}
-      <p role="status" aria-live="polite" className={expired ? 'mx-auto mt-1 max-w-sm text-center font-mono text-xs text-white/60' : 'sr-only'}>
+      <p role="status" aria-live="polite" className={expired ? 'text-center font-mono text-xs text-white/60' : 'sr-only'}>
         {expired ? t('accel.expired') : ending ? t('accel.ending') : ''}
       </p>
     </div>

@@ -16,6 +16,15 @@ describe('AcceleratorIndicator', () => {
     expect(screen.queryByRole('group', { name: tr('accel.label') })).toBeNull()
   })
 
+  it('reserva a mesma faixa com e sem acelerador ativo (sem deslocar o layout)', () => {
+    const a = setup(null)
+    const idle = screen.getByTestId('accelerator-area').className
+    expect(idle).toContain('h-8')
+    a.state.meta.accelerators.active = { id: 'a1', multiplier: 2, remainingMs: 60_000 }
+    setup({ multiplier: 2, remainingMs: 60_000 })
+    expect(screen.getAllByTestId('accelerator-area').every((e) => e.className === idle)).toBe(true)
+  })
+
   it('mostra multiplicador e tempo restante', () => {
     setup({ multiplier: 5, remainingMs: 125_000 })
     expect(screen.getByText('5x')).toBeTruthy()

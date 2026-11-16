@@ -143,7 +143,7 @@ describe('aceleradores na run 1 contra o motor real', () => {
     expect(base.seconds / 60).toBeLessThanOrEqual(85)
   }, 300_000)
 
-  it('ao receber e encadeando encurtam a run 1, e encadear não é pior que ao receber', () => {
+  it('ao receber e encadeando encurtam a run 1 dentro da faixa da D-18', () => {
     const pct = (x: number) => (100 * (1 - x / base.seconds)).toFixed(1)
     if (report) {
       out(
@@ -154,12 +154,15 @@ describe('aceleradores na run 1 contra o motor real', () => {
     }
     expect(eager.seconds).toBeLessThan(base.seconds)
     expect(chained.seconds).toBeLessThanOrEqual(eager.seconds)
-    // Faixa protegida: o ganho da run 1 fica entre 10% e 50% mesmo encadeando tudo (estimativa do AG07: até 45%).
-    expect(1 - chained.seconds / base.seconds).toBeGreaterThanOrEqual(0.1)
-    expect(1 - chained.seconds / base.seconds).toBeLessThanOrEqual(0.5)
+    // Faixa protegida (D-18, medido: ao receber -39,9%; encadeando -47,2%): ao receber entre 30% e 50%,
+    // encadeando entre 35% e 55%.
+    expect(1 - eager.seconds / base.seconds).toBeGreaterThanOrEqual(0.3)
+    expect(1 - eager.seconds / base.seconds).toBeLessThanOrEqual(0.5)
+    expect(1 - chained.seconds / base.seconds).toBeGreaterThanOrEqual(0.35)
+    expect(1 - chained.seconds / base.seconds).toBeLessThanOrEqual(0.55)
   }, 300_000)
 
-  it('a concessão de cada marco aparece uma vez e a soma bate com a tabela (7 itens: 6 estágios e o Reboot)', () => {
+  it('a concessão de cada marco aparece uma vez e a soma bate com a tabela (6 itens, um por estágio; Reboot não concede, D-18)', () => {
     const granted = chained.engine.state.meta.accelerators.granted
     expect(new Set(granted).size).toBe(granted.length)
     // Mega Corporation foi aberto: as seis concessões de estágio existem, sem a do Reboot (ainda não houve).
@@ -179,14 +182,10 @@ describe('aceleradores na run 1 contra o motor real', () => {
   }, 3_600_000)
 })
 
-const ACCELERATOR_STAGES: Record<string, string> = {
-  garage_company: '2x/15',
-  startup_lab: '2x/15',
-  data_center: '2x/30',
-  corporate_network: '5x/15',
-  quantum_facility: '5x/15',
-  mega_corporation: '5x/30',
-}
+// Rótulos derivados da tabela real (D-18), para o relatório e o teste de soma não ficarem defasados.
+const ACCELERATOR_STAGES: Record<string, string> = Object.fromEntries(
+  Object.entries(DEFAULT_CONFIG.acceleratorGrants.stage).map(([stage, list]) => [stage, (list ?? []).map((g) => `${g.multiplier}x/${g.durationMin}`).join('+')]),
+)
 
 describe('árvore completa com aceleradores (relatório)', () => {
   it.skipIf(!report)('quantos Reboots e horas, com e sem aceleradores', () => {
@@ -212,7 +211,7 @@ describe('árvore completa com aceleradores (relatório)', () => {
       ['tabela atual', {}],
       ['sem concessão de Reboot', { acceleratorGrants: { ...G, reboot: [] } }],
       ['5x só em Mega; resto 2x/15 e 2x/30', { acceleratorGrants: { stage: { garage_company: g(2, 15), startup_lab: g(2, 15), data_center: g(2, 30), corporate_network: g(2, 15), quantum_facility: g(2, 15), mega_corporation: g(5, 30) }, reboot: [] } }],
-      ['tudo 2x (15/15/30/15/15/30), sem Reboot', { acceleratorGrants: { stage: { garage_company: g(2, 15), startup_lab: g(2, 15), data_center: g(2, 30), corporate_network: g(2, 15), quantum_facility: g(2, 15), mega_corporation: g(2, 30) }, reboot: [] } }],
+      ['tudo 2x (15/15/30/15/15/30), sem Reboot (D-18 = tabela atual)', { acceleratorGrants: { stage: { garage_company: g(2, 15), startup_lab: g(2, 15), data_center: g(2, 30), corporate_network: g(2, 15), quantum_facility: g(2, 15), mega_corporation: g(2, 30) }, reboot: [] } }],
     ]
     const lines = [['', '== Alavancas (encadeando, árvore completa) =='].join(String.fromCharCode(10))]
     const none = playTree('none').total

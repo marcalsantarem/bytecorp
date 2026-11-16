@@ -1,20 +1,22 @@
-# Aceleradores do M4 (T-070)
+# Aceleradores do M4 (T-070, ajustado pela D-18)
 
 Catálogo em `src/core/catalog/accelerators.ts`; textos em `src/i18n/content/`. Regras (um ativo, sem acúmulo, guardados não expiram, offline corre) em D-16 e na Bíblia 13.
 
-## Tabela de concessões
+## Tabela de concessões (D-18)
+
+A D-18 substituiu a tabela original (5x a partir da Corporate Network, 2x/15 em cada Reboot), que adiantava a árvore em 57% a 65%. Tabela atual:
 
 | Marco | Item | Economia máx. (min) |
 |---|---|---|
 | Garage Company | 2x / 15 min | 7,5 |
 | Startup Lab | 2x / 15 min | 7,5 |
 | Data Center | 2x / 30 min | 15 |
-| Corporate Network | 5x / 15 min | 12 |
-| Quantum Facility | 5x / 15 min | 12 |
-| Mega Corporation | 5x / 30 min | 24 |
-| Cada Reboot | 2x / 15 min | 7,5 |
+| Corporate Network | 2x / 15 min | 7,5 |
+| Quantum Facility | 2x / 15 min | 7,5 |
+| Mega Corporation | 2x / 30 min | 15 |
+| Reboot | nenhuma (tabela vazia; o mecanismo `reboot` continua para eventos futuros) | 0 |
 
-Os seis itens existem (2x e 5x, 15/30/60 min); 2x/60 e 5x/60 não são concedidos por marco, ficam livres para eventos, conquistas e anúncio recompensado (M5, M6, M9).
+Os seis itens existem (2x e 5x, 15/30/60 min); os 5x e os de 60 min não são concedidos por marco e ficam livres para eventos, conquistas e anúncio recompensado (M5, M6, M9). Justificativa: com as runs tardias de 3 a 4 min, um 5x/15 cobria 3 a 4 runs; o 2x limita o ganho e a medição (resultado-qa-m4.md, seção 4) mostrou que a concessão de Reboot não pesava, então sai.
 
 ## Conta
 

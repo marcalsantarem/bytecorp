@@ -91,6 +91,7 @@ export const uiPtBR = {
   'offline.capped': 'Só as primeiras {time} foram contadas.',
   'offline.gains': 'Ganhos',
   'offline.stageReached': 'Novo estágio: {name}',
+  'offline.grantsReceived': 'Aceleradores recebidos: {count}',
   'offline.continue': 'Continuar',
   'offline.duration.lessThanMinute': 'menos de 1 min',
   'offline.duration.m': '{m} min',

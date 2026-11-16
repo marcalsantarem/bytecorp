@@ -1,4 +1,5 @@
 import type { ClockDeps } from '../core/clock'
+import type { StageId } from '../core/catalog/types'
 import type { GameEngine } from '../core/engine'
 import type { OfflineResult } from '../core/progression/offline'
 
@@ -7,37 +8,62 @@ export const MIN_OFFLINE_MS = 60_000
 // Ausência acima disto é tratada como este valor (relógio absurdo).
 export const MAX_AWAY_MS = 365 * 24 * 3_600_000
 
-// Resultado offline ainda não mostrado. A interface montada depois do bootstrap
-// lê com consume(); créditos seguidos antes da leitura são somados.
-export class PendingOffline {
-  private result: OfflineResult | null = null
+// Resultado offline com o contexto do crédito: o estágio antes dele e quantos
+// aceleradores foram concedidos durante ele (por exemplo, ao entrar em um novo estágio).
+export interface PendingOfflineDetail {
+  result: OfflineResult
+  // Ausente só quando o resultado entrou sem contexto (set sem o segundo argumento).
+  stageBefore?: StageId
+  grants: number
+}
 
-  set(next: OfflineResult): void {
-    const prev = this.result
-    this.result = prev
-      ? {
-          awayMs: prev.awayMs + next.awayMs,
-          creditedMs: prev.creditedMs + next.creditedMs,
-          cappedMs: prev.cappedMs + next.cappedMs,
-          bytes: prev.bytes.add(next.bytes),
-          segments: [...prev.segments, ...next.segments],
-        }
-      : next
+// Resultado offline ainda não mostrado. A interface montada depois do bootstrap
+// lê com consume() ou consumeDetail(); créditos seguidos antes da leitura são somados
+// (stageBefore é o do primeiro crédito não consumido; as concessões somam).
+export class PendingOffline {
+  private detail: PendingOfflineDetail | null = null
+
+  set(next: OfflineResult, context?: { stageBefore?: StageId; grants?: number }): void {
+    const prev = this.detail
+    if (!prev) {
+      this.detail = { result: next, stageBefore: context?.stageBefore, grants: context?.grants ?? 0 }
+      return
+    }
+    const p = prev.result
+    this.detail = {
+      result: {
+        awayMs: p.awayMs + next.awayMs,
+        creditedMs: p.creditedMs + next.creditedMs,
+        cappedMs: p.cappedMs + next.cappedMs,
+        bytes: p.bytes.add(next.bytes),
+        segments: [...p.segments, ...next.segments],
+      },
+      stageBefore: prev.stageBefore ?? context?.stageBefore,
+      grants: prev.grants + (context?.grants ?? 0),
+    }
   }
 
   peek(): OfflineResult | null {
-    return this.result
+    return this.detail?.result ?? null
+  }
+
+  peekDetail(): PendingOfflineDetail | null {
+    return this.detail
   }
 
   // Entrega o resultado pendente uma única vez.
   consume(): OfflineResult | null {
-    const r = this.result
-    this.result = null
-    return r
+    return this.consumeDetail()?.result ?? null
+  }
+
+  consumeDetail(): PendingOfflineDetail | null {
+    const d = this.detail
+    this.detail = null
+    return d
   }
 
   clear(): void {
-    this.result = null
+    this.detail = null
   }
 }
 
@@ -59,8 +85,18 @@ export function creditAway(
   if (away <= 0 || away < minMs) return null
   // Ordem importa: offlineSegments desconta os temporizadores e applyOffline os consome.
   const segments = engine.offlineSegments(away)
-  const result = engine.applyOffline(away, segments)
-  pending.set(result)
+  const stageBefore = engine.state.run.stage
+  let grants = 0
+  const off = engine.events.on('acceleratorGranted', ({ items }) => {
+    grants += items.length
+  })
+  let result: OfflineResult
+  try {
+    result = engine.applyOffline(away, segments)
+  } finally {
+    off()
+  }
+  pending.set(result, { stageBefore, grants })
   return result
 }
 

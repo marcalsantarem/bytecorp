@@ -264,3 +264,61 @@ describe('aceleradores durante a ausência', () => {
     expect(second.engine.state.meta.accelerators.active?.remainingMs).toBe(HOUR)
   })
 })
+
+describe('stageBefore e concessões do resultado pendente', () => {
+  // 0,5 B/s: 8 h (o limite) rendem 14.400 B, o bastante para sair do estágio inicial (1e4).
+  it('estágio muda na ausência: stageBefore é o anterior e há uma concessão', async () => {
+    const storage = new MemoryStorage()
+    await seedSave(storage, T0)
+    const s = await ready(storage, deps({ t: T0 + 8 * HOUR }).deps)
+    const d = s.offline.consumeDetail()!
+    expect(d.stageBefore).toBe('solo_hacker')
+    expect(s.engine.state.run.stage).not.toBe('solo_hacker')
+    expect(d.grants).toBeGreaterThanOrEqual(1)
+    expect(s.offline.consumeDetail()).toBeNull()
+  })
+
+  it('concessão durante a ausência entra no inventário e na contagem', async () => {
+    const storage = new MemoryStorage()
+    await seedSave(storage, T0)
+    const s = await ready(storage, deps({ t: T0 + 8 * HOUR }).deps)
+    const d = s.offline.peekDetail()!
+    const inv = s.engine.state.meta.accelerators.inventory.length + (s.engine.state.meta.accelerators.active ? 1 : 0)
+    expect(d.grants).toBe(inv)
+    expect(s.offline.peek()).toBe(d.result)
+  })
+
+  it('créditos seguidos: stageBefore do primeiro e concessões somadas', async () => {
+    const storage = new MemoryStorage()
+    await seedSave(storage, T0)
+    const wall = { t: T0 }
+    const d = deps(wall)
+    const s = await ready(storage, d.deps)
+    for (let i = 0; i < 2; i++) {
+      d.lifecycle.set(true)
+      wall.t += 8 * HOUR
+      d.lifecycle.set(false)
+    }
+    const detail = s.offline.consumeDetail()!
+    expect(detail.stageBefore).toBe('solo_hacker')
+    expect(detail.result.awayMs).toBe(16 * HOUR)
+    const inv = s.engine.state.meta.accelerators.inventory.length + (s.engine.state.meta.accelerators.active ? 1 : 0)
+    expect(detail.grants).toBe(inv)
+  })
+
+  it('sem mudança de estágio: stageBefore igual ao atual e zero concessões', async () => {
+    const storage = new MemoryStorage()
+    await seedSave(storage, T0)
+    const s = await ready(storage, deps({ t: T0 + 5 * 60_000 }).deps)
+    const d = s.offline.consumeDetail()!
+    expect(d.stageBefore).toBe(s.engine.state.run.stage)
+    expect(d.grants).toBe(0)
+  })
+
+  it('consume() segue devolvendo só o resultado', async () => {
+    const storage = new MemoryStorage()
+    await seedSave(storage, T0)
+    const s = await ready(storage, deps({ t: T0 + HOUR }).deps)
+    expect(s.offline.consume()?.creditedMs).toBe(HOUR)
+  })
+})

@@ -42,7 +42,7 @@ const FOOTER_BUTTON =
 export function FooterActions({ engine }: { engine: GameEngine }) {
   const { t } = useI18n()
   return (
-    <footer className="flex shrink-0 items-stretch justify-center gap-1.5 border-t border-neon-cyan/15 bg-panel/90 px-2 py-2">
+    <footer className="relative flex shrink-0 items-stretch justify-center gap-1.5 border-t border-neon-cyan/15 bg-panel/90 px-2 py-2">
       <RebootControl engine={engine} buttonClass={`${FOOTER_BUTTON} enabled:border-neon-magenta/50 enabled:text-white enabled:hover:bg-neon-magenta/10`} />
       <QuantumTreeControl
         engine={engine}

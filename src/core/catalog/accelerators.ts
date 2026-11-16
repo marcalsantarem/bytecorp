@@ -1,9 +1,10 @@
 import type { MessageKey } from '../../i18n'
 import type { StageId } from './types'
 
-// Catálogo de aceleradores (GDD 13, D-16, T-070). Seis itens (2x e 5x, 15/30/60 min) e a tabela de
-// concessões por marco: um item na primeira entrada em cada estágio (o inicial não concede) e um em
-// cada Reboot. Valores justificados em docs/AG07/aceleradores-m4.md.
+// Catálogo de aceleradores (GDD 13, D-16, D-18, T-070). Seis itens (2x e 5x, 15/30/60 min) e a tabela
+// de concessões por marco: um item 2x na primeira entrada em cada estágio (o inicial não concede); o
+// Reboot não concede (tabela vazia, o mecanismo existe para eventos futuros). Os itens 5x e de 60 min
+// ficam no catálogo, sem concessão por marco. Valores justificados em docs/AG07/aceleradores-m4.md.
 
 export type AcceleratorMultiplier = 2 | 5
 export type AcceleratorDurationMin = 15 | 30 | 60
@@ -41,11 +42,11 @@ export const ACCELERATOR_GRANTS: AcceleratorGrantsDef = {
     garage_company: [{ multiplier: 2, durationMin: 15 }],
     startup_lab: [{ multiplier: 2, durationMin: 15 }],
     data_center: [{ multiplier: 2, durationMin: 30 }],
-    corporate_network: [{ multiplier: 5, durationMin: 15 }],
-    quantum_facility: [{ multiplier: 5, durationMin: 15 }],
-    mega_corporation: [{ multiplier: 5, durationMin: 30 }],
+    corporate_network: [{ multiplier: 2, durationMin: 15 }],
+    quantum_facility: [{ multiplier: 2, durationMin: 15 }],
+    mega_corporation: [{ multiplier: 2, durationMin: 30 }],
   },
-  reboot: [{ multiplier: 2, durationMin: 15 }],
+  reboot: [],
 }
 
 export function acceleratorItemFor(multiplier: number, durationMin: number): AcceleratorItemDef | undefined {
@@ -74,8 +75,8 @@ export function validateAccelerators(
   const combos = new Set(items.map((i) => `${i.multiplier}:${i.durationMin}`))
   if (combos.size !== items.length) problems.push('accelerator: combinação de multiplicador e duração repetida')
 
-  const checkList = (where: string, list: readonly AcceleratorGrantDef[]) => {
-    if (list.length === 0) problems.push(`${where}: sem concessão`)
+  const checkList = (where: string, list: readonly AcceleratorGrantDef[], mayBeEmpty = false) => {
+    if (list.length === 0 && !mayBeEmpty) problems.push(`${where}: sem concessão`)
     const keys = new Set<string>()
     for (const g of list) {
       const key = `${g.multiplier}:${g.durationMin}`
@@ -89,6 +90,6 @@ export function validateAccelerators(
     else if (stage === stageIds[0]) problems.push('o estágio inicial não concede acelerador')
     checkList(`concessão do estágio ${stage}`, list ?? [])
   }
-  checkList('concessão do Reboot', grants.reboot)
+  checkList('concessão do Reboot', grants.reboot, true)
   return problems
 }

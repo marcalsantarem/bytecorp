@@ -92,6 +92,7 @@ export const uiEn: Record<UiMessageKey, string> = {
   'offline.capped': 'Only the first {time} were counted.',
   'offline.gains': 'Gains',
   'offline.stageReached': 'New stage: {name}',
+  'offline.grantsReceived': 'Accelerators received: {count}',
   'offline.continue': 'Continue',
   'offline.duration.lessThanMinute': 'under 1 min',
   'offline.duration.m': '{m} min',

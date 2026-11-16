@@ -3,10 +3,11 @@ import type { OfflineResult } from '../../core/progression/offline'
 import type { StageId } from '../../core/catalog/types'
 
 // Resultado da ausência pendente de exibição; stageBefore (opcional) é o estágio antes de creditar,
-// usado só para avisar de um novo estágio.
+// usado só para avisar de um novo estágio; grants é a contagem de aceleradores concedidos no crédito.
 export interface PendingOffline {
   result: OfflineResult
   stageBefore?: StageId
+  grants?: number
 }
 
 // Interface mínima da fonte: o bootstrap (T-069) a implementa.

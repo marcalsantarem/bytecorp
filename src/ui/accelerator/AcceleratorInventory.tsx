@@ -49,7 +49,7 @@ export function AcceleratorInventoryControl({ engine, buttonClass }: { engine: G
           {count > 0 && <span className="text-neon-cyan tabular-nums max-lg:absolute max-lg:top-0.5 max-lg:right-1.5">{count}</span>}
         </span>
       </button>
-      <div role="status" aria-live="polite" className={toast === null ? 'sr-only' : 'pointer-events-none fixed inset-x-0 top-28 z-30 flex justify-center px-3'}>
+      <div role="status" aria-live="polite" className={toast === null ? 'sr-only' : 'pointer-events-none absolute inset-x-0 bottom-[calc(100%+3.5rem)] z-30 flex justify-center px-3 lg:inset-x-auto lg:bottom-[calc(100%+0.5rem)] lg:left-3 lg:max-w-64 lg:px-0'}>
         {toast !== null && (
           <span data-testid="accelerator-toast" className="rounded border border-neon-cyan/50 bg-panel px-3 py-2 font-mono text-xs text-neon-cyan shadow-[0_0_16px_rgba(0,255,204,0.2)]">
             {t('accel.granted', { count: toast })}

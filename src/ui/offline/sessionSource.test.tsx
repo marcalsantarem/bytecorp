@@ -37,6 +37,45 @@ describe('resumo ligado à sessão', () => {
     expect(screen.queryByTestId('offline-summary')).toBeNull()
   })
 
+  it('mostra estágio novo e concessões vindos da sessão', () => {
+    const engine = makeEngine({ stage: 'garage_company' })
+    const offline = new PendingOffline()
+    offline.set(result(), { stageBefore: 'solo_hacker', grants: 2 })
+    render(
+      <I18nProvider>
+        <OfflineSummary engine={engine} source={sessionOfflineSource(engine, offline)} />
+      </I18nProvider>,
+    )
+    expect(screen.getByTestId('offline-stage')).toBeTruthy()
+    expect(screen.getByTestId('offline-grants')).toHaveTextContent(': 2')
+  })
+
+  it('soma créditos seguidos e mantém o estágio do primeiro', () => {
+    const engine = makeEngine({ stage: 'garage_company' })
+    const offline = new PendingOffline()
+    offline.set(result(), { stageBefore: 'solo_hacker', grants: 1 })
+    offline.set(result(), { stageBefore: 'garage_company', grants: 2 })
+    render(
+      <I18nProvider>
+        <OfflineSummary engine={engine} source={sessionOfflineSource(engine, offline)} />
+      </I18nProvider>,
+    )
+    expect(screen.getByTestId('offline-stage')).toBeTruthy()
+    expect(screen.getByTestId('offline-grants')).toHaveTextContent(': 3')
+  })
+
+  it('sem concessões nem mudança de estágio, não há seção de ganhos', () => {
+    const engine = makeEngine({ stage: 'solo_hacker' })
+    const offline = new PendingOffline()
+    offline.set(result(), { stageBefore: 'solo_hacker', grants: 0 })
+    render(
+      <I18nProvider>
+        <OfflineSummary engine={engine} source={sessionOfflineSource(engine, offline)} />
+      </I18nProvider>,
+    )
+    expect(screen.queryByTestId('offline-gains')).toBeNull()
+  })
+
   it('não abre sem pendente', () => {
     setup()
     expect(screen.queryByTestId('offline-summary')).toBeNull()

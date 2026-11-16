@@ -1,4 +1,4 @@
-import { Check, Clock, Rocket } from 'lucide-react'
+import { Check, Clock, Rocket, Zap } from 'lucide-react'
 import { useId, useRef } from 'react'
 import type { GameEngine } from '../../core/engine'
 import { formatBytes } from '../../core/format'
@@ -34,6 +34,7 @@ function SummaryDialog({ engine, pending, onClose }: { engine: GameEngine; pendi
   const ref = useRef<HTMLDivElement>(null)
   useModal(ref, onClose)
   const { result, stageBefore } = pending
+  const grants = pending.grants ?? 0
 
   const stageNow = engine.state.run.stage
   const stageDef = stageBefore && stageBefore !== stageNow ? engine.catalog.stages.find((s) => s.id === stageNow) : undefined
@@ -66,13 +67,21 @@ function SummaryDialog({ engine, pending, onClose }: { engine: GameEngine; pendi
             {t('offline.capped', { time: duration(result.creditedMs) })}
           </p>
         )}
-        {stageDef && (
+        {(stageDef || grants > 0) && (
           <section data-testid="offline-gains">
             <h3 className="mb-1 font-mono text-xs font-bold tracking-wider text-white/80 uppercase">{t('offline.gains')}</h3>
-            <p className="flex items-center gap-1.5 text-sm text-white/80">
-              <Rocket className="size-4 shrink-0 text-neon-magenta" aria-hidden />
-              {t('offline.stageReached', { name: t(stageDef.nameKey as MessageKey) })}
-            </p>
+            {stageDef && (
+              <p className="flex items-center gap-1.5 text-sm text-white/80" data-testid="offline-stage">
+                <Rocket className="size-4 shrink-0 text-neon-magenta" aria-hidden />
+                {t('offline.stageReached', { name: t(stageDef.nameKey as MessageKey) })}
+              </p>
+            )}
+            {grants > 0 && (
+              <p className="flex items-center gap-1.5 text-sm text-white/80" data-testid="offline-grants">
+                <Zap className="size-4 shrink-0 text-neon-cyan" aria-hidden />
+                {t('offline.grantsReceived', { count: grants })}
+              </p>
+            )}
           </section>
         )}
         <button

@@ -127,3 +127,17 @@ A medir se escolher a 2: run 1 com uso típico (item por estágio) e o ganho da 
 - O jogador clica 1 vez por segundo e usa o `curva-m2`; jogadores que não encadeiam ficam entre "ao receber" e sem aceleradores.
 - A política "encadeando" usa o item mais antigo primeiro, sem otimizar (usar o 5x mais cedo ou mais tarde pode mudar o resultado em alguns pontos percentuais).
 - Volta à aba oculta e reduced-motion não verificados.
+
+## 8. Ajuste D-18 (tabela 2x, sem Reboot)
+
+Tabela aplicada em `src/core/catalog/accelerators.ts` (todas 2x: Garage 15, Startup 15, Data Center 30, Corporate 15, Quantum 15, Mega 30 min; Reboot vazio). Medido com o motor real:
+
+| Medida | Sem | Ao receber | Encadeando |
+|---|---|---|---|
+| Run 1 até Mega | 74,3 min | 44,6 min (-39,9%) | 39,2 min (-47,2%) |
+| Árvore completa (10 Reboots) | 4,4 h | 3,4 h (-22,5%) | 2,4 h (-44,6%) |
+
+- Ganho isolado na run 1: Garage, Startup e Corporate ou Quantum cerca de -20% cada (14,7 a 14,8 min), Data Center 2x/30 -40% (29,8 min), Mega 0 (concedido no fim da run).
+- **Meta de 2,4 h (-45%): cumprida encadeando (2,4 h), não ao receber (3,4 h, +42% acima da meta, fora de ±15%).** A meta foi derivada da medição "encadeando"; "ao receber" ignora o que chega com outro ativo. Proposta com números, não aplicada: se a meta for ao receber, as concessões precisariam de cerca de 2 vezes mais minutos úteis (ex.: 2x/30 em Garage, Startup, Corporate e Quantum e 2x/60 em Data Center e Mega, a medir). Recomendo manter a tabela: ao receber é o piso do jogador desatento, encadeando é o teto.
+- A run 1 em -47% encadeando ainda é forte (o Data Center 2x/30 sozinho dá -40%); alavanca se incomodar: Data Center 2x/15 (mudança a medir).
+- Faixas protegidas do teste: run 1 ao receber 30% a 50% (antes só "menor que sem"), encadeando 35% a 55% (antes 10% a 50%). A árvore completa continua só no relatório (`TEMPO_REPORT=1`, cerca de 7 min).
