@@ -67,24 +67,24 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-064 | Aplicar o ajuste de peso do clique escolhido pelo usuário (A-09) em `upgrades.ts`, medir de novo os ritmos e atualizar o teste de curva | AG07 | D-14 | feita (BRF-046); clique x0,1 e produção das melhorias x2,1; run de 74,2 min a 1 clique/s e 51,5 min a 10 |
 | T-060 | Executar o roteiro manual `docs/AG07/roteiro-qa-m2.md` em 1280 px e 375 px e registrar o resultado | AG07 | T-031, T-062 | feita (BRF-047): 22 de 24 passos passaram nas duas larguras, os passos 21 e 22 (PWA) parciais por limite do navegador embutido; nenhum defeito de lógica; D1 a D4 de baixa gravidade em `docs/AG07/resultado-qa-m2.md` |
 | T-032 | Versão 0.3.0 | AG03 | T-031 (T-060 roda ao mesmo tempo, por ordem do usuário) | em andamento (BRF-048) |
-| T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | a fazer |
+| T-033 | PR `dev` → `main` e tag `v0.3.0` | AG00 | T-032, pedido do usuário | feita (PR #3, tag v0.3.0) |
 
 ### M3 Prestígio (v0.4.0), fecha a primeira versão jogável
 
 | ID | Task | Dono | Depende de | Status |
 |---|---|---|---|---|
-| T-034 | Reboot (regras): reset da execução, preservação do permanente, contagem de reboots, evento; recompensa injetável | AG02 | M2 | a fazer |
-| T-035 | Fórmula de Quantum Cores e condição para habilitar o Reboot | AG02 | T-034, A-02 | bloqueada |
-| T-036 | Árvore Quantum (regras): nós, níveis um por vez, custo exponencial, pré-requisitos, reset com custo crescente | AG02 | T-034 | a fazer |
-| T-037 | Aplicar os efeitos quânticos na fórmula de produção e no limite offline | AG01 | T-036, T-021 | bloqueada |
-| T-038 | Save: revisar o formato, salvar logo após Reboot e reset da árvore | AG03 | T-034, T-036 | a fazer |
-| T-039 | Catálogo da árvore Quantum: 3 caminhos, cerca de 12 nós, textos | AG07 | T-036 | a fazer |
-| T-040 | Efeito de Reboot em Canvas 2D (2 a 3 s, pulável) | AG05 | T-034 | a fazer |
-| T-041 | Janela de Reboot: estimativa, confirmação do que se perde e preserva, botão do rodapé | AG04 | T-035, T-040 | bloqueada |
-| T-042 | Árvore Quantum na interface (1): visual com linhas neon, pan e zoom, seleção | AG04 | T-036, T-039, T-041 | a fazer |
-| T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | a fazer |
-| T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | a fazer |
-| T-045 | Versão 0.4.0 | AG03 | T-044 | a fazer |
+| T-034 | Reboot (regras): reset da execução, preservação do permanente, contagem de reboots, evento; recompensa injetável | AG02 | M2 | feita |
+| T-035 | Fórmula de Quantum Cores e condição para habilitar o Reboot | AG02 | T-034, D-15 | feita |
+| T-036 | Árvore Quantum (regras): nós, níveis um por vez, custo exponencial, pré-requisitos, reset com custo crescente | AG02 | T-034 | feita |
+| T-037 | Aplicar os efeitos quânticos na fórmula de produção e no limite offline | AG01 | T-036, T-021 | feita |
+| T-038 | Save: revisar o formato, salvar logo após Reboot e reset da árvore | AG03 | T-034, T-036 | feita |
+| T-039 | Catálogo da árvore Quantum: 3 caminhos, cerca de 12 nós, textos | AG07 | T-036 | feita |
+| T-040 | Efeito de Reboot em Canvas 2D (2 a 3 s, pulável) | AG05 | T-034 | feita |
+| T-041 | Janela de Reboot: estimativa, confirmação do que se perde e preserva, botão do rodapé | AG04 | T-035, T-040 | feita |
+| T-042 | Árvore Quantum na interface (1): visual com linhas neon, pan e zoom, seleção | AG04 | T-036, T-039, T-041 | feita |
+| T-043 | Árvore Quantum na interface (2): painel lateral e inferior, compra, reset com confirmação | AG04 | T-042 | feita |
+| T-044 | QA do M3: Reboot, árvore, save após Reboot e simulação de ciclos de prestígio | AG07 | T-037, T-038, T-043 | feita |
+| T-045 | Versão 0.4.0 | AG03 | T-044 | feita |
 | T-046 | PR `dev` → `main` e tag `v0.4.0` | AG00 | T-045, pedido do usuário | a fazer |
 
 ## Marcos fechados
@@ -106,3 +106,5 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | A altura da cena do núcleo usa a constante `25rem` para o resto da coluna; se o indicador de estágio crescer (texto do próximo estágio em mais linhas), o botão de clique volta a cortar em telas baixas | M6 | AG04 |
 | Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |
 | Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |
+| Árvore Quantum: o desconto de custo da árvore (+10 pp) pode não valer nada, pois melhorias e ATLAS_CORE já passam do teto de 50 pp (D-13); decidir na QA do M3 entre trocar o efeito do caminho gama ou reduzir o ATLAS_CORE. Custo total da árvore ~495 cores (8 a 10 Reboots) pode ser alto. Nós Quantum desconhecidos no save são preservados; confirmar que o motor os ignora | M3 (T-044) | AG07 |
+| Trap de foco (Tab) na tela da árvore Quantum e na janela de reset; botão de reset fica desabilitado sem nível comprado (revisar na QA do M3) | M3 (T-044) | AG04 |

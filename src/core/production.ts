@@ -1,6 +1,7 @@
 import type { Catalog } from './catalog/types'
 import { D, type Decimal } from './decimal'
 import { effectsBySource, type EffectKind } from './economy'
+import { quantumEffects } from './progression/quantum'
 import type { GameState } from './state'
 
 // Produção passiva consolidada (GDD 4.2, D-10): todas as origens somam em uma base única
@@ -44,9 +45,9 @@ export function combineProduction(base: Decimal | number, layers: LayerInputs): 
   return D(base).mul(combineMultiplier(layers))
 }
 
-// Camada 2: soma dos efeitos quânticos em pontos percentuais. Sem fonte até a T-037.
-export function quantumPercent(_state: GameState, _catalog: Catalog): Decimal {
-  return D(0)
+// Camada 2: soma dos efeitos quânticos de produção global, em pontos percentuais.
+export function quantumPercent(state: GameState, catalog: Catalog): Decimal {
+  return D(quantumEffects(state, catalog).globalProductionPercent ?? 0)
 }
 
 // Camada 3: fatores multiplicativos temporários (aceleradores, eventos). Sem fonte até M4/M5.
@@ -89,12 +90,14 @@ export function computeProduction(state: GameState, catalog: Catalog): Productio
   return { bySource: { equipment, agents }, base, layers, multiplier, total: base.mul(multiplier) }
 }
 
+// Soma de agentes, melhorias e árvore Quantum para os efeitos que não são da camada 2 da
+// produção (clique, desconto, crítico). Efeitos quânticos sem uso são ignorados.
 function totalEffect(state: GameState, catalog: Catalog, kind: EffectKind): Decimal {
   const s = effectsBySource(state, catalog, kind)
-  return s.agents.add(s.upgrades)
+  return s.agents.add(s.upgrades).add(quantumEffects(state, catalog)[kind] ?? 0)
 }
 
-// Soma dos efeitos clickFlat de agentes e melhorias.
+// Soma dos efeitos clickFlat de agentes, melhorias e árvore Quantum.
 export function clickFlatBonus(state: GameState, catalog: Catalog): Decimal {
   return totalEffect(state, catalog, 'clickFlat')
 }

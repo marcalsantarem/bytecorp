@@ -8,7 +8,7 @@ Versões: marco Mn → `v0.(n+1).0` (D-07 em [decisoes.md](decisoes.md)).
 |---|---|---|---|
 | M0 Fundação | v0.1.0 | Fechado | AG01, AG03, AG04 |
 | M1 Loop básico | v0.2.0 | Fechado | AG01, AG03, AG04, AG05, AG07 |
-| M2 Expansão da execução | v0.3.0 | — | AG01, AG04, AG07 |
+| M2 Expansão da execução | v0.3.0 | Fechado | AG01, AG03, AG04, AG07 |
 | M3 Prestígio (primeira versão jogável) | v0.4.0 | — | AG02, AG04, AG07 |
 | M4 Tempo | v0.5.0 | — | AG02, AG04 |
 | M5 Metajogo e fluxo | v0.6.0 | — | AG02, AG03, AG04 |
@@ -53,7 +53,7 @@ Bíblia 7, 8, 1.2, 6.3.
 Bíblia 9, 10. Fecha a primeira versão jogável (25.1).
 
 - Reboot com estimativa, confirmação (o que perde e o que preserva) e animação pulável.
-- Quantum Cores (depende de A-02).
+- Quantum Cores pela fórmula da D-15.
 - Árvore Quantum com três caminhos, pan, zoom, painel de detalhes, compra por nível e reset com custo crescente.
 
 ## M4 Tempo

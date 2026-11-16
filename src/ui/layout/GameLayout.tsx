@@ -50,7 +50,7 @@ export function GameLayout({ engine, onReset, left, center, right }: Props) {
           </button>
         ))}
       </nav>
-      <FooterActions />
+      <FooterActions engine={engine} />
     </div>
   )
 }

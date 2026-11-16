@@ -10,7 +10,7 @@ export function useEngineRevision(engine: GameEngine): number {
       const schedule = () => {
         if (frame === 0) frame = requestAnimationFrame(() => ((frame = 0), notify()))
       }
-      const offs = [engine.events.on('tick', schedule), engine.events.on('click', schedule), engine.events.on('stateReplaced', schedule)]
+      const offs = [engine.events.on('tick', schedule), engine.events.on('click', schedule), engine.events.on('stateReplaced', schedule), engine.events.on('quantumNodePurchased', schedule), engine.events.on('quantumTreeReset', schedule)]
       return () => {
         offs.forEach((off) => off())
         if (frame !== 0) cancelAnimationFrame(frame)

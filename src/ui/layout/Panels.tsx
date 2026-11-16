@@ -1,10 +1,12 @@
-import { Network, RotateCcw, Trophy } from 'lucide-react'
+import { Network, Trophy } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { GameEngine } from '../../core/engine'
 import { formatBytes, formatCount } from '../../core/format'
 import type { MessageKey } from '../../i18n'
 import { NeonPanel } from '../components/NeonPanel'
 import { useI18n } from '../i18n'
+import { QuantumTreeControl } from '../quantum/QuantumTree'
+import { RebootControl } from '../reboot/RebootControl'
 
 export function Panel({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -30,24 +32,25 @@ export function StatsPanel({ engine }: { engine: GameEngine }) {
   )
 }
 
-const FOOTER: { key: MessageKey; icon: ReactNode }[] = [
-  { key: 'footer.reboot', icon: <RotateCcw className="size-4 shrink-0" aria-hidden /> },
-  { key: 'footer.quantumTree', icon: <Network className="size-4 shrink-0" aria-hidden /> },
-  { key: 'footer.achievements', icon: <Trophy className="size-4 shrink-0" aria-hidden /> },
-]
+const FOOTER: { key: MessageKey; icon: ReactNode }[] = [{ key: 'footer.achievements', icon: <Trophy className="size-4 shrink-0" aria-hidden /> }]
 
-// Ações permanentes; sem tela ainda, ficam desabilitadas.
-export function FooterActions() {
+const FOOTER_BUTTON =
+  'flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border border-white/10 px-1.5 py-1 text-center font-mono text-[11px] leading-tight lg:min-h-0 lg:flex-none lg:flex-row lg:gap-1.5 lg:px-4 lg:text-xs text-white/60 disabled:cursor-not-allowed disabled:opacity-50'
+
+// Ações permanentes; só o Reboot tem tela, as demais ficam desabilitadas.
+export function FooterActions({ engine }: { engine: GameEngine }) {
   const { t } = useI18n()
   return (
     <footer className="flex shrink-0 items-center justify-center gap-1.5 border-t border-neon-cyan/15 bg-panel/90 px-2 py-2">
+      <RebootControl engine={engine} buttonClass={`${FOOTER_BUTTON} enabled:border-neon-magenta/50 enabled:text-white enabled:hover:bg-neon-magenta/10`} />
+      <QuantumTreeControl
+        engine={engine}
+        buttonClass={`${FOOTER_BUTTON} enabled:border-neon-cyan/50 enabled:text-white enabled:hover:bg-neon-cyan/10`}
+        icon={<Network className="size-4 shrink-0" aria-hidden />}
+        label={t('footer.quantumTree')}
+      />
       {FOOTER.map(({ key, icon }) => (
-        <button
-          key={key}
-          type="button"
-          disabled
-          className="flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border border-white/10 px-1.5 py-1 text-center font-mono text-[11px] leading-tight lg:min-h-0 lg:flex-none lg:flex-row lg:gap-1.5 lg:px-4 lg:text-xs text-white/60 disabled:cursor-not-allowed disabled:opacity-50 lg:px-4"
-        >
+        <button key={key} type="button" disabled className={FOOTER_BUTTON}>
           {icon}
           <span className="lg:truncate">{t(key)}</span>
         </button>

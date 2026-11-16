@@ -4,7 +4,7 @@ import type { SaveManager } from '../core/save/saveManager'
 export const PURCHASE_SAVE_DELAY_MS = 300
 
 // Ações importantes que agendam gravação (Bíblia 21.2).
-const SAVE_TRIGGER_EVENTS = ['purchase', 'agentHired', 'agentLeveled', 'upgradePurchased', 'stageChanged'] as const
+const SAVE_TRIGGER_EVENTS = ['purchase', 'agentHired', 'agentLeveled', 'upgradePurchased', 'stageChanged', 'quantumNodePurchased', 'quantumTreeReset'] as const
 
 export interface PersistenceControl {
   // Grava já, em fila: gravações nunca se sobrepõem e a última a começar vence.
@@ -39,6 +39,8 @@ export function createPersistence(
     timer = setTimeout(saveNow, delayMs)
   }
   const offs = SAVE_TRIGGER_EVENTS.map((name) => engine.events.on(name, schedule))
+  // O Reboot é raro e irreversível: grava já, sem esperar a janela coalescida.
+  offs.push(engine.events.on('reboot', () => void saveNow()))
 
   return {
     saveNow,
