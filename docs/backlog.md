@@ -108,9 +108,9 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 
 | ID | Task | Dono | Depende de | Status |
 |---|---|---|---|---|
-| T-077 | Conquistas (regras): 7 categorias, 4 raridades, requisitos por tipo (produção, cliques e críticos, equipamentos, agentes, Reboots, Quantum, estágios, tempo de jogo acumulado), progresso imediato, secretas, recompensas (Bytes, bônus temporários de 15, 30 e 60 min, Quantum Cores), estado em `meta`, eventos | AG02 | M4 | a fazer |
+| T-077 | Conquistas (regras): 7 categorias, 4 raridades, requisitos por tipo (produção, cliques e críticos, equipamentos, agentes, Reboots, Quantum, estágios, tempo de jogo acumulado), progresso imediato, secretas, recompensas (Bytes, bônus temporários de 15, 30 e 60 min, Quantum Cores), estado em `meta`, eventos | AG02 | M4 | feita |
 | T-078 | Catálogo de conquistas (intermediário, secretas com pista) e textos pt-BR e en | AG07 | T-077, A-13 | a fazer |
-| T-079 | Save: conquistas, estatísticas novas (tempo de jogo aberto) e progresso do tutorial, com versão e migração | AG03 | T-077 | a fazer |
+| T-079 | Save: conquistas, estatísticas novas (tempo de jogo aberto) e progresso do tutorial, com versão e migração | AG03 | T-077 | feita |
 | T-080 | Notificação central de conquista: uma por vez, fila, fecha só manualmente, sem histórico | AG04 | T-077 | a fazer |
 | T-081 | Janela de conquistas (botão permanente do rodapé): lista por categoria, raridade, progresso, secretas com pista | AG04 | T-078, T-080 | a fazer |
 | T-082 | Estatísticas em modal: lista vertical única de totais acumulados, sem abas nem gráficos | AG04 | T-079 | a fazer |

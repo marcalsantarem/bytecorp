@@ -1,0 +1,26 @@
+# BRF-092 · AG04 · Tutorial na interface
+
+- **Task:** T-088 (marco M5)
+- **Dono:** AG04
+- **Depende de:** T-087 (feita; API e alvos de interface na entrega do AG02)
+- **Pode escrever em:** `src/ui/`, `src/i18n/ui/`. Não editar `src/core`.
+
+## Objetivo
+
+Dicas guiadas do tutorial (Bíblia 16.1): uma por vez, dispensáveis.
+
+## Escopo
+
+- Balão junto ao elemento alvo do passo atual, com destaque leve do alvo, título, texto, "Entendi" (dispensar passo) e "Pular tutorial" (dispensar tudo). Marcar os elementos alvo com os ids que o AG02 listou.
+- Não bloquear o clique no alvo; reposicionar em redimensionamento e no mobile (alvo fora da aba visível: indicar a aba).
+- Não aparecer por cima da tela inicial, do resumo offline nem de outros modais.
+- Textos pt-BR e en; mobile 375 e desktop.
+- Testes de componente; verificar no navegador num jogo novo até pelo menos o primeiro agente e relatar.
+
+## Critério de pronto
+
+- [ ] lint, typecheck, test e build passam; verificação visual relatada.
+
+## Entrega
+
+Responder ao AG00 com: **entregue, validação, suposições, não testado, próximo passo**. Não commitar.

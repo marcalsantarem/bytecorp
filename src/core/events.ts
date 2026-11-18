@@ -1,3 +1,4 @@
+import type { AchievementReward } from './catalog/achievements'
 import type { StageId } from './catalog/types'
 import type { Decimal } from './decimal'
 import type { OfflineResult } from './progression/offline'
@@ -34,6 +35,8 @@ export interface GameEvents {
   acceleratorExpired: { item: AcceleratorItem }
   temporaryBonusGranted: { bonus: TemporaryBonus; refreshed: boolean }
   temporaryBonusExpired: { bonus: TemporaryBonus }
+  // Conquista desbloqueada, com a recompensa já entregue (GDD 11).
+  achievementUnlocked: { id: string; reward: AchievementReward }
   stateReplaced: Record<string, never>
 }
 

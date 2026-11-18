@@ -4,7 +4,7 @@ import type { GameState } from '../state'
 
 // Formato persistido. Decimal vira string; tudo mais é JSON simples.
 // Ao mudar o formato: incrementar SAVE_VERSION e registrar a migração em MIGRATIONS.
-export const SAVE_VERSION = 2
+export const SAVE_VERSION = 3
 
 export interface SaveEnvelope {
   version: number
@@ -31,6 +31,29 @@ export const MIGRATIONS: Record<number, (state: unknown) => unknown> = {
       },
     }
   },
+  // v2 -> v3 (T-079): conquistas detalhadas e tutorial, com valores iniciais.
+  // Conquistas já listadas em `achievements` são tratadas como entregues, sem recompensa nova.
+  2: (raw) => {
+    const migrated = MIGRATION_V2_TO_V3(raw) as { meta: Obj }
+    const ids = Array.isArray(migrated.meta.achievements) ? (migrated.meta.achievements as unknown[]).filter((v) => typeof v === 'string') : []
+    migrated.meta.achievementRewardsDelivered = [...ids]
+    return migrated
+  },
+}
+
+const MIGRATION_V2_TO_V3 = (raw: unknown): unknown => {
+  const root = obj(raw, 'state')
+  const meta = obj(root.meta, 'meta')
+  return {
+    ...root,
+    meta: {
+      ...meta,
+      achievementUnlocks: {},
+      achievementRewardsDelivered: [],
+      achievementQueue: [],
+      tutorial: { completedSteps: [], dismissed: false },
+    },
+  }
 }
 
 const STAGE_IDS: readonly StageId[] = [
@@ -120,6 +143,25 @@ function timerList(value: unknown, path: string) {
   return (value as unknown[]).map((v, i) => timerItem(v, `${path}[${i}]`))
 }
 
+function parseUnlocks(value: unknown): GameState['meta']['achievementUnlocks'] {
+  const o = obj(value, 'meta.achievementUnlocks')
+  const out: GameState['meta']['achievementUnlocks'] = {}
+  for (const [id, v] of Object.entries(o)) {
+    const e = obj(v, `meta.achievementUnlocks.${id}`)
+    out[id] = {
+      at: num(e.at, `meta.achievementUnlocks.${id}.at`),
+      playTimeMs: num(e.playTimeMs, `meta.achievementUnlocks.${id}.playTimeMs`),
+    }
+  }
+  return out
+}
+
+function parseTutorial(value: unknown): GameState['meta']['tutorial'] {
+  const t = obj(value, 'meta.tutorial')
+  if (typeof t.dismissed !== 'boolean') fail('meta.tutorial.dismissed', 'booleano')
+  return { completedSteps: stringList(t.completedSteps, 'meta.tutorial.completedSteps'), dismissed: t.dismissed }
+}
+
 function parseAccelerators(value: unknown): GameState['meta']['accelerators'] {
   const a = obj(value, 'meta.accelerators')
   return {
@@ -164,6 +206,10 @@ function parseState(raw: unknown): GameState {
       quantumNodes: countMap(meta.quantumNodes, 'meta.quantumNodes'),
       treeResets: num(meta.treeResets, 'meta.treeResets', { integer: true }),
       achievements: stringList(meta.achievements, 'meta.achievements'),
+      achievementUnlocks: parseUnlocks(meta.achievementUnlocks),
+      achievementRewardsDelivered: stringList(meta.achievementRewardsDelivered, 'meta.achievementRewardsDelivered'),
+      achievementQueue: stringList(meta.achievementQueue, 'meta.achievementQueue'),
+      tutorial: parseTutorial(meta.tutorial),
       accelerators: parseAccelerators(meta.accelerators),
       temporaryBonuses: timerList(meta.temporaryBonuses, 'meta.temporaryBonuses'),
     },

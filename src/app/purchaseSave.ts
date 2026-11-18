@@ -4,7 +4,7 @@ import type { SaveManager } from '../core/save/saveManager'
 export const PURCHASE_SAVE_DELAY_MS = 300
 
 // Ações importantes que agendam gravação (Bíblia 21.2).
-const SAVE_TRIGGER_EVENTS = ['purchase', 'agentHired', 'agentLeveled', 'upgradePurchased', 'stageChanged', 'quantumNodePurchased', 'quantumTreeReset'] as const
+const SAVE_TRIGGER_EVENTS = ['purchase', 'agentHired', 'agentLeveled', 'upgradePurchased', 'stageChanged', 'quantumNodePurchased', 'quantumTreeReset', 'achievementUnlocked'] as const
 
 export interface PersistenceControl {
   // Grava já, em fila: gravações nunca se sobrepõem e a última a começar vence.

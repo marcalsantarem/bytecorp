@@ -1,3 +1,4 @@
+import type { AchievementDef } from './catalog/achievements'
 import type { Catalog, Effect, StageDef, UpgradeDef } from './catalog/types'
 import { D, type Decimal } from './decimal'
 import {
@@ -47,6 +48,13 @@ import {
   type ActivateResult,
   type ReplaceMode,
 } from './progression/accelerators'
+import {
+  achievementInfo,
+  satisfiedLocked,
+  unlockAchievement,
+  type AchievementContext,
+  type AchievementInfo,
+} from './progression/achievements'
 import { grantTemporaryBonus, type GrantBonusResult } from './progression/temporaryBonuses'
 import { computeOffline, type OfflineResult, type OfflineSegment } from './progression/offline'
 import { applyReboot, DEFAULT_REBOOT_REWARD, rebootRewardOf, type RebootResult, type RebootReward } from './progression/reboot'
@@ -277,6 +285,7 @@ export class GameEngine {
     this.syncStage()
     this.invalidate()
     this.events.emit('reboot', { reward: result.reward, rebootNumber: result.rebootNumber })
+    this.checkAchievements()
     return result
   }
 
@@ -286,6 +295,7 @@ export class GameEngine {
     if (!result.ok) return result
     this.invalidate()
     this.events.emit('quantumNodePurchased', { id, level: result.level, cost: result.cost })
+    this.checkAchievements()
     return result
   }
 
@@ -295,6 +305,7 @@ export class GameEngine {
     if (!result.ok) return result
     this.invalidate()
     this.events.emit('quantumTreeReset', { refunded: result.refunded, cost: result.cost, resetNumber: result.resetNumber })
+    this.checkAchievements()
     return result
   }
 
@@ -325,6 +336,7 @@ export class GameEngine {
     this.checkStage()
     this.invalidate()
     this.events.emit('offlineApplied', result)
+    this.checkAchievements()
     return result
   }
 
@@ -376,6 +388,7 @@ export class GameEngine {
     if (critical) stats.criticalClicks++
     stats.bytesFromClicks = stats.bytesFromClicks.add(gained)
     this.checkStage()
+    this.checkAchievements()
     this._revision++
     this.events.emit('click', { gained, critical })
     return gained
@@ -397,6 +410,7 @@ export class GameEngine {
     this.invalidate()
     this.events.emit('purchase', { id, quantity, cost })
     this.checkStage()
+    this.checkAchievements()
     return quantity
   }
 
@@ -441,6 +455,7 @@ export class GameEngine {
     this.invalidate()
     this.events.emit('agentHired', { id, count: entry.count + 1, cost })
     this.checkStage()
+    this.checkAchievements()
     return true
   }
 
@@ -457,6 +472,7 @@ export class GameEngine {
     entry.level++
     this.invalidate()
     this.events.emit('agentLeveled', { id, level: entry.level, cost })
+    this.checkAchievements()
     return true
   }
 
@@ -522,6 +538,35 @@ export class GameEngine {
     }
   }
 
+  // Conquistas do catálogo (GDD 11); vazio até a T-078.
+  get achievementDefs(): readonly AchievementDef[] {
+    return this.catalog.achievements ?? []
+  }
+
+  // Lista na ordem do catálogo, com estado, progresso e recompensa. Secreta bloqueada
+  // devolve só a pista (textos, progresso e recompensa nulos).
+  achievementList(): AchievementInfo[] {
+    const ctx = this.achievementContext()
+    return this.achievementDefs.map((d) => achievementInfo(d, ctx))
+  }
+
+  achievementInfo(id: string): AchievementInfo | undefined {
+    const def = this.achievementDefs.find((d) => d.id === id)
+    return def && achievementInfo(def, this.achievementContext())
+  }
+
+  // Id da notificação exibida (a primeira da fila) ou null (GDD 11.7).
+  get achievementNotification(): string | null {
+    return this._state.meta.achievementQueue?.[0] ?? null
+  }
+
+  // Fecha a notificação exibida e devolve seu id; a próxima da fila passa a ser a atual.
+  dismissAchievementNotification(): string | null {
+    const id = this._state.meta.achievementQueue?.shift() ?? null
+    if (id !== null) this._revision++
+    return id
+  }
+
   // Chamado por todo sistema que altere algo que afete a produção.
   invalidate(): void {
     this.cachedProduction = null
@@ -537,6 +582,7 @@ export class GameEngine {
     this._state.stats.playTimeMs += ms
     this.applyTimerTick(tickTimers(this._state.meta, ms, this.config.acceleratorEndingMs), true)
     this.checkStage()
+    this.checkAchievements()
   }
 
   private applyTimerTick(tick: ReturnType<typeof tickTimers>, warn: boolean): void {
@@ -546,6 +592,36 @@ export class GameEngine {
       this.events.emit('acceleratorEnding', { item: tick.endingAccelerator, remainingMs: tick.endingAccelerator.remainingMs })
     }
     for (const bonus of tick.expiredBonuses) this.events.emit('temporaryBonusExpired', { bonus })
+  }
+
+  private achievementContext(): AchievementContext {
+    return {
+      state: this._state,
+      catalog: this.catalog,
+      bytesPerSecond: () => this.productionBase,
+      rebootRewardNow: () => this.rebootRewardNow,
+    }
+  }
+
+  // Desbloqueia o que já foi atingido, entregando a recompensa uma vez. Repete porque uma
+  // recompensa (Bytes, cores) pode atingir outra conquista; cada passo desbloqueia ao menos uma.
+  private checkAchievements(): void {
+    const defs = this.achievementDefs
+    if (defs.length === 0) return
+    for (;;) {
+      const ready = satisfiedLocked(defs, this.achievementContext())
+      if (ready.length === 0) return
+      for (const def of ready) {
+        const result = unlockAchievement(this._state, def, Date.now())
+        if (!result.unlocked) continue
+        this.invalidate()
+        if (result.reward.kind === 'temporaryBonus' && result.temporaryGranted) {
+          const bonus = this._state.meta.temporaryBonuses.find((b) => b.id === `achievement:${def.id}`)
+          if (bonus) this.events.emit('temporaryBonusGranted', { bonus: { ...bonus }, refreshed: false })
+        }
+        this.events.emit('achievementUnlocked', { id: def.id, reward: result.reward })
+      }
+    }
   }
 
   private grantFor(key: string, grants: Parameters<typeof grantAccelerators>[2]): void {
