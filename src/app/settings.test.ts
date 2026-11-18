@@ -21,7 +21,7 @@ describe('padrões', () => {
     expect(s.volumes).toEqual({ music: 70, sfx: 80, ui: 80 })
     expect(s.graphicsQuality).toBe('auto')
     expect(s.locale).toBe('pt-BR')
-    expect(s.notifications).toEqual({ enabled: false, categories: { achievement: true, acceleratorExpired: true, offlineFull: true } })
+    expect(s.notifications).toEqual({ enabled: false, categories: { achievement: true, acceleratorExpired: true } })
     expect(s.gameSpeed).toBe(1)
   })
 
@@ -42,7 +42,7 @@ describe('parseSettings', () => {
       volumes: { music: 0, ui: 100 },
       graphicsQuality: 'low',
       locale: 'en',
-      notifications: { enabled: true, categories: { offlineFull: false } },
+      notifications: { enabled: true, categories: { acceleratorExpired: false } },
     })
     const raw = serializeSettings(s)
     expect(JSON.parse(raw).version).toBe(SETTINGS_VERSION)
@@ -55,15 +55,27 @@ describe('parseSettings', () => {
       volumes: { music: 150, sfx: -3, ui: 'alto' },
       graphicsQuality: 'ultra',
       locale: 'fr',
-      notifications: { enabled: 'sim', categories: { achievement: false, offlineFull: 1 } },
+      notifications: { enabled: 'sim', categories: { achievement: false, acceleratorExpired: 1 } },
       gameSpeed: 4,
     })
     const s = parseSettings(raw, ['en'])
     expect(s.volumes).toEqual({ music: 100, sfx: 0, ui: 80 })
     expect(s.graphicsQuality).toBe('auto')
     expect(s.locale).toBe('en')
-    expect(s.notifications).toEqual({ enabled: false, categories: { achievement: false, acceleratorExpired: true, offlineFull: true } })
+    expect(s.notifications).toEqual({ enabled: false, categories: { achievement: false, acceleratorExpired: true } })
     expect(s.gameSpeed).toBe(1)
+  })
+
+  it('configuração antiga com offlineFull carrega e ignora a chave (D-23)', () => {
+    const raw = JSON.stringify({
+      version: SETTINGS_VERSION,
+      locale: 'en',
+      notifications: { enabled: true, categories: { achievement: false, acceleratorExpired: true, offlineFull: false } },
+    })
+    const s = parseSettings(raw, ['pt-BR'])
+    expect(s.locale).toBe('en')
+    expect(s.notifications).toEqual({ enabled: true, categories: { achievement: false, acceleratorExpired: true } })
+    expect(s.notifications.categories).not.toHaveProperty('offlineFull')
   })
 
   it('arredonda volumes fracionários', () => {

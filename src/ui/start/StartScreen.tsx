@@ -27,7 +27,26 @@ export function StartScreen({ hasSave, onContinue, onNewGame, onReset }: Props) 
   const { t } = useI18n()
   const [dialog, setDialog] = useState<Dialog>('none')
   const [busy, setBusy] = useState(false)
+  // Reset feito pelas Configurações daqui (D-24): não há mais progresso a continuar.
+  const [wasReset, setWasReset] = useState(false)
+  const canContinue = hasSave && !wasReset
+  const newGameRef = useRef<HTMLButtonElement>(null)
+  const focusNewGame = useRef(false)
   const close = () => setDialog('none')
+
+  const reset = async () => {
+    await onReset()
+    focusNewGame.current = true
+    setWasReset(true)
+  }
+
+  // Ao fechar a janela depois do Reset, o foco vai para Novo jogo. Roda depois da limpeza de useModal,
+  // que devolveria o foco ao botão Configurações.
+  useEffect(() => {
+    if (dialog !== 'none' || !focusNewGame.current) return
+    focusNewGame.current = false
+    newGameRef.current?.focus()
+  }, [dialog])
 
   const startNew = () => {
     if (busy) return
@@ -51,7 +70,7 @@ export function StartScreen({ hasSave, onContinue, onNewGame, onReset }: Props) 
       </h1>
 
       <nav aria-label={t('start.menu')} className="flex w-full max-w-xs flex-col gap-3">
-        {hasSave && (
+        {canContinue && (
           <button type="button" data-testid="start-continue" autoFocus disabled={busy} onClick={onContinue} className={`${BUTTON} ${PRIMARY}`}>
             <Play className="size-4" aria-hidden />
             {t('start.continue')}
@@ -59,11 +78,12 @@ export function StartScreen({ hasSave, onContinue, onNewGame, onReset }: Props) 
         )}
         <button
           type="button"
+          ref={newGameRef}
           data-testid="start-new-game"
-          autoFocus={!hasSave}
+          autoFocus={!canContinue}
           disabled={busy}
-          onClick={() => (hasSave ? setDialog('confirm') : startNew())}
-          className={`${BUTTON} ${hasSave ? SECONDARY : PRIMARY}`}
+          onClick={() => (canContinue ? setDialog('confirm') : startNew())}
+          className={`${BUTTON} ${canContinue ? SECONDARY : PRIMARY}`}
         >
           <Plus className="size-4" aria-hidden />
           {t('start.newGame')}
@@ -110,7 +130,7 @@ export function StartScreen({ hasSave, onContinue, onNewGame, onReset }: Props) 
         </SimpleDialog>
       )}
 
-      {dialog === 'settings' && <SettingsDialog onReset={onReset} onClose={close} />}
+      {dialog === 'settings' && <SettingsDialog onReset={reset} onClose={close} />}
     </div>
   )
 }

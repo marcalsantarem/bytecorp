@@ -10,8 +10,10 @@ export const SETTINGS_VERSION = 1
 export const GRAPHICS_QUALITIES = ['auto', 'low', 'medium', 'high'] as const
 export type GraphicsQuality = (typeof GRAPHICS_QUALITIES)[number]
 
-// Categorias de notificação local (T-089 pode ajustar a lista).
-export const NOTIFICATION_CATEGORIES = ['achievement', 'acceleratorExpired', 'offlineFull'] as const
+// Categorias de notificação local. Sem `offlineFull` (D-23): sem backend nada roda com o
+// jogo fechado, então o aviso de offline cheio não teria quando disparar. Configurações
+// antigas que ainda tragam essa chave carregam normalmente; a chave é ignorada.
+export const NOTIFICATION_CATEGORIES = ['achievement', 'acceleratorExpired'] as const
 export type NotificationCategory = (typeof NOTIFICATION_CATEGORIES)[number]
 
 // D-19: sem seletor no M5; só o valor 1x fica reservado para o M8.
@@ -53,7 +55,7 @@ export function defaultSettings(languages: readonly string[] = []): Settings {
     graphicsQuality: 'auto',
     locale: detectLocale(languages),
     // Desligadas até o jogador ativar: ligar exige pedir permissão ao navegador (T-089).
-    notifications: { enabled: false, categories: { achievement: true, acceleratorExpired: true, offlineFull: true } },
+    notifications: { enabled: false, categories: { achievement: true, acceleratorExpired: true } },
     gameSpeed: 1,
   }
 }

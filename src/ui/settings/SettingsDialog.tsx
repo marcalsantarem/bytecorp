@@ -1,8 +1,8 @@
 import { Gauge, Globe, Bell, Database, Monitor, RotateCcw, Settings as SettingsIcon, Volume2, X } from 'lucide-react'
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { setNotificationsEnabled, SUPPORTED_NOTIFICATION_CATEGORIES } from '../../app/notifications'
-import { GRAPHICS_QUALITIES, VOLUME_MAX, VOLUME_MIN, type NotificationCategory, type Volumes } from '../../app/settings'
+import { setNotificationsEnabled } from '../../app/notifications'
+import { GRAPHICS_QUALITIES, NOTIFICATION_CATEGORIES, VOLUME_MAX, VOLUME_MIN, type NotificationCategory, type Volumes } from '../../app/settings'
 import { LOCALES, type MessageKey } from '../../i18n'
 import { useI18n } from '../i18n'
 import { useModal } from '../useModal'
@@ -46,7 +46,6 @@ const QUALITY_LABEL: Record<(typeof GRAPHICS_QUALITIES)[number], MessageKey> = {
 const CATEGORY_LABEL: Record<NotificationCategory, MessageKey> = {
   achievement: 'settings.notifications.achievement',
   acceleratorExpired: 'settings.notifications.acceleratorExpired',
-  offlineFull: 'settings.notifications.offlineFull',
 }
 
 const CHOICE = 'min-h-11 flex-1 rounded-lg border px-2 py-1 font-mono text-xs'
@@ -152,7 +151,7 @@ export function SettingsDialog({ onReset, onClose }: { onReset: () => Promise<vo
             </p>
           )}
           <div className="flex flex-col gap-1 pl-3">
-            {SUPPORTED_NOTIFICATION_CATEGORIES.map((c) => (
+            {NOTIFICATION_CATEGORIES.map((c) => (
               <Toggle
                 key={c}
                 label={t(CATEGORY_LABEL[c])}

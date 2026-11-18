@@ -25,7 +25,6 @@ export const uiPtBR = {
   'settings.notifications.enabled': 'Ativar notificações',
   'settings.notifications.achievement': 'Conquistas desbloqueadas',
   'settings.notifications.acceleratorExpired': 'Acelerador encerrado',
-  'settings.notifications.offlineFull': 'Limite offline atingido',
   'settings.notifications.denied': 'O navegador bloqueou as notificações. Libere a permissão nas configurações do navegador para ativá-las.',
   'settings.notifications.unsupported': 'Este navegador não oferece notificações.',
   'settings.speed': 'Velocidade de jogo',

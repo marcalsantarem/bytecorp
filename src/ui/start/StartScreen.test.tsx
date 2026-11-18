@@ -78,6 +78,40 @@ describe('StartScreen', () => {
     expect(document.activeElement).toBe(credits)
   })
 
+  it('Reset pelas Configurações esconde Continuar, foca Novo jogo e dispensa a confirmação (D-24)', async () => {
+    const { onReset, onNewGame } = setup(true)
+    fireEvent.click(screen.getByTestId('start-settings'))
+    const resetButton = screen.getByTestId('settings-reset')
+    fireEvent.click(resetButton)
+    await act(async () => fireEvent.click(resetButton))
+    expect(onReset).toHaveBeenCalledTimes(1)
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.queryByTestId('start-continue')).toBeNull()
+    const newGame = screen.getByTestId('start-new-game')
+    expect(document.activeElement).toBe(newGame)
+    await act(async () => fireEvent.click(newGame))
+    expect(screen.queryByTestId('start-confirm')).toBeNull()
+    expect(onNewGame).toHaveBeenCalledTimes(1)
+  })
+
+  it('Reset que falha mantém Continuar', async () => {
+    const onReset = vi.fn(() => Promise.reject(new Error('falha')))
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const store = new SettingsStore(new MemoryStorage(), defaultSettings(['pt-BR']))
+    render(
+      <I18nProvider settings={store}>
+        <StartScreen hasSave onContinue={vi.fn()} onNewGame={vi.fn(() => Promise.resolve())} onReset={onReset} />
+      </I18nProvider>,
+    )
+    fireEvent.click(screen.getByTestId('start-settings'))
+    const resetButton = screen.getByTestId('settings-reset')
+    fireEvent.click(resetButton)
+    await act(async () => fireEvent.click(resetButton))
+    expect(onReset).toHaveBeenCalledTimes(1)
+    expect(screen.getByTestId('start-continue')).toBeTruthy()
+    error.mockRestore()
+  })
+
   it('textos em inglês e espaço do fundo animado presente', () => {
     setup(true, 'en')
     expect(screen.getByTestId('start-continue').textContent).toContain('Continue')

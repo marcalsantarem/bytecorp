@@ -2,16 +2,11 @@ import type { GameEngine } from '../core/engine'
 import type { Locale } from '../core/format'
 import { translate, type MessageKey } from '../i18n'
 import type { LocalNotifier, NotificationPermissionState } from '../platform/localNotifications'
-import type { NotificationCategory, SettingsStore } from './settings'
+import { NOTIFICATION_CATEGORIES, type NotificationCategory, type SettingsStore } from './settings'
 
 // Notificações locais enquanto o jogo está aberto (GDD 22), só com a aba oculta.
 // Eventos da mesma categoria que chegam juntos ou durante o intervalo mínimo
 // viram uma notificação só, enviada quando o limite permitir.
-
-// Categorias que esta integração emite. `offlineFull` fica de fora: sem backend não há
-// código rodando com o jogo fechado ou congelado, e com a aba oculta viva a produção
-// segue sem limite, então o aviso de "offline perto de encher" não tem quando disparar.
-export const SUPPORTED_NOTIFICATION_CATEGORIES: readonly NotificationCategory[] = ['achievement', 'acceleratorExpired']
 
 export const NOTIFICATION_LIMITS = {
   // Espera para juntar eventos seguidos da mesma categoria.
@@ -123,7 +118,7 @@ export function startNotifications(engine: GameEngine, settings: SettingsStore, 
     }),
     settings.subscribe((s) => {
       if (!s.notifications.enabled) dropAll()
-      else for (const c of SUPPORTED_NOTIFICATION_CATEGORIES) if (!s.notifications.categories[c]) drop(c)
+      else for (const c of NOTIFICATION_CATEGORIES) if (!s.notifications.categories[c]) drop(c)
     }),
     engine.events.on('stateReplaced', dropAll),
   ]

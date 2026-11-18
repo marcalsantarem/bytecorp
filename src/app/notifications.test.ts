@@ -76,7 +76,7 @@ function setup(opts: { enabled?: boolean; hidden?: boolean; permission?: Notific
   const settings = new SettingsStore(new MemoryStorage(), {
     ...defaultSettings(),
     locale: 'pt-BR',
-    notifications: { enabled: opts.enabled ?? true, categories: { achievement: true, acceleratorExpired: true, offlineFull: true } },
+    notifications: { enabled: opts.enabled ?? true, categories: { achievement: true, acceleratorExpired: true } },
   })
   const game = fakeEngine()
   const n = fakeNotifier(opts.permission)

@@ -26,7 +26,6 @@ export const uiEn: Record<UiMessageKey, string> = {
   'settings.notifications.enabled': 'Enable notifications',
   'settings.notifications.achievement': 'Achievements unlocked',
   'settings.notifications.acceleratorExpired': 'Accelerator ended',
-  'settings.notifications.offlineFull': 'Offline limit reached',
   'settings.notifications.denied': 'The browser blocked notifications. Allow them in the browser settings to turn them on.',
   'settings.notifications.unsupported': 'This browser does not support notifications.',
   'settings.speed': 'Game speed',
