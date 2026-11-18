@@ -112,7 +112,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-078 | Catálogo de conquistas (intermediário, secretas com pista) e textos pt-BR e en | AG07 | T-077, A-13 | feita |
 | T-079 | Save: conquistas, estatísticas novas (tempo de jogo aberto) e progresso do tutorial, com versão e migração | AG03 | T-077 | feita |
 | T-080 | Notificação central de conquista: uma por vez, fila, fecha só manualmente, sem histórico | AG04 | T-077 | feita |
-| T-081 | Janela de conquistas (botão permanente do rodapé): lista por categoria, raridade, progresso, secretas com pista | AG04 | T-078, T-080 | a fazer |
+| T-081 | Janela de conquistas (botão permanente do rodapé): lista por categoria, raridade, progresso, secretas com pista | AG04 | T-078, T-080 | feita |
 | T-082 | Estatísticas em modal: lista vertical única de totais acumulados, sem abas nem gráficos | AG04 | T-079 | feita |
 | T-083 | Configurações (modelo e persistência fora do save): volumes de música, efeitos e interface, qualidade gráfica, idioma, notificações por categoria, velocidade de jogo conforme A-12 | AG03 | A-12 | feita |
 | T-084 | Janela de Configurações; idioma pt-BR e en reativado (revoga D-11); volumes e qualidade só guardam o valor até o M6 | AG04 | T-083 | feita |
