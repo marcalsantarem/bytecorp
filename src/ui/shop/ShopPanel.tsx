@@ -35,6 +35,8 @@ export function ShopPanel({ engine }: { engine: GameEngine }) {
             type="button"
             role="tab"
             aria-selected={view === v}
+            // Alvo do tutorial: o botão da vista enquanto ela não está aberta; aberta, a própria lista.
+            data-tutorial={view === v ? undefined : `shop-${v}`}
             onClick={() => setView(v)}
             className={`min-h-11 rounded border px-2 font-mono text-xs font-bold lg:min-h-9 ${view === v ? 'border-neon-cyan/60 bg-neon-cyan/15 text-neon-cyan' : 'border-white/10 text-white/50 hover:text-white'}`}
           >
@@ -43,7 +45,7 @@ export function ShopPanel({ engine }: { engine: GameEngine }) {
         ))}
       </div>
       {view === 'upgrades' ? (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-2" data-tutorial="shop-upgrades">
           {upgrades.map(({ def, info }) => (
             <UpgradeCard key={def.id} engine={engine} def={def} info={info} />
           ))}
@@ -52,9 +54,9 @@ export function ShopPanel({ engine }: { engine: GameEngine }) {
         <>
           <CategoryTabs value={category} onChange={setCategory} available={available} />
           {items.length === 0 ? (
-            <p className="text-sm text-white/50">{t('shop.empty')}</p>
+            <p className="text-sm text-white/50" data-tutorial="shop-equipment">{t('shop.empty')}</p>
           ) : (
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-2" data-tutorial="shop-equipment">
               {items.map(({ def, info }) => (
                 <EquipmentCard key={def.id} engine={engine} def={def} info={info} />
               ))}

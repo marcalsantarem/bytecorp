@@ -1,6 +1,6 @@
 import { IDBFactory } from 'fake-indexeddb'
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from '../core/catalog'
+import { BASE_CATALOG as CATALOG } from '../core/catalog'
 import type { Catalog, QuantumNodeDef } from '../core/catalog/types'
 import { D } from '../core/decimal'
 import { DEFAULT_CONFIG, GameEngine } from '../core/engine'

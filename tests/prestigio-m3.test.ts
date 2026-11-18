@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from '../src/core/catalog'
+import { BASE_CATALOG as CATALOG } from '../src/core/catalog'
 import type { Catalog, QuantumNodeDef } from '../src/core/catalog/types'
 import { D } from '../src/core/decimal'
 import { DEFAULT_CONFIG, GameEngine } from '../src/core/engine'

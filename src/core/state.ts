@@ -19,7 +19,16 @@ export interface MetaState {
   quantumCores: Decimal
   quantumNodes: Record<string, number>
   treeResets: number
+  // Ids desbloqueados, na ordem do desbloqueio.
   achievements: string[]
+  // Quando e com quanto tempo de jogo cada uma foi desbloqueada (`at` = Date.now()).
+  achievementUnlocks: Record<string, { at: number; playTimeMs: number }>
+  // Ids cuja recompensa já foi entregue (uma vez só).
+  achievementRewardsDelivered: string[]
+  // Fila de notificações pendentes (GDD 11.7): a primeira é a exibida até o jogador fechá-la.
+  achievementQueue: string[]
+  // Progresso do tutorial (T-079): passos concluídos e se foi dispensado. Sobrevive ao Reboot.
+  tutorial: { completedSteps: string[]; dismissed: boolean }
   // Aceleradores (GDD 13): em meta porque o temporizador corre além do Reboot e offline (13.3).
   accelerators: AcceleratorState
   // Bônus temporários (D-10, camada Π temporários); sobrevivem ao Reboot (GDD 9.3).
@@ -86,6 +95,10 @@ export function createInitialState(now: number): GameState {
       quantumNodes: {},
       treeResets: 0,
       achievements: [],
+      achievementUnlocks: {},
+      achievementRewardsDelivered: [],
+      achievementQueue: [],
+      tutorial: { completedSteps: [], dismissed: false },
       accelerators: { active: null, inventory: [], granted: [], nextItemId: 1 },
       temporaryBonuses: [],
     },

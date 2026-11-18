@@ -1,6 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { defaultSettings, SettingsStore } from '../app/settings'
 import type { Locale } from '../core/format'
+import { MemoryStorage } from '../core/save/storage'
 import { translate, type MessageKey, type MessageParams } from '../i18n'
+import { SettingsContext } from './settings/useSettings'
 
 interface I18nValue {
   locale: Locale
@@ -9,18 +12,26 @@ interface I18nValue {
 
 const I18nContext = createContext<I18nValue | null>(null)
 
-// Idioma fixo em pt-BR até a janela de configurações (D-11): ignora o idioma do
-// navegador e qualquer idioma salvo. A infraestrutura de i18n continua pronta.
-const LOCALE: Locale = 'pt-BR'
-
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const value = useMemo<I18nValue>(() => ({ locale: LOCALE, t: (key, params) => translate(LOCALE, key, params) }), [])
+// O idioma vem das configurações (revoga D-11) e troca na hora ao mudar.
+// Sem `settings` (testes), usa uma loja em memória com os padrões (pt-BR).
+export function I18nProvider({ children, settings }: { children: ReactNode; settings?: SettingsStore }) {
+  const [fallback] = useState(() => (settings ? null : new SettingsStore(new MemoryStorage(), defaultSettings())))
+  const store = settings ?? fallback!
+  const locale = useSyncExternalStore(
+    (listener) => store.subscribe(listener),
+    () => store.current.locale,
+  )
+  const value = useMemo<I18nValue>(() => ({ locale, t: (key, params) => translate(locale, key, params) }), [locale])
   // Título da aba com a versão (D-07) e idioma do documento.
   useEffect(() => {
-    document.documentElement.lang = LOCALE
-    document.title = `${translate(LOCALE, 'app.title')} v${__APP_VERSION__}`
-  }, [])
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
+    document.documentElement.lang = locale
+    document.title = `${translate(locale, 'app.title')} v${__APP_VERSION__}`
+  }, [locale])
+  return (
+    <SettingsContext.Provider value={store}>
+      <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
+    </SettingsContext.Provider>
+  )
 }
 
 export function useI18n(): I18nValue {

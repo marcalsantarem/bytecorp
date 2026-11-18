@@ -1,4 +1,5 @@
 import type { MessageKey } from '../../i18n/pt-BR'
+import type { AchievementDef } from './achievements'
 
 // Catálogos orientados a dados (GDD 6.2 e 27): adicionar conteúdo é adicionar
 // entradas, nunca alterar os sistemas. Textos são sempre chaves de i18n.
@@ -105,4 +106,6 @@ export interface Catalog {
   agents: AgentDef[]
   upgrades: UpgradeDef[]
   quantumNodes: QuantumNodeDef[]
+  // Opcional até a T-078 entregar o catálogo real; ausente equivale a lista vazia.
+  achievements?: AchievementDef[]
 }

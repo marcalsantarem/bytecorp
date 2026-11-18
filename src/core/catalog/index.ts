@@ -1,6 +1,8 @@
 import { isMessageKey } from '../../i18n'
 import { ACCELERATOR_GRANTS, ACCELERATOR_ITEMS, validateAccelerators } from './accelerators'
 import { AGENTS } from './agents'
+import { ACHIEVEMENTS } from './achievements'
+import { validateAchievements } from '../progression/achievements'
 import { EQUIPMENT } from './equipment'
 import { QUANTUM_NODES } from './quantum'
 import { STAGES } from './stages'
@@ -16,7 +18,12 @@ export const CATALOG: Catalog = {
   agents: AGENTS,
   upgrades: UPGRADES,
   quantumNodes: QUANTUM_NODES,
+  achievements: ACHIEVEMENTS,
 }
+
+// Mesmo catálogo sem conquistas: para testes que medem saldo, cores ou bônus exatos e não
+// querem as recompensas das conquistas no meio (e para as referências de curva).
+export const BASE_CATALOG: Catalog = { ...CATALOG, achievements: [] }
 
 // Verifica a consistência estrutural de um catálogo. Retorna a lista de problemas
 // encontrados; um catálogo válido retorna lista vazia. Roda nos testes.
@@ -132,6 +139,8 @@ export function validateCatalog(catalog: Catalog): string[] {
       isMessageKey,
     ),
   )
+
+  problems.push(...validateAchievements(catalog.achievements ?? [], catalog, isMessageKey))
 
   return problems
 }

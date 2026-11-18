@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from './catalog'
+import { BASE_CATALOG as CATALOG } from './catalog'
 import { startClock } from './clock'
 import { DEFAULT_CONFIG, GameEngine, type EngineConfig } from './engine'
 import { createInitialState } from './state'
@@ -127,6 +127,31 @@ describe('GameEngine', () => {
     engine.advance(Number.NaN)
     expect(engine.state.run.bytes.toNumber()).toBe(0)
     expect(engine.revision).toBe(revision)
+  })
+})
+
+describe('dismissAchievementNotification', () => {
+  function withQueue(queue: string[]) {
+    const state = createInitialState(0)
+    state.meta.achievementQueue = queue
+    const engine = new GameEngine(CATALOG, state)
+    const seen: string[] = []
+    engine.events.on('achievementNotificationDismissed', ({ id }) => seen.push(id))
+    return { engine, seen }
+  }
+
+  it('emite o evento com o id fechado', () => {
+    const { engine, seen } = withQueue(['a', 'b'])
+    expect(engine.dismissAchievementNotification()).toBe('a')
+    expect(seen).toEqual(['a'])
+    expect(engine.dismissAchievementNotification()).toBe('b')
+    expect(seen).toEqual(['a', 'b'])
+  })
+
+  it('com a fila vazia não emite', () => {
+    const { engine, seen } = withQueue([])
+    expect(engine.dismissAchievementNotification()).toBeNull()
+    expect(seen).toEqual([])
   })
 })
 

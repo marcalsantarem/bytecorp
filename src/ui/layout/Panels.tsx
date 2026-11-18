@@ -1,13 +1,14 @@
-import { Network, Trophy } from 'lucide-react'
+import { Network } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { GameEngine } from '../../core/engine'
 import { formatBytes, formatCount } from '../../core/format'
-import type { MessageKey } from '../../i18n'
 import { AcceleratorInventoryControl } from '../accelerator/AcceleratorInventory'
+import { AchievementsControl } from '../achievements/AchievementsDialog'
 import { NeonPanel } from '../components/NeonPanel'
 import { useI18n } from '../i18n'
 import { QuantumTreeControl } from '../quantum/QuantumTree'
 import { RebootControl } from '../reboot/RebootControl'
+import { StatsControl } from '../stats/StatsDialog'
 
 export function Panel({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -29,16 +30,15 @@ export function StatsPanel({ engine }: { engine: GameEngine }) {
         <dt className="text-white/50">{t('stats.clicks')}</dt>
         <dd className="text-right font-bold text-neon-cyan tabular-nums">{formatCount(stats.clicks, locale)}</dd>
       </dl>
+      <StatsControl engine={engine} />
     </Panel>
   )
 }
 
-const FOOTER: { key: MessageKey; icon: ReactNode }[] = [{ key: 'footer.achievements', icon: <Trophy className="size-4 shrink-0" aria-hidden /> }]
-
 const FOOTER_BUTTON =
   'flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border border-white/10 px-1.5 py-1 text-center font-mono text-[11px] leading-tight lg:flex-none lg:flex-row lg:gap-1.5 lg:px-4 lg:text-xs text-white/60 disabled:cursor-not-allowed disabled:opacity-50'
 
-// Ações permanentes; só o Reboot tem tela, as demais ficam desabilitadas.
+// Ações permanentes do rodapé: Reboot, árvore Quantum, aceleradores e conquistas.
 export function FooterActions({ engine }: { engine: GameEngine }) {
   const { t } = useI18n()
   return (
@@ -54,12 +54,10 @@ export function FooterActions({ engine }: { engine: GameEngine }) {
         engine={engine}
         buttonClass={`${FOOTER_BUTTON} enabled:border-neon-cyan/50 enabled:text-white enabled:hover:bg-neon-cyan/10`}
       />
-      {FOOTER.map(({ key, icon }) => (
-        <button key={key} type="button" disabled className={FOOTER_BUTTON}>
-          {icon}
-          <span className="lg:truncate">{t(key)}</span>
-        </button>
-      ))}
+      <AchievementsControl
+        engine={engine}
+        buttonClass={`${FOOTER_BUTTON} enabled:border-neon-cyan/50 enabled:text-white enabled:hover:bg-neon-cyan/10`}
+      />
     </footer>
   )
 }

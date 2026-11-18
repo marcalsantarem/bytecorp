@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from '../src/core/catalog'
+import { BASE_CATALOG, CATALOG } from '../src/core/catalog'
 import type { Catalog, QuantumNodeDef } from '../src/core/catalog/types'
 import { D } from '../src/core/decimal'
 import { DEFAULT_CONFIG, GameEngine, type EngineConfig } from '../src/core/engine'
@@ -63,7 +63,7 @@ const MAX_RUNS = 60
 
 function run1(use: Use, only?: string) {
   const acc = accelerate(use, only)
-  const r = simulateCurve(CATALOG, {
+  const r = simulateCurve(BASE_CATALOG, {
     onEngine: acc.onEngine,
     stopWhen: (e) => {
       acc.tick(e)
@@ -99,7 +99,7 @@ function treeComplete(state: GameState, catalog: Catalog): boolean {
 }
 
 function playTree(use: Use, opts: { config?: Partial<EngineConfig> } = {}) {
-  const catalog = CATALOG
+  const catalog = BASE_CATALOG
   const state = createInitialState(0)
   const acc = accelerate(use)
   const runs: { n: number; seconds: number; reward: number }[] = []
@@ -227,10 +227,10 @@ describe('produção offline contra o motor real', () => {
   const HOUR = 3_600_000
   const base = () => {
     const s = createInitialState(0)
-    s.run.equipment = { [CATALOG.equipment[0]!.id]: 10, [CATALOG.equipment[1]!.id]: 3 }
+    s.run.equipment = { [BASE_CATALOG.equipment[0]!.id]: 10, [BASE_CATALOG.equipment[1]!.id]: 3 }
     s.run.bytes = D(0)
     s.run.bytesEarned = D(0)
-    return new GameEngine(CATALOG, s, { ...DEFAULT_CONFIG, random: () => 0.99, maxStepMs: 1000 })
+    return new GameEngine(BASE_CATALOG, s, { ...DEFAULT_CONFIG, random: () => 0.99, maxStepMs: 1000 })
   }
   const withAcc = (multiplier: number, minutes: number) => {
     const e = base()
@@ -335,6 +335,8 @@ describe('produção offline contra o motor real', () => {
     s.run.equipment = { [CATALOG.equipment[0]!.id]: 10 }
     s.meta.accelerators.active = { id: 'acc-1', multiplier: 2, remainingMs: 15 * 60000 }
     s.meta.accelerators.nextItemId = 2
+    // O boot usa o catálogo real: conquistas já desbloqueadas, para nenhuma recompensa entrar na conta.
+    s.meta.achievements = (CATALOG.achievements ?? []).map((a) => a.id)
     const first = new GameEngine(CATALOG, s)
     await saves.save(first)
     const lifecycle = { isHidden: () => false, onVisibilityChange: () => () => {}, onPageHide: () => () => {} }

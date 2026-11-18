@@ -1,3 +1,4 @@
+import type { AchievementReward } from './catalog/achievements'
 import type { StageId } from './catalog/types'
 import type { Decimal } from './decimal'
 import type { OfflineResult } from './progression/offline'
@@ -34,6 +35,19 @@ export interface GameEvents {
   acceleratorExpired: { item: AcceleratorItem }
   temporaryBonusGranted: { bonus: TemporaryBonus; refreshed: boolean }
   temporaryBonusExpired: { bonus: TemporaryBonus }
+  // Conquista desbloqueada, com a recompensa já entregue (GDD 11).
+  achievementUnlocked: { id: string; reward: AchievementReward }
+  // Notificação de conquista fechada pelo jogador (saiu da fila); não é emitido com a fila vazia.
+  achievementNotificationDismissed: { id: string }
+  // Passo ativo do tutorial mudou (GDD 16.1); `step` null = nenhum passo exibido.
+  // `completed`: ids concluídos nesta mudança. `reason`: 'progress' (ação de jogo ou ativação),
+  // 'completed' / 'stepDismissed' (API) ou 'tutorialDismissed' (tutorial inteiro dispensado).
+  tutorialChanged: {
+    step: string | null
+    previous: string | null
+    completed: string[]
+    reason: 'progress' | 'completed' | 'stepDismissed' | 'tutorialDismissed'
+  }
   stateReplaced: Record<string, never>
 }
 

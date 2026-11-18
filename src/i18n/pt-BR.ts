@@ -3,6 +3,10 @@
 import { contentPtBR } from './content/pt-BR'
 import { uiPtBR } from './ui/pt-BR'
 
-export const ptBR = { ...uiPtBR, ...contentPtBR }
+import { tutorialPtBR } from './tutorial/pt-BR'
+import { notificationsPtBR } from './notifications/pt-BR'
+import { achievementsPtBR } from './achievements/pt-BR'
+
+export const ptBR = { ...uiPtBR, ...contentPtBR, ...tutorialPtBR, ...notificationsPtBR, ...achievementsPtBR }
 
 export type MessageKey = keyof typeof ptBR
