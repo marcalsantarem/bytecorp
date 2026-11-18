@@ -121,8 +121,10 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-087 | Tutorial contextual (regras): passos por marcos (cliques, primeiro equipamento, produção passiva, primeiro agente, melhorias, conquistas, Reboot, árvore Quantum), progresso no save, passo de eventos fica para o M7 | AG02 | T-079 | feita |
 | T-088 | Tutorial na interface: dicas guiadas e dispensáveis, uma por vez | AG04 | T-087 | feita |
 | T-089 | Notificações locais (API do navegador, permissão, categorias configuráveis, limite contra excesso) compatível com PWA | AG03 | T-083, T-077 | feita |
-| T-090 | QA do M5: conquistas, tutorial, configurações, tela inicial, notificações, save | AG07 | T-081, T-082, T-085, T-086, T-088, T-089 | a fazer |
-| T-091 | Versão 0.6.0 | AG03 | T-090 | a fazer |
+| T-090 | QA do M5: conquistas, tutorial, configurações, tela inicial, notificações, save | AG07 | T-081, T-082, T-085, T-086, T-088, T-089 | feita |
+| T-090b | QA do M5 (D1): em 375 a dica do tutorial cobre o botão de clique (e provavelmente o card de agente) | AG04 | T-090 | a fazer |
+| T-090c | QA do M5 (O3): gravar o save logo após "Pular tutorial", concluir passo e fechar notificação de conquista | AG03 | T-090 | a fazer |
+| T-091 | Versão 0.6.0 | AG03 | T-090b, T-090c | a fazer |
 | T-092 | PR `dev` → `main` e tag `v0.6.0` | AG00 | T-091, pedido do usuário | a fazer |
 
 ## Marcos fechados
@@ -135,6 +137,10 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 
 | Item | Marco | Dono provável |
 |---|---|---|
+| QA do M5 (O1): sem indicador dos bônus temporários de conquista ativos e do tempo restante | M6 | AG04 |
+| QA do M5 (O2): save do M4 migrado recomeça o tutorial do zero; concluir na migração os passos já cumpridos | M8 | AG02 |
+| QA do M5 (O4): em 375 o rótulo "Quantum Cores" do topo quebra em duas linhas | M6 | AG04 |
+| Estatísticas sem totais históricos (compras de todas as execuções, cores ganhos, offline creditado, maior B/s); exige save novo | M8 | AG01 e AG03 |
 | QA do M2 (D1): o agente revelado mostra só nome e requisito, sem a especialidade (`src/ui/agents/AgentCard.tsx`, ramo não desbloqueado); a Bíblia 7.6 permite exibir "com suas informações"; decidir se é intencional | M3 | AG04 |
 | QA do M2 (D2): em 375x600 a legenda "+N B por clique" fica sob a barra de abas e só aparece rolando a coluna | M3 | AG04 |
 | QA do M2 (D4): descrições de `haptic_gloves` e `quantum_gloves` dizem "+30.000 Bytes" e "+3 bilhões" e o benefício formatado diz "+30 kB" e "+3 GB"; alinhar os textos | M3 | AG07 |
