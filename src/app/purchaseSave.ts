@@ -1,10 +1,16 @@
 import type { GameEngine } from '../core/engine'
+import type { GameEvents } from '../core/events'
 import type { SaveManager } from '../core/save/saveManager'
 
 export const PURCHASE_SAVE_DELAY_MS = 300
 
 // Ações importantes que agendam gravação (Bíblia 21.2).
-const SAVE_TRIGGER_EVENTS = ['purchase', 'agentHired', 'agentLeveled', 'upgradePurchased', 'stageChanged', 'quantumNodePurchased', 'quantumTreeReset', 'achievementUnlocked'] as const
+const SAVE_TRIGGER_EVENTS = ['purchase', 'agentHired', 'agentLeveled', 'upgradePurchased', 'stageChanged', 'quantumNodePurchased', 'quantumTreeReset', 'achievementUnlocked', 'achievementNotificationDismissed'] as const
+const TUTORIAL_SAVE_REASONS: ReadonlySet<GameEvents['tutorialChanged']['reason']> = new Set([
+  'completed',
+  'stepDismissed',
+  'tutorialDismissed',
+])
 
 export interface PersistenceControl {
   // Grava já, em fila: gravações nunca se sobrepõem e a última a começar vence.
@@ -39,6 +45,12 @@ export function createPersistence(
     timer = setTimeout(saveNow, delayMs)
   }
   const offs = SAVE_TRIGGER_EVENTS.map((name) => engine.events.on(name, schedule))
+  // Ações do jogador no tutorial; 'progress' vem de ações que já agendam gravação ou da simulação.
+  offs.push(
+    engine.events.on('tutorialChanged', ({ reason }) => {
+      if (TUTORIAL_SAVE_REASONS.has(reason)) schedule()
+    }),
+  )
   // O Reboot é raro e irreversível: grava já, sem esperar a janela coalescida.
   offs.push(engine.events.on('reboot', () => void saveNow()))
 

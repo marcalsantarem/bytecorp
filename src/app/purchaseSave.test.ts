@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { CATALOG } from '../core/catalog'
 import type { Catalog } from '../core/catalog/types'
 import { D } from '../core/decimal'
 import { DEFAULT_CONFIG, GameEngine } from '../core/engine'
@@ -211,6 +212,89 @@ describe('salvar após compra', () => {
       await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS * 3)
       expect(setSpy).not.toHaveBeenCalled()
     })
+  })
+
+  describe('ações do tutorial', () => {
+    function setupTutorial() {
+      const engine = new GameEngine({ ...CATALOG, achievements: [] }, createInitialState(0), { ...DEFAULT_CONFIG, random: () => 0.99 })
+      const storage = new MemoryStorage()
+      const setSpy = vi.spyOn(storage, 'set')
+      const saves = new SaveManager(storage)
+      return { engine, saves, setSpy, p: createPersistence(engine, saves) }
+    }
+
+    async function loadedTutorial(saves: SaveManager) {
+      const loaded = await saves.load()
+      if (!('ok' in loaded) || !loaded.ok) throw new Error('save ausente ou inválido')
+      return loaded.state.meta.tutorial
+    }
+
+    it('pular o tutorial grava sem esperar o autosave', async () => {
+      const { engine, saves, p } = setupTutorial()
+      expect(engine.dismissTutorial()).toBe(true)
+      await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS)
+      expect((await loadedTutorial(saves)).dismissed).toBe(true)
+      p.dispose()
+    })
+
+    it('dispensar o passo grava sem esperar o autosave', async () => {
+      const { engine, saves, p } = setupTutorial()
+      expect(engine.tutorialStep?.id).toBe('click')
+      expect(engine.dismissTutorialStep()).toBe(true)
+      await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS)
+      expect((await loadedTutorial(saves)).completedSteps).toContain('click')
+      p.dispose()
+    })
+
+    it('concluir o passo pela API grava sem esperar o autosave', async () => {
+      const { engine, saves, p } = setupTutorial()
+      expect(engine.completeTutorialStep('click')).toBe(true)
+      await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS)
+      expect((await loadedTutorial(saves)).completedSteps).toContain('click')
+      p.dispose()
+    })
+
+    it('ações seguidas do tutorial geram uma gravação só', async () => {
+      const { engine, setSpy, p } = setupTutorial()
+      engine.dismissTutorialStep()
+      engine.dismissTutorial()
+      await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS)
+      expect(setSpy).toHaveBeenCalledTimes(1)
+      p.dispose()
+    })
+
+    it('progresso do tutorial por ação de jogo sem gatilho próprio não grava', async () => {
+      const { engine, setSpy, p } = setupTutorial()
+      const reasons: string[] = []
+      engine.events.on('tutorialChanged', (e) => reasons.push(e.reason))
+      engine.click()
+      expect(reasons).toContain('progress')
+      await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS * 3)
+      expect(setSpy).not.toHaveBeenCalled()
+      p.dispose()
+    })
+
+    it('depois do dispose as ações do tutorial não gravam', async () => {
+      const { engine, setSpy, p } = setupTutorial()
+      p.dispose()
+      engine.dismissTutorialStep()
+      engine.dismissTutorial()
+      await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS * 3)
+      expect(setSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  it('fechar a notificação de conquista grava sem esperar o autosave', async () => {
+    const { engine, saves, setSpy } = setup()
+    engine.state.meta.achievementQueue = ['x']
+    const p = createPersistence(engine, saves)
+    expect(engine.dismissAchievementNotification()).toBe('x')
+    await vi.advanceTimersByTimeAsync(PURCHASE_SAVE_DELAY_MS)
+    expect(setSpy).toHaveBeenCalledTimes(1)
+    const loaded = await saves.load()
+    if (!('ok' in loaded) || !loaded.ok) throw new Error('save ausente ou inválido')
+    expect(loaded.state.meta.achievementQueue ?? []).toEqual([])
+    p.dispose()
   })
 
   it('dispose cancela o agendamento e a inscrição', async () => {

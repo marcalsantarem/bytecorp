@@ -583,7 +583,10 @@ export class GameEngine {
   // Fecha a notificação exibida e devolve seu id; a próxima da fila passa a ser a atual.
   dismissAchievementNotification(): string | null {
     const id = this._state.meta.achievementQueue?.shift() ?? null
-    if (id !== null) this._revision++
+    if (id !== null) {
+      this._revision++
+      this.events.emit('achievementNotificationDismissed', { id })
+    }
     return id
   }
 

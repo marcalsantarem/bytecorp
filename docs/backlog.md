@@ -122,8 +122,8 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-088 | Tutorial na interface: dicas guiadas e dispensáveis, uma por vez | AG04 | T-087 | feita |
 | T-089 | Notificações locais (API do navegador, permissão, categorias configuráveis, limite contra excesso) compatível com PWA | AG03 | T-083, T-077 | feita |
 | T-090 | QA do M5: conquistas, tutorial, configurações, tela inicial, notificações, save | AG07 | T-081, T-082, T-085, T-086, T-088, T-089 | feita |
-| T-090b | QA do M5 (D1): em 375 a dica do tutorial cobre o botão de clique (e provavelmente o card de agente) | AG04 | T-090 | a fazer |
-| T-090c | QA do M5 (O3): gravar o save logo após "Pular tutorial", concluir passo e fechar notificação de conquista | AG03 | T-090 | a fazer |
+| T-090b | QA do M5 (D1): em 375 a dica do tutorial cobre o botão de clique (e provavelmente o card de agente) | AG04 | T-090 | feita |
+| T-090c | QA do M5 (O3): gravar o save logo após "Pular tutorial", concluir passo e fechar notificação de conquista | AG03 | T-090 | feita |
 | T-091 | Versão 0.6.0 | AG03 | T-090b, T-090c | a fazer |
 | T-092 | PR `dev` → `main` e tag `v0.6.0` | AG00 | T-091, pedido do usuário | a fazer |
 

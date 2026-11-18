@@ -119,6 +119,9 @@ describe('TutorialHint', () => {
     )
     expect(hint()?.dataset.anchor).toBe('tab')
     expect(screen.getByTestId('tutorial-tab-hint').textContent).toBe(tr('tutorialHint.openTab', { tab: tr('tab.shop') }))
+    // Compacto: só o título e a aba a abrir, para não cobrir a área de jogo.
+    expect(hint()?.dataset.compact).toBe('true')
+    expect(screen.queryByText(tr('tutorial.firstEquipment.text'))).toBeNull()
 
     // Ao abrir a aba, o balão passa para o alvo.
     const tab = screen.getByText('loja')
@@ -129,6 +132,7 @@ describe('TutorialHint', () => {
     })
     expect(hint()?.dataset.anchor).toBe('target')
     expect(screen.queryByTestId('tutorial-tab-hint')).toBeNull()
+    expect(screen.getByText(tr('tutorial.firstEquipment.text'))).toBeTruthy()
   })
 
   it('espera a notificação de conquista fechar', () => {

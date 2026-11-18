@@ -37,6 +37,8 @@ export interface GameEvents {
   temporaryBonusExpired: { bonus: TemporaryBonus }
   // Conquista desbloqueada, com a recompensa já entregue (GDD 11).
   achievementUnlocked: { id: string; reward: AchievementReward }
+  // Notificação de conquista fechada pelo jogador (saiu da fila); não é emitido com a fila vazia.
+  achievementNotificationDismissed: { id: string }
   // Passo ativo do tutorial mudou (GDD 16.1); `step` null = nenhum passo exibido.
   // `completed`: ids concluídos nesta mudança. `reason`: 'progress' (ação de jogo ou ativação),
   // 'completed' / 'stepDismissed' (API) ou 'tutorialDismissed' (tutorial inteiro dispensado).
