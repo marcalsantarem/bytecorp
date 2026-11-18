@@ -48,5 +48,8 @@ Tasks que dependem destes itens ficam bloqueadas.
 
 | ID | Questão | Bloqueia |
 |---|---|---|
+| A-15 | Origem dos modelos 3D da infraestrutura no M6 (Bíblia 18.3): geometria procedural em código, modelos GLB/GLTF de bibliotecas livres (CC0) ou combinação. | T-094 |
+| A-16 | Origem da música e dos efeitos sonoros no M6 (Bíblia 20.4): síntese procedural por Web Audio, arquivos de bibliotecas livres (CC0) ou combinação. | T-100, T-101 |
+| A-17 | Núcleo visual na cena do M6 (Bíblia 5.2 e 18.2): manter o núcleo em Canvas 2D sobreposto à cena Three.js ou recriá-lo como objeto 3D da cena. | T-096 |
 | A-07 | Relevância do ganho fixo por clique (`clickFlat`): perde peso depois de cerca de 10 min de jogo e todas as melhorias de clique ficam disponíveis até 7 min. Decidir se `clickFlat` escala com a produção ou se fica como está. | Nada; revisar no balanceamento do M8 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |

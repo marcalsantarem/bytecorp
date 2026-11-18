@@ -129,6 +129,28 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-091 | Versão 0.6.0 | AG03 | T-090b, T-090c | feita |
 | T-092 | PR `dev` → `main` e tag `v0.6.0` | AG00 | T-091, pedido do usuário | feita (PR #6, tag v0.6.0) |
 
+### M6 Apresentação (v0.7.0)
+
+| ID | Task | Dono | Depende de | Status |
+|---|---|---|---|---|
+| T-093 | Base da cena Three.js (Bíblia 18.1, 18.2, 18.4, 18.5): dependência `three` carregada sob demanda, `mountInfraScene` com câmera isométrica fixa, presets de iluminação, laço de desenho separado do engine e parado com a aba oculta, descarte de recursos | AG05 | M5 | a fazer |
+| T-094 | Modelos da infraestrutura por categoria de equipamento e ambiente por estágio (7 estágios), conforme A-15, com carregamento progressivo | AG05 | T-093, A-15 | bloqueada |
+| T-095 | Evolução visual (Bíblia 6.7, 18.8): função pura estado → objetos da cena, equipamentos individuais até um limite e agrupados depois, mudanças por marcos e estágio, sem efeito econômico | AG05 | T-093 | a fazer |
+| T-096 | Fluxos de dados, pacotes, partículas e efeitos de energia em Canvas 2D; núcleo visual com ondas de energia e elementos holográficos, conforme A-17 | AG05 | T-093, A-17 | bloqueada |
+| T-097 | Transição de estágio de 2 a 3 s, pulável, sem pausar produção e cliques (Bíblia 18.7); transição de Reboot integrada à nova cena | AG05 | T-095 | a fazer |
+| T-098 | Qualidade adaptativa (Bíblia 19): detecção inicial, presets Baixa, Média e Alta lidos das Configurações, redução de partículas, luzes e sombras sob carga; teste de que a qualidade não altera a produção | AG05 | T-096 | a fazer |
+| T-099 | Sistema de áudio (Bíblia 20.3 a 20.5): Web Audio com barramentos de música, efeitos e interface e "silenciar tudo" ligados às Configurações, desbloqueio no primeiro gesto, carregamento progressivo e nada carregado quando mudo | AG05 | M5 | a fazer |
+| T-100 | Efeitos sonoros (Bíblia 20.2): clique, crítico, compra e agente, conquista, Reboot, notificação; som de evento fica para o M7; conforme A-16 | AG05 | T-099, A-16 | bloqueada |
+| T-101 | Música por estágio em camadas que crescem com a infraestrutura e composição curta do Reboot (Bíblia 20.1), conforme A-16 | AG05 | T-099, A-16 | bloqueada |
+| T-102 | Integração na interface: cena na coluna central e no mobile, botão de pular transição, texto flutuante de ganho no clique, altura da cena sem a constante `25rem`, Configurações de áudio e qualidade passando a valer | AG04 | T-097, T-098, T-100 | a fazer |
+| T-103 | Pendências de interface da QA do M5: indicador dos bônus temporários de conquista ativos e do tempo restante (O1), rótulo "Quantum Cores" em 375 (O4) | AG04 | M5 | a fazer |
+| T-104 | PWA: cache em tempo de execução dos modelos e áudios de `public/assets/` sem inflar o pré-cache | AG03 | T-094, T-101 | a fazer |
+| T-105 | QA do M6: FPS em 1280 e 375, produção idêntica com cena parada e em qualidade baixa, transições, áudio e mudo, carregamento | AG07 | T-102, T-103, T-104 | a fazer |
+| T-106 | Versão 0.7.0 | AG03 | T-105 | a fazer |
+| T-107 | PR `dev` → `main` e tag `v0.7.0` | AG00 | T-106, pedido do usuário | a fazer |
+
+Ondas: T-093 (AG05) e T-103 (AG04) em paralelo; o AG05 segue em sequência (T-095, T-094, T-096, T-097, T-098, T-099, T-100, T-101); T-102 e T-104 no fim, depois a QA.
+
 ## Marcos fechados
 
 | Marco | Versão | Tasks |
@@ -139,9 +161,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 
 | Item | Marco | Dono provável |
 |---|---|---|
-| QA do M5 (O1): sem indicador dos bônus temporários de conquista ativos e do tempo restante | M6 | AG04 |
 | QA do M5 (O2): save do M4 migrado recomeça o tutorial do zero; concluir na migração os passos já cumpridos | M8 | AG02 |
-| QA do M5 (O4): em 375 o rótulo "Quantum Cores" do topo quebra em duas linhas | M6 | AG04 |
 | Estatísticas sem totais históricos (compras de todas as execuções, cores ganhos, offline creditado, maior B/s); exige save novo | M8 | AG01 e AG03 |
 | QA do M2 (D1): o agente revelado mostra só nome e requisito, sem a especialidade (`src/ui/agents/AgentCard.tsx`, ramo não desbloqueado); a Bíblia 7.6 permite exibir "com suas informações"; decidir se é intencional | M3 | AG04 |
 | QA do M2 (D2): em 375x600 a legenda "+N B por clique" fica sob a barra de abas e só aparece rolando a coluna | M3 | AG04 |
@@ -149,9 +169,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | QA do M2 (D3): a janela de 4 s da confirmação do Reset é curta com latência alta; observação | M3 | AG04 |
 | Teste lento `src/core/economy/economy.test.ts` (cerca de 2 s) falhou uma vez por timeout sob carga, com a suíte rodando junto do teste de curva; dar folga de timeout ou reduzir os casos | M3 | AG01 |
 | `useEngineRevision` só re-renderiza em `tick`, `click` e `stateReplaced`; assinar também `purchase`, `agentHired`, `agentLeveled` e `upgradePurchased` para a tela atualizar na hora, sem depender do relógio | M3 | AG04 |
-| A altura da cena do núcleo usa a constante `25rem` para o resto da coluna; se o indicador de estágio crescer (texto do próximo estágio em mais linhas), o botão de clique volta a cortar em telas baixas | M6 | AG04 |
 | Remover a chave i18n sem uso `core.infraPlaceholder` | M2 | AG04 |
-| Texto flutuante de ganho a cada clique e som do clique | M6 | AG04 e AG05 |
 | Árvore Quantum: o desconto de custo da árvore (+10 pp) pode não valer nada, pois melhorias e ATLAS_CORE já passam do teto de 50 pp (D-13); decidir na QA do M3 entre trocar o efeito do caminho gama ou reduzir o ATLAS_CORE. Custo total da árvore ~495 cores (8 a 10 Reboots) pode ser alto. Nós Quantum desconhecidos no save são preservados; confirmar que o motor os ignora | M3 (T-044) | AG07 |
 | Trap de foco (Tab) na tela da árvore Quantum e na janela de reset; botão de reset fica desabilitado sem nível comprado (revisar na QA do M3) | M3 (T-044) | AG04 |
 | Resumo de retorno: guardar `stageBefore` no `PendingOffline` (src/app) para mostrar "novo estágio"; conferir no navegador real a volta à aba oculta e o throttling do Chrome, e o resumo em mobile e en | M4 (T-074) | AG03 e AG07 |
