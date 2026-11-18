@@ -127,7 +127,7 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | T-090d | Remover a categoria de notificação "produção offline cheia" (D-23) | AG03 | T-090 | feita |
 | T-090e | Esconder Continuar após Reset na tela inicial (D-24) | AG04 | T-090 | feita |
 | T-091 | Versão 0.6.0 | AG03 | T-090b, T-090c | feita |
-| T-092 | PR `dev` → `main` e tag `v0.6.0` | AG00 | T-091, pedido do usuário | a fazer |
+| T-092 | PR `dev` → `main` e tag `v0.6.0` | AG00 | T-091, pedido do usuário | feita (PR #6, tag v0.6.0) |
 
 ## Marcos fechados
 
