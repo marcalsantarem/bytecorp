@@ -13,6 +13,9 @@ Registro do AG00. Vale abaixo do usuário e da Bíblia, acima dos documentos dos
 | D-05 | 2026-11-10 | Processo de trabalho, time e Git conforme [00_processo.md](00_processo.md). | Usuário |
 | D-06 | 2026-11-10 | Configurações (idioma) salvas fora do save do jogo; sobrevivem a "Novo jogo". | M0 |
 | D-08 | 2026-11-10 | Referência visual em `docs/referencias/` (só inspiração). O acabamento neon (painéis chanfrados, barra colorida nos cartões) entra já nas tasks T-011 e T-012 do M1; onde diverge da Bíblia, vale a Bíblia. | Usuário |
+| D-21 | 2026-11-18 | Destino do botão Reset (resolve A-14): o botão Reset sai do rodapé e passa para dentro das Configurações, mantendo a confirmação em dois passos; a tela inicial tem Novo jogo (com confirmação). | Usuário |
+| D-20 | 2026-11-18 | Catálogo de conquistas do M5 (resolve A-13): cerca de 40 conquistas, cobrindo as 7 categorias e as 4 raridades, com 6 a 8 secretas; ampliação fica para o M8. | Usuário |
+| D-19 | 2026-11-18 | Velocidade de jogo (resolve A-12): sem seletor no M5; as Configurações trazem apenas o item reservado para o M8. | Usuário |
 | D-18 | 2026-11-16 | Ajuste das concessões de aceleradores (altera D-16, a partir da QA do M4: a tabela de 5x adiantava a run 1 em 40 a 47% e a árvore completa em 57 a 65%): todas as concessões por marco passam a 2x (Garage Company 15 min, Startup Lab 15, Data Center 30, Corporate Network 15, Quantum Facility 15, Mega Corporation 30) e o Reboot deixa de conceder acelerador. Os aceleradores de 5x e de 60 min permanecem no catálogo, reservados a eventos, conquistas e anúncios. Medido no motor real: run 1 até Mega em 44,6 min (-40%) ao receber e 39,2 min (-47%) encadeando; árvore completa em 3,4 h (-22,5%) ao receber e 2,4 h (-44,6%) encadeando, contra 4,4 h sem aceleradores. | Usuário |
 | D-17 | 2026-11-16 | O acelerador entra na camada de temporários da D-10 como multiplicador global e vale para a produção passiva e para o clique (resolve A-11). Aceleradores não acumulam entre si (Bíblia 13.4); com outro bônus temporário ativo, os multiplicadores de temporários multiplicam entre si (acelerador × bônus), e o acelerador mais forte prevalece sobre outro acelerador. | Usuário |
 | D-16 | 2026-11-16 | Aceleradores no M4 (resolve A-10): concedidos por marcos de jogo, um na primeira entrada em cada estágio e um em cada Reboot (primeira vez em cada marco, sem repetir); o catálogo de concessões (multiplicador e duração de cada uma) é do AG07 (T-070). Conquistas, eventos e anúncios entram nos marcos próprios. | Usuário |
@@ -42,8 +45,5 @@ Tasks que dependem destes itens ficam bloqueadas.
 
 | ID | Questão | Bloqueia |
 |---|---|---|
-| A-12 | Velocidade de jogo nas configurações (Bíblia 15.8; 13.1 diz que o controle manual poderá ser desbloqueado por melhorias): o que entra no M5. Opções: (1) seletor 1x, 2x e 5x bloqueado até uma melhoria nova o liberar; (2) sem seletor, só o item reservado nas configurações (para o M8); (3) seletor livre desde o início. | T-083 |
-| A-13 | Tamanho do catálogo de conquistas (Bíblia 11.1, "intermediário"): cerca de 40 (cobre as 7 categorias e as 4 raridades, com 6 a 8 secretas) ou cerca de 70. | T-078 |
-| A-14 | Destino do botão Reset (D-11) depois da tela inicial com Novo jogo: remover do jogo, manter como está, ou mover para dentro das Configurações. | T-085 |
 | A-07 | Relevância do ganho fixo por clique (`clickFlat`): perde peso depois de cerca de 10 min de jogo e todas as melhorias de clique ficam disponíveis até 7 min. Decidir se `clickFlat` escala com a produção ou se fica como está. | Nada; revisar no balanceamento do M8 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |
