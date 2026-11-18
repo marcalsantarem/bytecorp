@@ -14,9 +14,9 @@ export function AgentsPanel({ engine }: { engine: GameEngine }) {
     <NeonPanel>
       <h2 className="font-mono text-xs font-bold tracking-wider text-neon-cyan/80 uppercase">{t('agents.title')}</h2>
       {items.length === 0 ? (
-        <p className="text-sm text-white/50">{t('agents.empty')}</p>
+        <p className="text-sm text-white/50" data-tutorial="shop-agents">{t('agents.empty')}</p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-2" data-tutorial="shop-agents">
           {items.map(({ def, info }) => (
             <AgentCard key={def.id} engine={engine} def={def} info={info} />
           ))}

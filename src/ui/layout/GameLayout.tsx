@@ -34,15 +34,16 @@ export function GameLayout({ engine, onReset, left, center, right }: Props) {
       <ResourceBar engine={engine} onReset={onReset} />
       <AcceleratorIndicator engine={engine} />
       <main className="flex min-h-0 flex-1 lg:grid lg:grid-cols-[18rem_minmax(0,1fr)_22rem]">
-        <div className={`${show('agents')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-r lg:border-neon-cyan/10`}>{left}</div>
-        <div className={`${show('core')} min-h-0 min-w-0 flex-1 flex-col items-center justify-center-safe gap-6 overflow-y-auto p-3`}>{center}</div>
-        <div className={`${show('shop')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-l lg:border-neon-cyan/10`}>{right}</div>
+        <div data-tab="agents" className={`${show('agents')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-r lg:border-neon-cyan/10`}>{left}</div>
+        <div data-tab="core" className={`${show('core')} min-h-0 min-w-0 flex-1 flex-col items-center justify-center-safe gap-6 overflow-y-auto p-3`}>{center}</div>
+        <div data-tab="shop" className={`${show('shop')} min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:border-l lg:border-neon-cyan/10`}>{right}</div>
       </main>
       <nav className="flex shrink-0 border-t border-neon-cyan/20 bg-panel lg:hidden" aria-label={t('tab.label')}>
         {TABS.map(({ id, label, icon }) => (
           <button
             key={id}
             type="button"
+            data-tab-button={id}
             aria-current={tab === id ? 'page' : undefined}
             onClick={() => setTab(id)}
             className={`flex flex-1 flex-col items-center gap-0.5 min-h-11 justify-center py-2 font-mono text-xs ${tab === id ? 'bg-neon-cyan/10 text-neon-cyan' : 'text-white/50'}`}

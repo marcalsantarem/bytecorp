@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest'
-import { CATALOG } from '../src/core/catalog'
+import { BASE_CATALOG as CATALOG } from '../src/core/catalog'
 import type { Catalog } from '../src/core/catalog/types'
 import { fmtTime, simulateCurve, type CurveResult } from './helpers/curva'
 

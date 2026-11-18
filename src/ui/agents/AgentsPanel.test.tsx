@@ -1,6 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from '../../core/catalog'
+import { BASE_CATALOG as CATALOG } from '../../core/catalog'
 import { formatBytes, formatCount } from '../../core/format'
 import { flush, makeEngine, renderWithEngine, tr } from '../testUtils'
 import { AgentsPanel } from './AgentsPanel'

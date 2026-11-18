@@ -1,6 +1,6 @@
 import { act, render } from '@testing-library/react'
 import type { ReactNode } from 'react'
-import { CATALOG } from '../core/catalog'
+import { BASE_CATALOG as CATALOG } from '../core/catalog'
 import { D } from '../core/decimal'
 import { DEFAULT_CONFIG, GameEngine } from '../core/engine'
 import { createInitialState, type RunState } from '../core/state'

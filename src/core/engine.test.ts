@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from './catalog'
+import { BASE_CATALOG as CATALOG } from './catalog'
 import { startClock } from './clock'
 import { DEFAULT_CONFIG, GameEngine, type EngineConfig } from './engine'
 import { createInitialState } from './state'

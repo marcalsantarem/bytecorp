@@ -70,3 +70,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .accel-warning { animation: none; }
 }
+
+/* Destaque leve do alvo do tutorial: contorno ciano que pulsa devagar. */
+@keyframes tutorial-highlight {
+  0%, 100% { box-shadow: 0 0 6px rgba(0, 255, 204, 0.35); opacity: 0.9; }
+  50% { box-shadow: 0 0 16px rgba(0, 255, 204, 0.6); opacity: 0.55; }
+}
+.tutorial-highlight {
+  animation: tutorial-highlight 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-highlight { animation: none; }
+}

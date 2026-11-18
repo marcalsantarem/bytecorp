@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from '../src/core/catalog'
+// Saldos e custos exatos: sem as recompensas das conquistas (medidas em conquistas-m5).
+import { BASE_CATALOG as CATALOG } from '../src/core/catalog'
 import type { Catalog } from '../src/core/catalog/types'
 import { D, type Decimal } from '../src/core/decimal'
 import { DEFAULT_CONFIG, GameEngine, type EngineConfig } from '../src/core/engine'

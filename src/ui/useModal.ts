@@ -1,9 +1,26 @@
-import { useEffect, useRef, type RefObject } from 'react'
+import { useEffect, useRef, useSyncExternalStore, type RefObject } from 'react'
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
 // Janelas abertas, da mais antiga para a mais nova; só a última reage ao teclado.
 const stack: symbol[] = []
+const stackListeners = new Set<() => void>()
+
+function notifyStack() {
+  stackListeners.forEach((l) => l())
+}
+
+function subscribeStack(listener: () => void) {
+  stackListeners.add(listener)
+  return () => {
+    stackListeners.delete(listener)
+  }
+}
+
+// Há alguma janela modal aberta? Usado por avisos que esperam as janelas fecharem.
+export function useAnyModalOpen(): boolean {
+  return useSyncExternalStore(subscribeStack, () => stack.length > 0)
+}
 
 function focusables(root: HTMLElement): HTMLElement[] {
   return [...root.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
@@ -24,6 +41,7 @@ export function useModal(container: RefObject<HTMLElement | null>, onClose: () =
     const id = Symbol('modal')
     const previous = document.activeElement as HTMLElement | null
     stack.push(id)
+    notifyStack()
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (stack[stack.length - 1] !== id) return
@@ -58,6 +76,7 @@ export function useModal(container: RefObject<HTMLElement | null>, onClose: () =
       document.removeEventListener('keydown', onKeyDown)
       const i = stack.indexOf(id)
       if (i >= 0) stack.splice(i, 1)
+      notifyStack()
       previous?.focus?.()
     }
   }, [container])

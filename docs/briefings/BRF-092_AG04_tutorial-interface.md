@@ -9,6 +9,10 @@
 
 Dicas guiadas do tutorial (Bíblia 16.1): uma por vez, dispensáveis.
 
+## API da T-087
+
+`engine.tutorialStep` (passo atual ou null; `titleKey`, `textKey`, `target`), `completeTutorialStep(id?)`, `dismissTutorialStep()`, `dismissTutorial()`, evento `tutorialChanged`. Passos `passiveProduction` e `achievements` são de conclusão manual (chamar `completeTutorialStep()` no "Entendi" ou ao abrir a janela de conquistas). Alvos: `click-button`, `shop-equipment`, `production-rate`, `shop-agents`, `shop-upgrades`, `achievements-button` (novos) e `reboot-button`, `quantum-button` (já existem como `data-testid`).
+
 ## Escopo
 
 - Balão junto ao elemento alvo do passo atual, com destaque leve do alvo, título, texto, "Entendi" (dispensar passo) e "Pular tutorial" (dispensar tudo). Marcar os elementos alvo com os ids que o AG02 listou.

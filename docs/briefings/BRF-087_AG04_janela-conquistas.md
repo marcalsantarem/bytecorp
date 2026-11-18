@@ -11,6 +11,7 @@ Janela de conquistas aberta por um botão permanente do rodapé (Bíblia 11 e 15
 
 ## Escopo
 
+- Substituir o botão desabilitado de conquistas do rodapé (`Panels.tsx`), mantendo `data-tutorial="achievements-button"`, e chamar `engine.completeTutorialStep('achievements')` ao abrir a janela (T-088). Reaproveitar `RARITY` e `useRewardText` de `src/ui/achievements/AchievementNotification.tsx`.
 - Botão no rodapé com contador (desbloqueadas/total).
 - Lista agrupada por categoria; cada item com ícone, raridade (cor), nome, descrição, progresso (barra atual/alvo, formatado), recompensa e estado (bloqueada ou desbloqueada, com data). Secretas bloqueadas mostram só a pista (`achievementInfo` já devolve nulos).
 - Sem busca nem filtros (fora de escopo). Rolagem simples; reutilizar `useModal` (foco, Esc).

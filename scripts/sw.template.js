@@ -40,6 +40,18 @@ async function cacheFirst(request) {
   return response
 }
 
+// Clique em notificação local (T-089): foca uma janela do jogo ou abre uma nova.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      const client = clients.find((c) => new URL(c.url).origin === self.location.origin)
+      if (client) return client.focus()
+      return self.clients.openWindow('/')
+    }),
+  )
+})
+
 self.addEventListener('fetch', (event) => {
   const { request } = event
   if (request.method !== 'GET') return

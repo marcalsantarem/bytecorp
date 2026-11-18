@@ -73,6 +73,8 @@ import {
   type TreeResetCost,
 } from './progression/quantum'
 import { createInitialState, type GameState, type TemporaryBonus } from './state'
+import { TUTORIAL_STEPS, type TutorialStepDef } from './catalog/tutorial'
+import { autoCompleteSteps, markStepDone, selectTutorialStep, type TutorialContext } from './progression/tutorial'
 
 export interface EngineConfig {
   baseClick: number
@@ -96,6 +98,8 @@ export interface EngineConfig {
   acceleratorGrants: AcceleratorGrantTable
   // Aviso acceleratorEnding quando faltar este tempo (ms) no acelerador ativo.
   acceleratorEndingMs: number
+  // Passos do tutorial contextual, em ordem (GDD 16.1, T-087).
+  tutorialSteps: readonly TutorialStepDef[]
 }
 
 export interface EquipmentModeInfo {
@@ -164,6 +168,7 @@ export const DEFAULT_CONFIG: EngineConfig = {
   treeResetCost: DEFAULT_TREE_RESET_COST,
   acceleratorGrants: ACCELERATOR_GRANTS,
   acceleratorEndingMs: DEFAULT_ACCELERATOR_ENDING_MS,
+  tutorialSteps: TUTORIAL_STEPS,
 }
 
 // Núcleo de lógica. Não conhece interface, renderização nem relógio: quem o
@@ -177,6 +182,8 @@ export class GameEngine {
   // Estágios em ordem e a posição do atual, para olhar só o próximo a cada passo.
   private readonly stages: StageDef[]
   private stageIndex = -1
+  // Passo do tutorial exibido; não vai ao save (é recalculado ao carregar).
+  private tutorialStepId: string | null = null
 
   constructor(
     readonly catalog: Catalog,
@@ -186,6 +193,7 @@ export class GameEngine {
     this._state = state
     this.stages = orderedStages(catalog)
     this.syncStage()
+    this.checkTutorial()
     // D-16: um acelerador na primeira entrada em cada estágio e um em cada Reboot.
     this.events.on('stageChanged', ({ to }) => {
       this.grantFor(grantKey('stage', to), this.config.acceleratorGrants.stage[to] ?? [])
@@ -231,6 +239,9 @@ export class GameEngine {
   replaceState(state: GameState): void {
     this._state = state
     this.syncStage()
+    // Sem evento de tutorial: stateReplaced já avisa que tudo deve ser relido.
+    this.tutorialStepId = null
+    this.checkTutorial(false)
     this.invalidate()
     this.events.emit('stateReplaced', {})
   }
@@ -286,6 +297,7 @@ export class GameEngine {
     this.invalidate()
     this.events.emit('reboot', { reward: result.reward, rebootNumber: result.rebootNumber })
     this.checkAchievements()
+    this.checkTutorial()
     return result
   }
 
@@ -296,6 +308,7 @@ export class GameEngine {
     this.invalidate()
     this.events.emit('quantumNodePurchased', { id, level: result.level, cost: result.cost })
     this.checkAchievements()
+    this.checkTutorial()
     return result
   }
 
@@ -306,6 +319,7 @@ export class GameEngine {
     this.invalidate()
     this.events.emit('quantumTreeReset', { refunded: result.refunded, cost: result.cost, resetNumber: result.resetNumber })
     this.checkAchievements()
+    this.checkTutorial()
     return result
   }
 
@@ -337,6 +351,7 @@ export class GameEngine {
     this.invalidate()
     this.events.emit('offlineApplied', result)
     this.checkAchievements()
+    this.checkTutorial()
     return result
   }
 
@@ -389,6 +404,7 @@ export class GameEngine {
     stats.bytesFromClicks = stats.bytesFromClicks.add(gained)
     this.checkStage()
     this.checkAchievements()
+    this.checkTutorial()
     this._revision++
     this.events.emit('click', { gained, critical })
     return gained
@@ -411,6 +427,7 @@ export class GameEngine {
     this.events.emit('purchase', { id, quantity, cost })
     this.checkStage()
     this.checkAchievements()
+    this.checkTutorial()
     return quantity
   }
 
@@ -456,6 +473,7 @@ export class GameEngine {
     this.events.emit('agentHired', { id, count: entry.count + 1, cost })
     this.checkStage()
     this.checkAchievements()
+    this.checkTutorial()
     return true
   }
 
@@ -473,6 +491,7 @@ export class GameEngine {
     this.invalidate()
     this.events.emit('agentLeveled', { id, level: entry.level, cost })
     this.checkAchievements()
+    this.checkTutorial()
     return true
   }
 
@@ -515,6 +534,7 @@ export class GameEngine {
     run.upgrades.push(id)
     this.invalidate()
     this.events.emit('upgradePurchased', { id, cost: def.cost })
+    this.checkTutorial()
     return true
   }
 
@@ -567,6 +587,38 @@ export class GameEngine {
     return id
   }
 
+  // Passos do tutorial, em ordem (GDD 16.1).
+  get tutorialSteps(): readonly TutorialStepDef[] {
+    return this.config.tutorialSteps
+  }
+
+  // Passo exibido agora (com título, texto e alvo de interface) ou null.
+  get tutorialStep(): TutorialStepDef | null {
+    const id = this.tutorialStepId
+    return id === null ? null : (this.config.tutorialSteps.find((s) => s.id === id) ?? null)
+  }
+
+  // Conclui um passo (padrão: o exibido), para os de conclusão manual ou quando a interface vê a
+  // ação. Também aceita um passo ainda não exibido. false se não existe ou já estava concluído.
+  completeTutorialStep(id: string | null = this.tutorialStepId): boolean {
+    return this.finishTutorialStep(id, 'completed')
+  }
+
+  // Dispensa o passo exibido (conta como concluído) e passa ao próximo que estiver ativo.
+  dismissTutorialStep(): boolean {
+    return this.finishTutorialStep(this.tutorialStepId, 'stepDismissed')
+  }
+
+  // Dispensa o tutorial inteiro; nenhum passo volta a aparecer até um Novo jogo.
+  dismissTutorial(): boolean {
+    const { tutorial } = this._state.meta
+    if (tutorial.dismissed) return false
+    tutorial.dismissed = true
+    this.checkTutorial(true, 'tutorialDismissed')
+    this._revision++
+    return true
+  }
+
   // Chamado por todo sistema que altere algo que afete a produção.
   invalidate(): void {
     this.cachedProduction = null
@@ -583,6 +635,7 @@ export class GameEngine {
     this.applyTimerTick(tickTimers(this._state.meta, ms, this.config.acceleratorEndingMs), true)
     this.checkStage()
     this.checkAchievements()
+    this.checkTutorial()
   }
 
   private applyTimerTick(tick: ReturnType<typeof tickTimers>, warn: boolean): void {
@@ -629,6 +682,62 @@ export class GameEngine {
     if (items.length === 0) return
     this._revision++
     this.events.emit('acceleratorGranted', { source: key, items })
+  }
+
+  private tutorialContext(): TutorialContext {
+    const state = this._state
+    const { run } = state
+    const discount = () => costDiscountPercent(state, this.catalog, this.config.maxCostDiscountPercent)
+    return {
+      state,
+      canAffordEquipment: () => {
+        const d = discount()
+        return this.catalog.equipment.some(
+          (e) =>
+            equipmentStatus(e, state, this.catalog) === 'unlocked' &&
+            run.bytes.gte(unitCost(e.baseCost, e.costGrowth, run.equipment[e.id] ?? 0, d)),
+        )
+      },
+      canAffordAgent: () => {
+        const d = discount()
+        return this.catalog.agents.some(
+          (a) =>
+            agentStatus(a, state, this.catalog) === 'unlocked' &&
+            run.bytes.gte(agentHireCost(a, run.agents[a.id]?.count ?? 0, d)),
+        )
+      },
+      canAffordUpgrade: () =>
+        this.catalog.upgrades.some((u) => upgradeStatus(u, state) === 'available' && run.bytes.gte(u.cost)),
+      rebootAvailable: () => this.rebootRewardNow >= 1,
+    }
+  }
+
+  private finishTutorialStep(id: string | null, reason: 'completed' | 'stepDismissed'): boolean {
+    if (id === null || this._state.meta.tutorial.dismissed) return false
+    if (!markStepDone(this.config.tutorialSteps, this._state.meta, id)) return false
+    this.checkTutorial(true, reason, [id])
+    this._revision++
+    return true
+  }
+
+  // Conclui em silêncio o que já foi feito e escolhe o passo exibido; emite tutorialChanged
+  // se algo mudou. O tutorial dispensado não custa nada por passo de simulação.
+  private checkTutorial(
+    emit = true,
+    reason: GameEvents['tutorialChanged']['reason'] = 'progress',
+    completed: string[] = [],
+  ): void {
+    const previous = this.tutorialStepId
+    if (this._state.meta.tutorial.dismissed && previous === null && reason === 'progress') return
+    const steps = this.config.tutorialSteps
+    const ctx = this.tutorialContext()
+    const done = this._state.meta.tutorial.dismissed ? [] : autoCompleteSteps(steps, ctx)
+    const step = selectTutorialStep(steps, previous, ctx)
+    this.tutorialStepId = step
+    if (done.length > 0 || step !== previous) this._revision++
+    if (emit && (step !== previous || done.length > 0 || completed.length > 0 || reason === 'tutorialDismissed')) {
+      this.events.emit('tutorialChanged', { step, previous, completed: [...completed, ...done], reason })
+    }
   }
 
   // Ao carregar um estado: localiza o estágio salvo e corrige em silêncio o que

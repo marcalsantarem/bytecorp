@@ -9,6 +9,10 @@
 
 Janela de Configurações (Bíblia 15.8) com idioma reativado (revoga D-11) e o botão Reset dentro dela (D-21).
 
+## API da T-083 (`src/app/settings.ts`)
+
+`loadSettings(storage)` → `SettingsStore` com `current`, `update(patch)` e `subscribe(listener)`; exporta `Settings`, `GRAPHICS_QUALITIES`, `NOTIFICATION_CATEGORIES`, `VOLUME_MIN/MAX`. Ligar em `main.tsx` (`await loadSettings(storage)` antes de `createRoot`) e no `I18nProvider` (`ui/i18n.tsx`), que passa a usar `settings.current.locale` e assina mudanças no lugar do `LOCALE` fixo; remover o comentário da D-11 em `main.tsx`. `gameSpeed` é fixo em 1.
+
 ## Escopo
 
 - Botão de engrenagem no lugar do Reset atual do rodapé; abre a janela (`useModal`).

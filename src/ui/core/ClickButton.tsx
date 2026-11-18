@@ -11,6 +11,7 @@ export function ClickButton({ engine }: { engine: GameEngine }) {
     <div className="flex w-full max-w-72 flex-col items-center gap-2">
       <button
         type="button"
+        data-tutorial="click-button"
         onClick={() => engine.click()}
         className="w-full touch-manipulation rounded-xl transition-transform duration-75 select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white active:scale-95"
       >

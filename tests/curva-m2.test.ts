@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from '../src/core/catalog'
+// Curva de referência do M2, sem conquistas (o impacto delas fica em conquistas-m5.test.ts).
+import { BASE_CATALOG as CATALOG } from '../src/core/catalog'
 import type { Catalog } from '../src/core/catalog/types'
 import { fmtTime, simulateCurve, type CurveResult } from './helpers/curva'
 

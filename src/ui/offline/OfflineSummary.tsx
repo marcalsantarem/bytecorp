@@ -4,21 +4,9 @@ import type { GameEngine } from '../../core/engine'
 import { formatBytes } from '../../core/format'
 import type { MessageKey } from '../../i18n'
 import { useI18n } from '../i18n'
+import { useDuration } from '../components/useDuration'
 import { useModal } from '../useModal'
 import { useOfflineSummary, type OfflineSource, type PendingOffline } from './useOfflineSummary'
-
-function useDuration() {
-  const { t } = useI18n()
-  return (ms: number): string => {
-    const minutes = Math.floor(ms / 60_000)
-    const h = Math.floor(minutes / 60)
-    const m = minutes % 60
-    if (h === 0 && m === 0) return t('offline.duration.lessThanMinute')
-    if (h === 0) return t('offline.duration.m', { m })
-    if (m === 0) return t('offline.duration.h', { h })
-    return t('offline.duration.hm', { h, m })
-  }
-}
 
 // Janela de resumo ao retornar (Bíblia 14.3): sem penalidade e sem sequência diária (14.6).
 export function OfflineSummary({ engine, source }: { engine: GameEngine; source: OfflineSource }) {

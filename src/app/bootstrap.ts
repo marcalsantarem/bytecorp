@@ -9,7 +9,8 @@ import { createPersistence } from './purchaseSave'
 import { resetGame } from './resetGame'
 
 export type BootResult =
-  | { kind: 'ready'; session: GameSession }
+  // hasSave: havia save válido ao abrir (a tela inicial só oferece Continuar nesse caso).
+  | { kind: 'ready'; session: GameSession; hasSave: boolean }
   | { kind: 'corrupt'; detail: string; startNewGame: () => Promise<GameSession> }
 
 export interface GameSession {
@@ -57,7 +58,7 @@ export async function boot(storage: KeyValueStorage, deps: BootDeps = {}): Promi
   const saves = new SaveManager(storage, now)
   const loaded = await saves.load()
 
-  if ('kind' in loaded) return { kind: 'ready', session: start(new GameEngine(CATALOG), saves, deps) }
+  if ('kind' in loaded) return { kind: 'ready', session: start(new GameEngine(CATALOG), saves, deps), hasSave: false }
   if (loaded.ok) {
     const engine = new GameEngine(CATALOG, loaded.state)
     const session = start(engine, saves, deps)
@@ -66,7 +67,7 @@ export async function boot(storage: KeyValueStorage, deps: BootDeps = {}): Promi
     const rawAway = now() - loaded.savedAt
     const credited = creditAway(engine, session.offline, rawAway, minMs)
     if (credited || sanitizeAway(rawAway) === 0) await session.persistence.saveNow()
-    return { kind: 'ready', session }
+    return { kind: 'ready', session, hasSave: true }
   }
   return {
     kind: 'corrupt',
