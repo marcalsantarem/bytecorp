@@ -134,17 +134,17 @@ Um agente roda uma task por vez. Tasks do mesmo dono em arquivos em comum seguem
 | ID | Task | Dono | Depende de | Status |
 |---|---|---|---|---|
 | T-093 | Base da cena Three.js (Bíblia 18.1, 18.2, 18.4, 18.5): dependência `three` carregada sob demanda, `mountInfraScene` com câmera isométrica fixa, presets de iluminação, laço de desenho separado do engine e parado com a aba oculta, descarte de recursos | AG05 | M5 | a fazer |
-| T-094 | Modelos da infraestrutura por categoria de equipamento e ambiente por estágio (7 estágios), conforme A-15, com carregamento progressivo | AG05 | T-093, A-15 | bloqueada |
+| T-094 | Modelos da infraestrutura por categoria de equipamento e ambiente por estágio (7 estágios), geometria procedural (D-25), com carregamento progressivo | AG05 | T-093 | a fazer |
 | T-095 | Evolução visual (Bíblia 6.7, 18.8): função pura estado → objetos da cena, equipamentos individuais até um limite e agrupados depois, mudanças por marcos e estágio, sem efeito econômico | AG05 | T-093 | a fazer |
-| T-096 | Fluxos de dados, pacotes, partículas e efeitos de energia em Canvas 2D; núcleo visual com ondas de energia e elementos holográficos, conforme A-17 | AG05 | T-093, A-17 | bloqueada |
+| T-096 | Fluxos de dados, pacotes, partículas e efeitos de energia em Canvas 2D; núcleo visual com ondas de energia e elementos holográficos (D-27: núcleo segue em Canvas 2D sobre a cena) | AG05 | T-093 | a fazer |
 | T-097 | Transição de estágio de 2 a 3 s, pulável, sem pausar produção e cliques (Bíblia 18.7); transição de Reboot integrada à nova cena | AG05 | T-095 | a fazer |
 | T-098 | Qualidade adaptativa (Bíblia 19): detecção inicial, presets Baixa, Média e Alta lidos das Configurações, redução de partículas, luzes e sombras sob carga; teste de que a qualidade não altera a produção | AG05 | T-096 | a fazer |
 | T-099 | Sistema de áudio (Bíblia 20.3 a 20.5): Web Audio com barramentos de música, efeitos e interface e "silenciar tudo" ligados às Configurações, desbloqueio no primeiro gesto, carregamento progressivo e nada carregado quando mudo | AG05 | M5 | a fazer |
-| T-100 | Efeitos sonoros (Bíblia 20.2): clique, crítico, compra e agente, conquista, Reboot, notificação; som de evento fica para o M7; conforme A-16 | AG05 | T-099, A-16 | bloqueada |
-| T-101 | Música por estágio em camadas que crescem com a infraestrutura e composição curta do Reboot (Bíblia 20.1), conforme A-16 | AG05 | T-099, A-16 | bloqueada |
+| T-100 | Efeitos sonoros (Bíblia 20.2): clique, crítico, compra e agente, conquista, Reboot, notificação; som de evento fica para o M7 (D-26: síntese procedural) | AG05 | T-099 | a fazer |
+| T-101 | Música por estágio em camadas que crescem com a infraestrutura e composição curta do Reboot (Bíblia 20.1) (D-26: síntese procedural) | AG05 | T-099 | a fazer |
 | T-102 | Integração na interface: cena na coluna central e no mobile, botão de pular transição, texto flutuante de ganho no clique, altura da cena sem a constante `25rem`, Configurações de áudio e qualidade passando a valer | AG04 | T-097, T-098, T-100 | a fazer |
 | T-103 | Pendências de interface da QA do M5: indicador dos bônus temporários de conquista ativos e do tempo restante (O1), rótulo "Quantum Cores" em 375 (O4) | AG04 | M5 | a fazer |
-| T-104 | PWA: cache em tempo de execução dos modelos e áudios de `public/assets/` sem inflar o pré-cache | AG03 | T-094, T-101 | a fazer |
+| T-104 | PWA: conferir que o chunk do Three.js e os módulos de cena e áudio entram no pré-cache e que o app abre offline (D-25 e D-26 dispensam modelos e áudios em arquivo) | AG03 | T-094, T-101 | a fazer |
 | T-105 | QA do M6: FPS em 1280 e 375, produção idêntica com cena parada e em qualidade baixa, transições, áudio e mudo, carregamento | AG07 | T-102, T-103, T-104 | a fazer |
 | T-106 | Versão 0.7.0 | AG03 | T-105 | a fazer |
 | T-107 | PR `dev` → `main` e tag `v0.7.0` | AG00 | T-106, pedido do usuário | a fazer |

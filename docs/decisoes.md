@@ -13,6 +13,9 @@ Registro do AG00. Vale abaixo do usuário e da Bíblia, acima dos documentos dos
 | D-05 | 2026-11-10 | Processo de trabalho, time e Git conforme [00_processo.md](00_processo.md). | Usuário |
 | D-06 | 2026-11-10 | Configurações (idioma) salvas fora do save do jogo; sobrevivem a "Novo jogo". | M0 |
 | D-08 | 2026-11-10 | Referência visual em `docs/referencias/` (só inspiração). O acabamento neon (painéis chanfrados, barra colorida nos cartões) entra já nas tasks T-011 e T-012 do M1; onde diverge da Bíblia, vale a Bíblia. | Usuário |
+| D-27 | 2026-11-19 | Núcleo visual no M6 (resolve A-17): o núcleo continua em Canvas 2D (`coreScene`) sobreposto à cena Three.js; a cena 3D é só a infraestrutura. | Usuário |
+| D-26 | 2026-11-19 | Música e efeitos no M6 (resolve A-16): síntese procedural por Web Audio, sem arquivos de áudio; arquivos CC0 podem entrar depois sem mudar a estrutura. | Usuário |
+| D-25 | 2026-11-19 | Modelos 3D no M6 (resolve A-15): geometria procedural em código; GLB/GLTF podem entrar depois pelo carregamento progressivo. | Usuário |
 | D-24 | 2026-11-18 | Reset feito pela tela inicial (Configurações) esconde o botão Continuar, pois não há mais progresso a continuar. | Usuário |
 | D-23 | 2026-11-18 | Notificações locais: a categoria "produção offline cheia" sai das configurações (sem backend não há como dispará-la); ficam conquista desbloqueada e acelerador terminou. Push com backend fica para depois. Limites provisórios: agrupamento de 3 s, 2 min entre notificações e 10 min por categoria. | Usuário |
 | D-22 | 2026-11-18 | Piso de ritmo de clique com conquistas (altera D-14): o piso de 50 min a 10 cliques por segundo vale para a curva sem conquistas (`tests/curva-m2.test.ts`); com o catálogo de conquistas, o mínimo a 10 cliques por segundo é 45 min e o adiantamento das recompensas fica em até 10% (`tests/conquistas-m5.test.ts`). Medido: 69,4 min a 1 clique/s (-6,6%), 46,9 min a 10 cliques/s (-8,9%), árvore completa 4,1 h (-7,9%). | Usuário |
@@ -48,8 +51,5 @@ Tasks que dependem destes itens ficam bloqueadas.
 
 | ID | Questão | Bloqueia |
 |---|---|---|
-| A-15 | Origem dos modelos 3D da infraestrutura no M6 (Bíblia 18.3): geometria procedural em código, modelos GLB/GLTF de bibliotecas livres (CC0) ou combinação. | T-094 |
-| A-16 | Origem da música e dos efeitos sonoros no M6 (Bíblia 20.4): síntese procedural por Web Audio, arquivos de bibliotecas livres (CC0) ou combinação. | T-100, T-101 |
-| A-17 | Núcleo visual na cena do M6 (Bíblia 5.2 e 18.2): manter o núcleo em Canvas 2D sobreposto à cena Three.js ou recriá-lo como objeto 3D da cena. | T-096 |
 | A-07 | Relevância do ganho fixo por clique (`clickFlat`): perde peso depois de cerca de 10 min de jogo e todas as melhorias de clique ficam disponíveis até 7 min. Decidir se `clickFlat` escala com a produção ou se fica como está. | Nada; revisar no balanceamento do M8 |
 | A-04 | Valores iniciais de chance e multiplicador do clique crítico (Bíblia 28.1). | Nada: T-007 usa valores provisórios configuráveis até a definição |
